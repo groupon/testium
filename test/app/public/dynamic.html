@@ -1,0 +1,19 @@
+<html>
+<body>
+  <style>
+    .load_later {display: none;}
+    .load_never {display: none;}
+  </style>
+  <script>
+    function showElementAfter(selector, ms) {
+      setTimeout(function(){
+        document.querySelector(selector).style.display = 'block';
+      }, ms);
+    }
+
+    showElementAfter('.load_later', 20);
+  </script>
+  <div class="load_later">This just in!</div>
+  <div class="load_never">This in never!</div>
+</body>
+</html>

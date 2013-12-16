@@ -1,0 +1,15 @@
+
+/bin
+/log
+/node_modules
+
+# Chrome has a bug where it will create this file in the current working directory
+# there is code in place to remove it after test runs. However, if this fails, we
+# don't want this file commited to the repository.
+libpeerconnection.log
+
+test/integration_log_screenshots
+test/integration_log
+test/screenshot_integration_log
+test/screenshot_integration_screenshots
+

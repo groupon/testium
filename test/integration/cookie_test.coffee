@@ -1,0 +1,36 @@
+{getBrowser} = require '../../lib/index'
+assert = require 'assertive'
+
+describe 'cookies', ->
+  before ->
+    @browser = getBrowser()
+
+  it 'can be set individually', ->
+    @browser.setCookie
+      name: 'test_cookie'
+      value: '3'
+
+    cookie = @browser.getCookie('test_cookie')
+    assert.equal '3', cookie.value
+
+  it 'can be set in groups', ->
+    @browser.setCookies [
+      { name: 'test_cookie1', value: '5' }
+      { name: 'test_cookie2', value: '7' }
+    ]
+
+    cookie1 = @browser.getCookie('test_cookie1')
+    cookie2 = @browser.getCookie('test_cookie2')
+
+    assert.equal '5', cookie1.value
+    assert.equal '7', cookie2.value
+
+  it 'can be cleared', ->
+    @browser.setCookie
+      name: 'test_cookie'
+      value: '9'
+    @browser.clearCookies()
+
+    cookies = @browser.getCookies()
+
+    assert.equal 0, cookies.length
