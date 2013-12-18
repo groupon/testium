@@ -68,6 +68,31 @@ testium.run testOptions, (error, exitCode) ->
   # handle result
 ```
 
+## Testium Interactive Console
+
+Testium provides an interactive CoffeeScript console
+as a bin stub.
+It creates a browser
+and mixes the methods of that browser
+into the global scope.
+
+You can use it like so!
+
+```
+$ ./node_modules/.bin/testium
+%> navigateTo 'google.com'
+%> element = getElement 'input[name="q"]'
+%> element.type 'puppies\n'
+```
+
+And the browser will navigate to `google.com`,
+find the search box,
+and type `puppies\n` into it.
+You should now see search results for puppies.
+
+This is useful for testing out your commands
+before setting up an actual test.
+
 ## Testium API
 
 `browser = getBrowser()`

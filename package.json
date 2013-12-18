@@ -18,7 +18,7 @@
     }
   },
   "main": "lib/index.js",
-  "bin": { "repl" : "./lib/cli.js" },
+  "bin": "./cli.sh",
   "scripts": {
     "install": "node lib/install.js"
   },
