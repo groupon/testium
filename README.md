@@ -7,6 +7,24 @@ and headlessly (via PhantomJS).
 It uses [webdriver-http-sync](https://github.com/groupon/webdriver-http-sync)
 in order to communicate using the WebDriver protocol to a selenium server.
 
+## Example
+
+A simple test using [assertive](https://github.com/groupon/assertive).
+
+```coffeescript
+{getBrowser} = require 'testium'
+assert = require 'assertive' # or whatever assert library you prefer
+
+describe 'browse', ->
+  before ->
+    @browser = getBrowser()
+    @browser.navigateTo '/my-account'
+    assert.equal 200, @browser.getStatusCode()
+
+  it 'is serving up gzipped content', ->
+    assert.equal 'gzip', @browser.getHeader('Content-Encoding')
+```
+
 ## Installing Testium
 
 **Warning: There is an issue with npm where
@@ -48,24 +66,6 @@ testOptions =
 
 testium.run testOptions, (error, exitCode) ->
   # handle result
-```
-
-## Example
-
-Here's an example test.
-
-```coffeescript
-{getBrowser} = require 'testium'
-assert = require 'assertive' # or whatever assert library you prefer
-
-describe 'browse', ->
-  before ->
-    @browser = getBrowser()
-    @browser.navigateTo '/browse/abbotsford'
-    assert.equal 200, @browser.getStatusCode()
-
-  it 'Server sets x-itier-host header', ->
-    assert.equal 'Pull-Itier', @browser.getHeader('x-Application')
 ```
 
 ## Testium API
