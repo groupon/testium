@@ -25,6 +25,10 @@ describe 'browse', ->
     assert.equal 'gzip', @browser.getHeader('Content-Encoding')
 ```
 
+For help debugging your tests,
+check out
+[the wiki page](https://github.com/groupon/testium/wiki/Debugging-Your-Tests).
+
 ## Installing Testium
 
 **Warning: There is an issue with npm where
@@ -182,4 +186,14 @@ Method | Description
 :----- | :----------
 `element.get(attribute)` | Returns the element's specified attribute, which can be `text`. Note that WebDriver (and therefore testium) will not return text of hidden elements.
 `element.click()` | Calls click on the element.
+
+
+## Contributing
+
+If you'd like to help make testium better,
+please check out:
+
+* [CONTRIBUTING.md](CONTRIBUTING.md)
+* [Roadmap](https://github.com/groupon/testium/wiki/Roadmap)
+* [Under the Hood](https://github.com/groupon/testium/wiki/Under-the-Hood)
 
