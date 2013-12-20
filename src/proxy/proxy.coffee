@@ -125,9 +125,9 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
     markRequestClosed(remoteRequest)
 
     if newPage && request.url.indexOf('/favicon.ico') != 0 && !remoteRequest.aborted
+      newPage = false
       modifyResponse(response)
 
-    newPage = false
     response.writeHead response.statusCode, response.headers
     response.end()
 
