@@ -26,7 +26,7 @@
     "underscore": "1.4.4",
     "coffee-script-redux": "2.0.0-beta7",
     "webdriver-http-sync": "~0.5.0",
-    "mocha": "1.12.1",
+    "mocha": "1.16.1",
     "assertive": "~1.2.0",
     "mkdirp": "~0.3.5",
     "async": "~0.2.9",
