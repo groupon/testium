@@ -50,10 +50,9 @@ buildRemoteRequestOptions = (request, toPort) ->
 
 openRequests = []
 firstPage = true
-newPage = true
 newPageOptions = {}
-markNewPage = (body, response) ->
-  newPageOptions = body || {}
+markNewPage = (options, response) ->
+  newPageOptions = options
   console.log "\n[System] Marking new page request with options: #{JSON.stringify newPageOptions}"
 
   for request in openRequests
@@ -62,8 +61,10 @@ markNewPage = (body, response) ->
     request.abort()
   openRequests = []
 
-  newPage = true
   response.end()
+
+isNewPage = (url) ->
+  url == newPageOptions.url
 
 markRequestClosed = (targetRequest) ->
   openRequests = openRequests.filter (request) ->
@@ -97,18 +98,16 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
   remoteRequestOptions = buildRemoteRequestOptions(request, toPort)
   console.log "    #{JSON.stringify remoteRequestOptions}"
 
-  if request.url.indexOf('/favicon.ico') != 0
-    if firstPage
-      firstPage = false
-      return success(response)
-    else if newPage
-      modifyRequest(remoteRequestOptions, newPageOptions)
+  if firstPage
+    firstPage = false
+    return success(response)
+  else if isNewPage(request.url)
+    modifyRequest(remoteRequestOptions, newPageOptions)
 
   remoteRequest = http.request remoteRequestOptions, (remoteResponse) ->
     markRequestClosed(remoteRequest)
 
-    if newPage && request.url.indexOf('/favicon.ico') != 0
-      newPage = false
+    if isNewPage(request.url)
       modifyResponse(remoteResponse)
 
     response.writeHead remoteResponse.statusCode, remoteResponse.headers
@@ -124,10 +123,9 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
 
     markRequestClosed(remoteRequest)
 
-    if newPage && request.url.indexOf('/favicon.ico') != 0 && !remoteRequest.aborted
+    if isNewPage(request.url) && !remoteRequest.aborted
       modifyResponse(response)
 
-    newPage = false
     response.writeHead response.statusCode, response.headers
     response.end()
 
@@ -137,8 +135,6 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
   request.on 'end', ->
     remoteRequest.end()
 
-server = null
-commandServer = null
 module.exports = (fromPort, toPort, commandPort, modifyResponse) ->
   server = http.createServer (request, response) ->
     proxyRequest(request, response, modifyResponse, toPort)
