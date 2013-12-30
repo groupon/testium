@@ -38,6 +38,9 @@ module.exports = (driver) ->
   navigateTo: (url, options) ->
     truthy 'navigateTo(url) - requires url', url
 
+    options ?= {}
+    options.url = url
+
     hasProtocol = /^[^:\/?#]+:\/\//
     unless hasProtocol.test url
       url = "#{@urlRoot}#{url}"
