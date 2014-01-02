@@ -7,6 +7,8 @@ and headlessly (via PhantomJS).
 It uses [webdriver-http-sync](https://github.com/groupon/webdriver-http-sync)
 in order to communicate using the WebDriver protocol to a selenium server.
 
+[Demo Video](https://www.youtube.com/watch?v=hux1icPwVg8)
+
 ## Example
 
 A simple test using [assertive](https://github.com/groupon/assertive).
