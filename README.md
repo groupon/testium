@@ -33,11 +33,6 @@ check out
 
 ## Installing Testium
 
-**Warning: There is an issue with npm where
-`npm install testium` returns the wrong thing.
-Please use `npm install testium@1.0.0` until
-this issue has been resolved.**
-
 On Ubuntu, you need to make sure you have libcurl installed.
 `sudo apt-get install libcurl4-openssl-dev`
 
