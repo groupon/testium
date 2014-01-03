@@ -46,6 +46,8 @@ You can install OpenJDK or JDK 7.
 
 Install Testium by adding `"testium": "~1.0.0"` to your package.json
 and running `npm install`.
+This will download the latest selenium standalone server
+(and chromedriver).
 
 Then, you need to require it and run it, like so!
 

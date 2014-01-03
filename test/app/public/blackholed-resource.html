@@ -17,7 +17,11 @@
           s.type = "text/javascript";
           s.src = "/blackhole";
           document.body.appendChild(s);
-        }, 0);
+
+          // this can't simply be `0`
+          // because firefox will still
+          // block dom-ready otherwise
+        }, 30);
       };
     </script>
   </body>

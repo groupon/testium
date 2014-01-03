@@ -45,6 +45,7 @@ module.exports.getBrowser = ->
 
   browserOptions =
     browserName: browser
+    applicationCacheEnabled: false
   options =
     logDirectory: logDirectory
     http: http

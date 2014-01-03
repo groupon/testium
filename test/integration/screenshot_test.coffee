@@ -3,6 +3,7 @@ assert = require 'assertive'
 
 getIndexScreenshot = (browser) ->
   browser.navigateTo '/'
+  assert.equal 200, browser.getStatusCode()
   browser.getScreenshot()
 
 describe 'screenshots', ->
@@ -11,8 +12,6 @@ describe 'screenshots', ->
 
   describe 'taking', ->
     before ->
-      @browser.navigateTo '/'
-      assert.equal 200, @browser.getStatusCode()
       @indexScreenshot ?= getIndexScreenshot(@browser)
 
     it 'captures the page', ->
@@ -23,12 +22,15 @@ describe 'screenshots', ->
       assert.truthy 'selector screenshot is smaller than the page', formScreenshot.length < @indexScreenshot.length
 
   describe 'comparing', ->
+    before ->
+      @indexScreenshot ?= getIndexScreenshot(@browser)
+
     it 'to itself succeeds', ->
       @browser.assert.imagesMatch(@indexScreenshot, @indexScreenshot)
 
     it 'to something else fails', ->
-      @indexScreenshot ?= getIndexScreenshot(@browser)
       @browser.navigateTo '/other-page.html'
+      assert.equal 200, @browser.getStatusCode()
       otherScreenshot = @browser.getScreenshot()
 
       error = assert.throws =>
@@ -37,8 +39,8 @@ describe 'screenshots', ->
       assert.match expectedError, error.message
 
     it 'allows tolerance', ->
-      @indexScreenshot ?= getIndexScreenshot(@browser)
       @browser.navigateTo '/index-diff.html'
+      assert.equal 200, @browser.getStatusCode()
       diffScreenshot = @browser.getScreenshot()
       @browser.assert.imagesMatch(@indexScreenshot, diffScreenshot, 60.00)
 

@@ -118,13 +118,14 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
 
   remoteRequest.on 'error', (error) ->
     response.statusCode = 500
-    console.log JSON.stringify error, ['message', 'stack'], 2
-    console.log '<-- ' + response.statusCode + ' ' + request.url
 
     markRequestClosed(remoteRequest)
 
-    if isNewPage(request.url) && !remoteRequest.aborted
+    if isNewPage(request.url)
       modifyResponse(response)
+
+    console.log error.stack
+    console.log '<-- ' + response.statusCode + ' ' + request.url
 
     response.writeHead response.statusCode, response.headers
     response.end()
