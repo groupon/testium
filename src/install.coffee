@@ -45,7 +45,7 @@ CHROMEDRIVER_ZIP_TEMP_PATH = "#{CHROMEDRIVER_TEMP_PATH}.zip"
 CHROMEDRIVER_VERSION = '2.8'
 SELENIUM_JAR_PATH = "#{BIN_PATH}/selenium.jar"
 SELENIUM_TEMP_PATH = "#{TEMP_PATH}/selenium.jar"
-SELENIUM_VERSION = '2.39.0'
+SELENIUM_VERSION = '2.38.0'
 
 doneEvent = do ->
   nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1])
@@ -62,37 +62,28 @@ downloadFile = (url, filePath, callback) ->
   http.get url, (response) ->
     response.pipe(file)
     response.on doneEvent, ->
-      console.log "#{url}  ->  #{filePath}"
-      if /\.zip$/.test(url)
-        console.log 'unzipping: ' + filePath
-        unzip filePath, callback
-      else
-        callback()
-
-ensureFile = (file, url, callback) ->
-  binFilePath = "#{BIN_PATH}/#{file}"
-  tempFilePath = "#{TEMP_PATH}/#{file}"
-
-  return callback() if exists binFilePath
-
-  if exists tempFilePath
-    console.log 'copying file from /tmp: ' + tempFilePath
-    copy tempFilePath, binFilePath, callback
-  else
-    console.log 'downloading: ' + url
-    downloadFile url, tempFilePath, ->
-      console.log 'copying file from /tmp: ' + tempFilePath
-      copy tempFilePath, binFilePath, callback
+      callback()
 
 ensureSelenium = (callback) ->
   url = "http://selenium.googlecode.com/files/selenium-server-standalone-#{SELENIUM_VERSION}.jar"
-  ensureFile 'selenium.jar', url, callback
+  file = 'selenium.jar'
+  binFilePath = "#{BIN_PATH}/#{file}"
+  return callback() if exists binFilePath
+
+  console.log '[testium] grabbing selenium standalone server'
+
+  tempFilePath = "#{TEMP_PATH}/selenium_#{SELENIUM_VERSION}.jar"
+  if exists tempFilePath
+    copy tempFilePath, binFilePath, callback
+  else
+    downloadFile url, tempFilePath, ->
+      copy tempFilePath, binFilePath, callback
 
 getArchitecture = ->
   platform = process.platform
 
   unless platform in ['linux', 'darwin', 'win32']
-    throw new Error('Unsupported platform #{platform}. Only linux, darwin, and win32 are supported.')
+    throw new Error("Unsupported platform #{platform}. Only linux, darwin, and win32 are supported.")
 
   bitness = process.arch.substr(1)
 
@@ -119,9 +110,19 @@ unzip = (filePath, callback) ->
 ensureChromeDriver = (callback) ->
   {platform, bitness} = getArchitecture()
   url = "http://chromedriver.storage.googleapis.com/#{CHROMEDRIVER_VERSION}/chromedriver_#{platform}#{bitness}.zip"
+  return callback() if exists CHROMEDRIVER_PATH
 
-  ensureFile 'chromedriver', url, ->
-    fs.chmod CHROMEDRIVER_PATH, '755', callback
+  console.log '[testium] grabbing selenium chromedriver'
+
+  tempFilePath = "#{TEMP_PATH}/chromedriver_#{CHROMEDRIVER_VERSION}"
+  if exists tempFilePath
+    copy tempFilePath, binFilePath, callback
+  else
+    downloadFile url, tempFilePath, ->
+      unzip tempFilePath, ->
+        move "#{TEMP_PATH}/chromedriver", tempFilePath, ->
+          copy tempFilePath, CHROMEDRIVER_PATH, ->
+            fs.chmod CHROMEDRIVER_PATH, '755', callback
 
 makePaths = ->
   mkdirp.sync BIN_PATH
