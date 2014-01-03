@@ -50,6 +50,9 @@ module.exports = (response) ->
   if response.headers["Set-Cookie"]
     console.log "Existing Set-Cookie Header!! #{response.headers["Set-Cookie"]}"
 
+  # force disable caching
+  response.headers['Cache-Control'] = 'no-store'
+
   response.headers["Set-Cookie"] = buildCookie(response.headers, response.statusCode)
   console.log "<-- Set-Cookie: " + response.headers["Set-Cookie"]
 

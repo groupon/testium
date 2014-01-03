@@ -35,7 +35,9 @@
     "glob": "~3.2.6",
     "readr": "~0.3.0",
     "adm-zip": "~0.4.3",
-    "concat-stream": "~1.0.1"
+    "concat-stream": "~1.0.1",
+    "ncp": "~0.5.0",
+    "fs.extra": "~1.2.1"
   },
   "devDependencies": {
     "node-static": "0.7.0",

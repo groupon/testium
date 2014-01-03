@@ -35,26 +35,58 @@ http = require 'http'
 mkdirp = require 'mkdirp'
 async = require 'async'
 AdmZip = require('adm-zip')
+{copy, move} = require 'fs.extra'
 
 BIN_PATH = "#{__dirname}/../bin"
+TEMP_PATH = '/tmp/testium'
 CHROMEDRIVER_PATH = "#{BIN_PATH}/chromedriver"
-CHROMEDRIVER_ZIP_PATH = "#{CHROMEDRIVER_PATH}.zip"
+CHROMEDRIVER_TEMP_PATH = "#{TEMP_PATH}/chromedriver"
+CHROMEDRIVER_ZIP_TEMP_PATH = "#{CHROMEDRIVER_TEMP_PATH}.zip"
 CHROMEDRIVER_VERSION = '2.8'
 SELENIUM_JAR_PATH = "#{BIN_PATH}/selenium.jar"
+SELENIUM_TEMP_PATH = "#{TEMP_PATH}/selenium.jar"
 SELENIUM_VERSION = '2.39.0'
 
-ensureSelenium = (callback) ->
-  console.log '[Selenium] checking if standalone server jar exists: ' + SELENIUM_JAR_PATH
-  return console.log '[Selenium] found' if fs.existsSync(SELENIUM_JAR_PATH)
+doneEvent = do ->
+  nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1])
+  if nodeVersion < 0.99
+    'end'
+  else
+    'finish'
 
-  console.log '[Selenium] standalone server jar'
-  url = "http://selenium.googlecode.com/files/selenium-server-standalone-#{SELENIUM_VERSION}.jar"
-  file = fs.createWriteStream(SELENIUM_JAR_PATH)
+exists = (filePath) ->
+  fs.existsSync filePath
+
+downloadFile = (url, filePath, callback) ->
+  file = fs.createWriteStream(filePath)
   http.get url, (response) ->
     response.pipe(file)
-    response.on 'end', ->
-      console.log '[Selenium] download complete'
-      callback()
+    response.on doneEvent, ->
+      console.log "#{url}  ->  #{filePath}"
+      if /\.zip$/.test(url)
+        console.log 'unzipping: ' + filePath
+        unzip filePath, callback
+      else
+        callback()
+
+ensureFile = (file, url, callback) ->
+  binFilePath = "#{BIN_PATH}/#{file}"
+  tempFilePath = "#{TEMP_PATH}/#{file}"
+
+  return callback() if exists binFilePath
+
+  if exists tempFilePath
+    console.log 'copying file from /tmp: ' + tempFilePath
+    copy tempFilePath, binFilePath, callback
+  else
+    console.log 'downloading: ' + url
+    downloadFile url, tempFilePath, ->
+      console.log 'copying file from /tmp: ' + tempFilePath
+      copy tempFilePath, binFilePath, callback
+
+ensureSelenium = (callback) ->
+  url = "http://selenium.googlecode.com/files/selenium-server-standalone-#{SELENIUM_VERSION}.jar"
+  ensureFile 'selenium.jar', url, callback
 
 getArchitecture = ->
   platform = process.platform
@@ -74,43 +106,29 @@ getArchitecture = ->
 
   { platform, bitness }
 
-unzipChromedriver = ->
+unzip = (filePath, callback) ->
   # This is file-based instead of stream-based
-  # because none of the stream options work
-  # for various reasons
-  # If you can fix this, feel free to try!
-  zip = new AdmZip CHROMEDRIVER_ZIP_PATH
-  zip.extractAllTo BIN_PATH
-  fs.unlinkSync CHROMEDRIVER_ZIP_PATH
-
-downloadChromeDriver = (callback) ->
-  console.log '[ChromeDriver] downloading driver'
-
-  { platform, bitness } = getArchitecture()
-
-  url = "http://chromedriver.storage.googleapis.com/#{CHROMEDRIVER_VERSION}/chromedriver_#{platform}#{bitness}.zip"
-  file = fs.createWriteStream(CHROMEDRIVER_ZIP_PATH)
-  http.get url, (response) ->
-    response.on 'end', ->
-      unzipChromedriver()
-      console.log '[ChromeDriver] download complete'
-      callback()
-
-    response.pipe(file)
-
-ensureChromeDriver = (callback) ->
-  console.log '[ChromeDriver] checking if driver exists: ' + CHROMEDRIVER_PATH
-  return console.log '[ChromeDriver] found' if fs.existsSync(CHROMEDRIVER_PATH)
-
-  downloadChromeDriver ->
-    fs.chmodSync(CHROMEDRIVER_PATH, '755')
+  # because none of the stream options worked for me
+  tempFilePath = "#{filePath}.tmp"
+  move filePath, tempFilePath, ->
+    zip = new AdmZip tempFilePath
+    zip.extractAllTo TEMP_PATH
+    fs.unlinkSync tempFilePath
     callback()
 
-makePath = (callback) ->
-  mkdirp BIN_PATH, callback
+ensureChromeDriver = (callback) ->
+  {platform, bitness} = getArchitecture()
+  url = "http://chromedriver.storage.googleapis.com/#{CHROMEDRIVER_VERSION}/chromedriver_#{platform}#{bitness}.zip"
 
+  ensureFile 'chromedriver', url, ->
+    fs.chmod CHROMEDRIVER_PATH, '755', callback
+
+makePaths = ->
+  mkdirp.sync BIN_PATH
+  mkdirp.sync TEMP_PATH
+
+makePaths()
 async.parallel [
-  makePath
   ensureSelenium
   ensureChromeDriver
 ], (error) ->

@@ -36,6 +36,8 @@ PROXY_PORT = 4445
 PROXY_TIMEOUT = 1000 # 1 second
 DEFAULT_LOG_DIRECTORY = "#{__dirname}/../../log"
 
+DEBUG = false
+
 path = require 'path'
 mkdirp = require 'mkdirp'
 async = require 'async'
@@ -79,13 +81,27 @@ waitForPort = (port, timeout, callback) ->
 
   check()
 
+createSeleniumArguments = ->
+  chromeDriverPath = path.join __dirname, '../../bin/chromedriver'
+  firefoxProfilePath = path.join __dirname, '../../bin/firefox_profile.js'
+
+  args = [
+    "-Dwebdriver.chrome.driver=#{chromeDriverPath}"
+    '-firefoxProfileTemplate', firefoxProfilePath
+    '-ensureCleanSession'
+    '-Dwebdriver.chrome.args="--disable-application-cache --media-cache-size=1 --disk-cache-size=1 --disk-cache-dir=/dev/null --disable-cache"'
+  ]
+
+  args.push '-debug' if DEBUG
+  args
+
 startSelenium = (logStream) ->
   (callback) ->
     logStream.log "Starting selenium"
 
     jarPath = path.join __dirname, '../../bin/selenium.jar'
-    chromeDriverPath = path.join __dirname, '../../bin/chromedriver'
-    seleniumProcess = spawn 'java', "-jar #{jarPath} -debug -Dwebdriver.chrome.driver=#{chromeDriverPath}".split(' ')
+    args = ['-jar', jarPath].concat createSeleniumArguments()
+    seleniumProcess = spawn 'java', args
 
     seleniumProcess.stdout.pipe logStream
     seleniumProcess.stderr.pipe logStream
