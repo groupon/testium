@@ -36,15 +36,18 @@ mkdirp = require 'mkdirp'
 async = require 'async'
 AdmZip = require('adm-zip')
 {copy, move} = require 'fs.extra'
+getLatestVersions = require './versions'
 
-BIN_PATH = "#{__dirname}/../bin"
+BIN_PATH = "#{__dirname}/../../bin"
 TEMP_PATH = '/tmp/testium'
 CHROMEDRIVER_PATH = "#{BIN_PATH}/chromedriver"
 CHROMEDRIVER_TEMP_PATH = "#{TEMP_PATH}/chromedriver"
 CHROMEDRIVER_ZIP_TEMP_PATH = "#{CHROMEDRIVER_TEMP_PATH}.zip"
-CHROMEDRIVER_VERSION = '2.8'
 SELENIUM_JAR_PATH = "#{BIN_PATH}/selenium.jar"
 SELENIUM_TEMP_PATH = "#{TEMP_PATH}/selenium.jar"
+
+# fallbacks if the version detection fails
+CHROMEDRIVER_VERSION = '2.8'
 SELENIUM_VERSION = '2.38.0'
 
 doneEvent = do ->
@@ -64,20 +67,21 @@ downloadFile = (url, filePath, callback) ->
     response.on doneEvent, ->
       callback()
 
-ensureSelenium = (callback) ->
-  url = "http://selenium.googlecode.com/files/selenium-server-standalone-#{SELENIUM_VERSION}.jar"
-  file = 'selenium.jar'
-  binFilePath = "#{BIN_PATH}/#{file}"
-  return callback() if exists binFilePath
+ensureSelenium = (version) ->
+  (callback) ->
+    url = "http://selenium.googlecode.com/files/selenium-server-standalone-#{version}.jar"
+    file = 'selenium.jar'
+    binFilePath = "#{BIN_PATH}/#{file}"
+    return callback() if exists binFilePath
 
-  console.log '[testium] grabbing selenium standalone server'
+    console.log "[testium] grabbing selenium standalone server #{version}"
 
-  tempFilePath = "#{TEMP_PATH}/selenium_#{SELENIUM_VERSION}.jar"
-  if exists tempFilePath
-    copy tempFilePath, binFilePath, callback
-  else
-    downloadFile url, tempFilePath, ->
+    tempFilePath = "#{TEMP_PATH}/selenium_#{version}.jar"
+    if exists tempFilePath
       copy tempFilePath, binFilePath, callback
+    else
+      downloadFile url, tempFilePath, ->
+        copy tempFilePath, binFilePath, callback
 
 getArchitecture = ->
   platform = process.platform
@@ -107,32 +111,39 @@ unzip = (filePath, callback) ->
     fs.unlinkSync tempFilePath
     callback()
 
-ensureChromeDriver = (callback) ->
-  {platform, bitness} = getArchitecture()
-  url = "http://chromedriver.storage.googleapis.com/#{CHROMEDRIVER_VERSION}/chromedriver_#{platform}#{bitness}.zip"
-  return callback() if exists CHROMEDRIVER_PATH
+ensureChromeDriver = (version) ->
+  (callback) ->
+    {platform, bitness} = getArchitecture()
+    url = "http://chromedriver.storage.googleapis.com/#{version}/chromedriver_#{platform}#{bitness}.zip"
+    return callback() if exists CHROMEDRIVER_PATH
 
-  console.log '[testium] grabbing selenium chromedriver'
+    console.log "[testium] grabbing selenium chromedriver #{version}"
 
-  tempFilePath = "#{TEMP_PATH}/chromedriver_#{CHROMEDRIVER_VERSION}"
-  if exists tempFilePath
-    copy tempFilePath, binFilePath, callback
-  else
-    downloadFile url, tempFilePath, ->
-      unzip tempFilePath, ->
-        move "#{TEMP_PATH}/chromedriver", tempFilePath, ->
-          copy tempFilePath, CHROMEDRIVER_PATH, ->
-            fs.chmod CHROMEDRIVER_PATH, '755', callback
+    tempFilePath = "#{TEMP_PATH}/chromedriver_#{version}"
+    if exists tempFilePath
+      copy tempFilePath, CHROMEDRIVER_PATH, callback
+    else
+      downloadFile url, tempFilePath, ->
+        unzip tempFilePath, ->
+          move "#{TEMP_PATH}/chromedriver", tempFilePath, ->
+            copy tempFilePath, CHROMEDRIVER_PATH, ->
+              fs.chmod CHROMEDRIVER_PATH, '755', callback
 
 makePaths = ->
   mkdirp.sync BIN_PATH
   mkdirp.sync TEMP_PATH
 
-makePaths()
-async.parallel [
-  ensureSelenium
-  ensureChromeDriver
-], (error) ->
+exit = (error) ->
   console.error error if error?
   process.exit(if error? then 1 else 0)
+
+
+makePaths()
+getLatestVersions SELENIUM_VERSION, CHROMEDRIVER_PATH, (error, versions) ->
+  return exit(error) if error?
+
+  async.parallel [
+    ensureSelenium(versions.selenium)
+    ensureChromeDriver(versions.chromedriver)
+  ], exit
 
