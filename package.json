@@ -36,7 +36,6 @@
     "readr": "~0.3.0",
     "adm-zip": "~0.4.3",
     "concat-stream": "~1.0.1",
-    "ncp": "~0.5.0",
     "fs.extra": "~1.2.1",
     "request": "~2.30.0",
     "xml2js": "~0.4.1"

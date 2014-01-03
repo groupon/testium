@@ -30,30 +30,24 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-mkdirp = require 'mkdirp'
-async = require 'async'
-getLatestVersions = require './versions'
-ensureSelenium = require './selenium'
-ensureChromedriver = require './chromedriver'
+fs = require 'fs'
+{copy, move} = require 'fs.extra'
+downloadFile = require './download'
 
-BIN_PATH = "#{__dirname}/../../bin"
-TEMP_PATH = '/tmp/testium'
+module.exports = (binPath, tempPath, version) ->
+  (callback) ->
+    url = "http://selenium.googlecode.com/files/selenium-server-standalone-#{version}.jar"
+    file = 'selenium.jar'
+    binFilePath = "#{binPath}/#{file}"
+    return callback() if fs.existsSync binFilePath
 
-makePaths = ->
-  mkdirp.sync BIN_PATH
-  mkdirp.sync TEMP_PATH
+    console.log "[testium] grabbing selenium standalone server #{version}"
 
-exit = (error) ->
-  console.error error if error?
-  process.exit(if error? then 1 else 0)
-
-
-makePaths()
-getLatestVersions (error, versions) ->
-  return exit(error) if error?
-
-  async.parallel [
-    ensureSelenium(BIN_PATH, TEMP_PATH, versions.selenium)
-    ensureChromedriver(BIN_PATH, TEMP_PATH, versions.chromedriver)
-  ], exit
+    tempFilePath = "#{tempPath}/selenium_#{version}.jar"
+    if fs.existsSync tempFilePath
+      copy tempFilePath, binFilePath, callback
+    else
+      downloadFile url, tempFilePath, (error) ->
+        return callback error if error?
+        copy tempFilePath, binFilePath, callback
 

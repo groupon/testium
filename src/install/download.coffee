@@ -30,30 +30,19 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-mkdirp = require 'mkdirp'
-async = require 'async'
-getLatestVersions = require './versions'
-ensureSelenium = require './selenium'
-ensureChromedriver = require './chromedriver'
+fs = require 'fs'
+http = require 'http'
+doneEvent = do ->
+  nodeVersion = process.version.match(/^v(\d+\.\d+)/)[1]
+  if nodeVersion == "0.8"
+    'end'
+  else
+    'finish'
 
-BIN_PATH = "#{__dirname}/../../bin"
-TEMP_PATH = '/tmp/testium'
-
-makePaths = ->
-  mkdirp.sync BIN_PATH
-  mkdirp.sync TEMP_PATH
-
-exit = (error) ->
-  console.error error if error?
-  process.exit(if error? then 1 else 0)
-
-
-makePaths()
-getLatestVersions (error, versions) ->
-  return exit(error) if error?
-
-  async.parallel [
-    ensureSelenium(BIN_PATH, TEMP_PATH, versions.selenium)
-    ensureChromedriver(BIN_PATH, TEMP_PATH, versions.chromedriver)
-  ], exit
+module.exports = (url, filePath, callback) ->
+  file = fs.createWriteStream(filePath)
+  http.get url, (response) ->
+    response.pipe(file)
+    response.on doneEvent, ->
+      callback()
 
