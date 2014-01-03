@@ -52,7 +52,7 @@ ensureSelenium = (callback) ->
   file = fs.createWriteStream(SELENIUM_JAR_PATH)
   http.get url, (response) ->
     response.pipe(file)
-    response.on 'end', ->
+    response.on 'finish', ->
       console.log '[Selenium] download complete'
       callback()
 
@@ -91,12 +91,12 @@ downloadChromeDriver = (callback) ->
   url = "http://chromedriver.storage.googleapis.com/#{CHROMEDRIVER_VERSION}/chromedriver_#{platform}#{bitness}.zip"
   file = fs.createWriteStream(CHROMEDRIVER_ZIP_PATH)
   http.get url, (response) ->
-    response.on 'end', ->
+    response.pipe(file)
+
+    response.on 'finish', ->
       unzipChromedriver()
       console.log '[ChromeDriver] download complete'
       callback()
-
-    response.pipe(file)
 
 ensureChromeDriver = (callback) ->
   console.log '[ChromeDriver] checking if driver exists: ' + CHROMEDRIVER_PATH
