@@ -20,7 +20,7 @@
   "main": "lib/index.js",
   "bin": "./cli.sh",
   "scripts": {
-    "install": "node lib/install/index.js"
+    "install": "node lib/install"
   },
   "dependencies": {
     "underscore": "1.4.4",
