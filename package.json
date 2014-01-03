@@ -19,9 +19,6 @@
   },
   "main": "lib/index.js",
   "bin": "./cli.sh",
-  "scripts": {
-    "install": "node lib/install"
-  },
   "dependencies": {
     "underscore": "1.4.4",
     "coffee-script-redux": "2.0.0-beta7",

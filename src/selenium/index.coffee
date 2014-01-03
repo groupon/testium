@@ -32,11 +32,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 cleanup = require './cleanup'
 startProcesses = require './process'
+ensureBinaries = require './ensure'
 
 seleniumProcess = null
 proxyProcess = null
 
 module.exports =
+  ensure: ensureBinaries
   cleanup: (callback) ->
     cleanup(seleniumProcess, proxyProcess, callback)
 

@@ -56,15 +56,18 @@ run = (options={}, callback) ->
   assert.truthy "#{invocation} - requires options.tests", options.tests
   assert.truthy "#{invocation} - requires callback", callback
 
-  selenium.start options.logDirectory, options.applicationPort, (error) ->
+  selenium.ensure (error) ->
     return callback error if error?
 
-    runTests options, (error, failedTests) ->
-      selenium.cleanup (cleanupError) ->
-        error ?= cleanupError
-        if error? && cleanupError?
-          error.inner = cleanupError
-        callback(error, failedTests)
+    selenium.start options.logDirectory, options.applicationPort, (error) ->
+      return callback error if error?
+
+      runTests options, (error, failedTests) ->
+        selenium.cleanup (cleanupError) ->
+          error ?= cleanupError
+          if error? && cleanupError?
+            error.inner = cleanupError
+          callback(error, failedTests)
 
 cleanup = selenium.cleanup
 module.exports = { run, cleanup, getBrowser }
