@@ -83,13 +83,14 @@ waitForPort = (port, timeout, callback) ->
 
 createSeleniumArguments = ->
   chromeDriverPath = path.join __dirname, '../../bin/chromedriver'
-  firefoxProfilePath = path.join __dirname, '../../bin/firefox_profile.js'
+  chromeArgs = '--disable-application-cache --media-cache-size=1 --disk-cache-size=1 --disk-cache-dir=/dev/null --disable-cache'
+  firefoxProfilePath = path.join __dirname, './firefox_profile.js'
 
   args = [
     "-Dwebdriver.chrome.driver=#{chromeDriverPath}"
     '-firefoxProfileTemplate', firefoxProfilePath
     '-ensureCleanSession'
-    '-Dwebdriver.chrome.args="--disable-application-cache --media-cache-size=1 --disk-cache-size=1 --disk-cache-dir=/dev/null --disable-cache"'
+    "-Dwebdriver.chrome.args=\"#{chromeArgs}\""
   ]
 
   args.push '-debug' if DEBUG

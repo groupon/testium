@@ -30,6 +30,9 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+FALLBACK_CHROMEDRIVER_VERSION = '2.8'
+FALLBACK_SELENIUM_VERSION = '2.39.0'
+
 async = require 'async'
 request = require 'request'
 parseXml = require('xml2js').parseString
@@ -55,15 +58,15 @@ getLatestChromedriverVersion = (callback) ->
       version = versionPath.substring(0, versionPath.length-1)
       callback null, version
 
-module.exports = (defaultSeleniumVersion, defaultChromedriverVersion, callback) ->
+module.exports = (callback) ->
   async.parallel [
     getLatestSeleniumVersion
     getLatestChromedriverVersion
   ], (error, results) ->
     return callback error if error?
 
-    selenium = defaultSeleniumVersion
-    chromedriver = defaultChromedriverVersion
+    selenium = FALLBACK_SELENIUM_VERSION
+    chromedriver = FALLBACK_CHROMEDRIVER_VERSION
 
     if !results?[0]
       console.log "[testium] Unable to determine latest version of selenium standalone server; using #{selenium}"

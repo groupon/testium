@@ -121,7 +121,7 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
 
     markRequestClosed(remoteRequest)
 
-    if isNewPage(request.url) #&& !remoteRequest.aborted
+    if isNewPage(request.url)
       modifyResponse(response)
 
     console.log error.stack

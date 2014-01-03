@@ -32,7 +32,7 @@ describe 'proxy', ->
       assert.equal 'statuscode', 200, @browser.getStatusCode()
       done()
 
-      # this can't simple be sync
+      # this can't simply be sync
       # because firefox blocks dom-ready
       # if we don't wait on the client-side
     ), 50
