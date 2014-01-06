@@ -39,15 +39,17 @@ proxyProcess = null
 
 module.exports =
   ensure: ensureBinaries
+
   cleanup: (callback) ->
     cleanup(seleniumProcess, proxyProcess, callback)
 
-  start: (logDirectory, applicationPort, callback) ->
-    startProcesses logDirectory, applicationPort, (error, processes) ->
+  start: (seleniumServerUrl, logDirectory, applicationPort, callback) ->
+    startProcesses seleniumServerUrl, logDirectory, applicationPort, (error, processes) ->
       return callback(error) if error?
 
       seleniumProcess = processes.selenium
       proxyProcess = processes.proxy
 
-      callback()
+      seleniumServerUrl ?= 'http://localhost:4444/wd/hub'
+      callback(null, seleniumServerUrl)
 

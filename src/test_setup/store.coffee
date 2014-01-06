@@ -40,5 +40,6 @@ module.exports =
     values.screenshotDirectory = options.screenshotDirectory
     values.browser = options.browser
     values.http = options.http || {}
+    values.seleniumServer = options.seleniumServer
 
   get: -> values

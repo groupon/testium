@@ -44,6 +44,7 @@ passValuesToTestiumBeforeTestFiles = (options) ->
     http: options.http
     browser: options.browser
     screenshotDirectory: options.screenshotDirectory
+    seleniumServer: options.seleniumServer
 
 validateBrowser = (browser) ->
   return browser if browser in ['phantomjs', 'firefox', 'chrome']
