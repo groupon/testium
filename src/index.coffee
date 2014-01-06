@@ -50,15 +50,22 @@ runTests = (options={}, callback) ->
 
   proc.send(options)
 
+startSelenium = ({seleniumServer, logDirectory, applicationPort}, callback) ->
+  if seleniumServer
+    selenium.start seleniumServer, logDirectory, applicationPort, callback
+  else
+    selenium.ensure (error) ->
+      return callback(error) if error?
+      selenium.start null, logDirectory, applicationPort, callback
+
 run = (options={}, callback) ->
   invocation = 'run(options, callback)'
   assert.truthy "#{invocation} - requires options.applicationPort", options.applicationPort
   assert.truthy "#{invocation} - requires options.tests", options.tests
   assert.truthy "#{invocation} - requires callback", callback
 
-  selenium.start options.logDirectory, options.applicationPort, (error) ->
-    return callback error if error?
-
+  startSelenium options, (error, serverUrl) ->
+    options.seleniumServer = serverUrl
     runTests options, (error, failedTests) ->
       selenium.cleanup (cleanupError) ->
         error ?= cleanupError

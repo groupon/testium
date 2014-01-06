@@ -46,8 +46,6 @@ You can install OpenJDK or JDK 7.
 
 Install Testium by adding `"testium": "~1.0.0"` to your package.json
 and running `npm install`.
-This will download the latest selenium standalone server
-(and chromedriver).
 
 Then, you need to require it and run it, like so!
 
@@ -60,6 +58,7 @@ testOptions =
   screenshotDirectory: "#{__dirname}/test/failed_screenshots"
   browser: 'phantomjs' # chrome | firefox
   appDirectory: "#{__dirname}/.." # allows relative paths to files/dirs to test
+  seleniumServer: 'http://localhost:9999/wd/hub' # optional external selenium server
   http:
     timeout: 60000
     connectTimeout: 20000
@@ -70,6 +69,11 @@ testOptions =
 testium.run testOptions, (error, exitCode) ->
   # handle result
 ```
+
+If the `seleniumServer` option is not specified,
+the first test run will download
+the latest selenium standalone server
+and chromedriver.
 
 ## Testium Interactive Console
 

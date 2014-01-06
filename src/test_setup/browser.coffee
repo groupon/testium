@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Driver = require '../api'
 store = require './store'
 
-{logDirectory, browser, http} = store.get()
+{seleniumServer, logDirectory, browser, http} = store.get()
 
 TARGET_PORT = 4445 # port for proxy to app under test
 PROXY_COMMAND_PORT = 4446 # port for commands
@@ -49,7 +49,8 @@ module.exports.getBrowser = ->
   options =
     logDirectory: logDirectory
     http: http
-  browserInstance = new Driver TARGET_PORT, PROXY_COMMAND_PORT, browserOptions, options
+
+  browserInstance = new Driver TARGET_PORT, PROXY_COMMAND_PORT, seleniumServer, browserOptions, options
 
   # default to reasonable size
   # fixes some phantomjs element size/position reporting

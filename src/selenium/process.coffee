@@ -47,22 +47,22 @@ logError = require '../log/error'
 {createWriteStream} = require 'fs'
 {spawn} = require 'child_process'
 
-module.exports = (logDirectory, applicationPort, callback) ->
+module.exports = (seleniumServerUrl, logDirectory, applicationPort, callback) ->
   logDirectory ?= DEFAULT_LOG_DIRECTORY
   mkdirp.sync logDirectory
 
   seleniumLog = createLog("#{logDirectory}/selenium.log")
   proxyLog = createLog("#{logDirectory}/proxy.log")
 
-  async.parallel [
-    startSelenium(seleniumLog)
-    startProxy(applicationPort, proxyLog)
-  ], (error, results) ->
+  tasks =
+    proxy: startProxy(applicationPort, proxyLog)
+
+  if !seleniumServerUrl
+    tasks.selenium = startSelenium(seleniumLog)
+
+  async.parallel tasks, (error, processes) ->
     return callback(error) if error?
 
-    processes =
-      selenium: results[0]
-      proxy: results[1]
     callback(null, processes)
 
 waitForPort = (port, timeout, callback) ->
