@@ -17,6 +17,9 @@
       ]
     }
   },
+  "scripts": {
+    "prepublish": "make build"
+  },
   "main": "lib/index.js",
   "bin": "./cli.sh",
   "dependencies": {

@@ -2,6 +2,7 @@
 /bin
 /log
 /node_modules
+/lib
 
 # Chrome has a bug where it will create this file in the current working directory
 # there is code in place to remove it after test runs. However, if this fails, we

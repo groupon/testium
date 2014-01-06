@@ -30,9 +30,6 @@ test-all: build
 build: $(LIB)
 	@./node_modules/.bin/npub prep lib
 
-prepublish:
-	./node_modules/.bin/npub prep
-
 clean:
 	@rm -rf "$(LIBDIR)"
 	@rm -rf test/integration_log
