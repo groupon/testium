@@ -1,6 +1,6 @@
 default: build
 
-COFFEE=node_modules/.bin/coffee --js
+COFFEE=node_modules/.bin/coffee
 
 SRCDIR = src
 SRC = $(shell find $(SRCDIR) -type f -name '*.coffee' | sort)
@@ -9,7 +9,7 @@ LIB = $(SRC:$(SRCDIR)/%.coffee=$(LIBDIR)/%.js)
 
 $(LIBDIR)/%.js: $(SRCDIR)/%.coffee
 	@mkdir -p "$(@D)"
-	$(COFFEE) <"$<" >"$@"
+	$(COFFEE) --js --input "$<" --output "$@" --source-map-file "$@.map"
 
 setup:
 	npm install

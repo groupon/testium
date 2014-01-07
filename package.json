@@ -24,7 +24,7 @@
   "bin": "./cli.sh",
   "dependencies": {
     "underscore": "1.4.4",
-    "coffee-script-redux": "2.0.0-beta7",
+    "coffee-script-redux": "git://github.com/michaelficarra/CoffeeScriptRedux.git#master",
     "webdriver-http-sync": "~0.6.0",
     "mocha": "1.16.1",
     "assertive": "~1.2.0",
@@ -38,7 +38,8 @@
     "concat-stream": "~1.0.1",
     "fs.extra": "~1.2.1",
     "request": "~2.30.0",
-    "xml2js": "~0.4.1"
+    "xml2js": "~0.4.1",
+    "source-map-support": "~0.2.5"
   },
   "devDependencies": {
     "node-static": "0.7.0",
