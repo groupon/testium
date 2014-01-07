@@ -37,6 +37,7 @@ store.set
   logDirectory: logDirectory
   browser: browserName
   screenshotDirectory: "#{logDirectory}/screenshots"
+  seleniumServer: 'http://localhost:4444/wd/hub'
 
 csrepl = require 'coffee-script-redux/lib/repl'
 selenium = require './selenium'
@@ -65,7 +66,7 @@ createBrowser = ->
 
   browser
 
-selenium.start logDirectory, 80, (error) ->
+selenium.start null, logDirectory, 80, (error) ->
   throw error if error?
 
   require 'coffee-script-redux/register'
