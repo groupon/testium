@@ -1,6 +1,6 @@
 default: build
 
-COFFEE=node_modules/.bin/coffee --js
+COFFEE=node_modules/.bin/coffee
 
 SRCDIR = src
 SRC = $(shell find $(SRCDIR) -type f -name '*.coffee' | sort)
@@ -9,7 +9,7 @@ LIB = $(SRC:$(SRCDIR)/%.coffee=$(LIBDIR)/%.js)
 
 $(LIBDIR)/%.js: $(SRCDIR)/%.coffee
 	@mkdir -p "$(@D)"
-	$(COFFEE) <"$<" >"$@"
+	$(COFFEE) --js --input "$<" --output "$@" --source-map-file "$@.map"
 
 setup:
 	npm install
@@ -29,9 +29,6 @@ test-all: build
 
 build: $(LIB)
 	@./node_modules/.bin/npub prep lib
-
-prepublish:
-	./node_modules/.bin/npub prep
 
 clean:
 	@rm -rf "$(LIBDIR)"
