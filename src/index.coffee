@@ -50,13 +50,13 @@ runTests = (options={}, callback) ->
 
   proc.send(options)
 
-startSelenium = ({seleniumServer, logDirectory, applicationPort}, callback) ->
+startSelenium = ({seleniumServer, javaHeapSize, logDirectory, applicationPort}, callback) ->
   if seleniumServer
-    selenium.start seleniumServer, logDirectory, applicationPort, callback
+    selenium.start seleniumServer, javaHeapSize, logDirectory, applicationPort, callback
   else
     selenium.ensure (error) ->
       return callback(error) if error?
-      selenium.start null, logDirectory, applicationPort, callback
+      selenium.start null, javaHeapSize, logDirectory, applicationPort, callback
 
 run = (options={}, callback) ->
   invocation = 'run(options, callback)'

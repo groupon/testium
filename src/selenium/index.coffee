@@ -43,8 +43,8 @@ module.exports =
   cleanup: (callback) ->
     cleanup(seleniumProcess, proxyProcess, callback)
 
-  start: (seleniumServerUrl, logDirectory, applicationPort, callback) ->
-    startProcesses seleniumServerUrl, logDirectory, applicationPort, (error, processes) ->
+  start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
+    startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
       return callback(error) if error?
 
       seleniumProcess = processes.selenium

@@ -47,7 +47,7 @@ logError = require '../log/error'
 {createWriteStream} = require 'fs'
 {spawn} = require 'child_process'
 
-module.exports = (seleniumServerUrl, logDirectory, applicationPort, callback) ->
+module.exports = (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
   logDirectory ?= DEFAULT_LOG_DIRECTORY
   mkdirp.sync logDirectory
 
@@ -58,7 +58,7 @@ module.exports = (seleniumServerUrl, logDirectory, applicationPort, callback) ->
     proxy: startProxy(applicationPort, proxyLog)
 
   if !seleniumServerUrl
-    tasks.selenium = startSelenium(seleniumLog)
+    tasks.selenium = startSelenium(seleniumLog, javaHeapSize)
 
   async.parallel tasks, (error, processes) ->
     return callback(error) if error?
@@ -88,20 +88,21 @@ createSeleniumArguments = ->
 
   args = [
     "-Dwebdriver.chrome.driver=#{chromeDriverPath}"
+    "-Dwebdriver.chrome.args=\"#{chromeArgs}\""
     '-firefoxProfileTemplate', firefoxProfilePath
     '-ensureCleanSession'
-    "-Dwebdriver.chrome.args=\"#{chromeArgs}\""
   ]
 
   args.push '-debug' if DEBUG
   args
 
-startSelenium = (logStream) ->
+startSelenium = (logStream, javaHeapSize=128) ->
   (callback) ->
     logStream.log "Starting selenium"
 
     jarPath = path.join __dirname, '../../bin/selenium.jar'
-    args = ['-jar', jarPath].concat createSeleniumArguments()
+    javaHeapArg = "-Xmx#{javaHeapSize}m"
+    args = [javaHeapArg, '-jar', jarPath].concat createSeleniumArguments()
     seleniumProcess = spawn 'java', args
 
     seleniumProcess.stdout.pipe logStream

@@ -66,7 +66,7 @@ createBrowser = ->
 
   browser
 
-selenium.start null, logDirectory, 80, (error) ->
+selenium.start null, null, logDirectory, 80, (error) ->
   throw error if error?
 
   require 'coffee-script-redux/register'
