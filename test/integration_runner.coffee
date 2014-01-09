@@ -45,10 +45,7 @@ runTests = (callback) ->
 
 exit = (error) ->
   console.error error.stack if error?
-
-  testium.cleanup (error) ->
-    console.error error.stack if error?
-    process.exit(-1)
+  process.exit(-1)
 
 process.on 'uncaughtException', exit
 

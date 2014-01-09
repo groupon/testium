@@ -39,8 +39,8 @@ module.exports = (seleniumProcess, proxyProcess, callback) ->
   cleanupPhantomJS()
 
   async.parallel [
-    (taskDone) -> killProcess(seleniumProcess, taskDone)
-    (taskDone) -> killProcess(proxyProcess, taskDone)
+    (taskDone) -> killProcess('selenium', seleniumProcess, taskDone)
+    (taskDone) -> killProcess('proxy', proxyProcess, taskDone)
   ], callback
 
 cleanupChrome = ->
@@ -57,15 +57,22 @@ cleanupPhantomJS = ->
   catch error
     logError error
 
-killProcess = (proc, callback) ->
+killProcess = (name, proc, callback) ->
   return callback() unless proc?
   return callback() if proc.killed
 
   error = null
+  exited = false
   proc.on 'error', (err) ->
     error = err
   proc.on 'exit', ->
+    exited = true
     callback(error)
 
   proc.kill('SIGKILL')
+
+  setTimeout (->
+    if !exited
+      callback new Error "[testium] failed to cleanup #{name} (pid=#{proc.pid}) process; check the #{name}.log."
+  ), 2000
 
