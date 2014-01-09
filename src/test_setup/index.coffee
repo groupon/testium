@@ -67,7 +67,7 @@ before ->
   # by the proxy to be a success
   # this allows us to set cookies
   # right away in tests
-  browser.navigateTo '/'
+  browser.navigateTo '/testium-priming-load'
 
 afterEach -> takeScreenshotOnFailure(screenshotDirectory, @currentTest, browser)
 after(global.exitMocha)

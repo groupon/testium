@@ -48,11 +48,18 @@ buildRemoteRequestOptions = (request, toPort) ->
   delete opt.headers['if-modified-since']
   opt
 
+trimHash = (url) ->
+  url.split('#')[0]
+
+normalizeOptions = (options) ->
+  options.url = trimHash(options.url)
+  options
+
 openRequests = []
 firstPage = true
 newPageOptions = {}
 markNewPage = (options, response) ->
-  newPageOptions = options
+  newPageOptions = normalizeOptions(options)
   console.log "\n[System] Marking new page request with options: #{JSON.stringify newPageOptions}"
 
   for request in openRequests
@@ -93,15 +100,17 @@ modifyRequest = (request, options) ->
     request.headers[header] = value
 
 proxyRequest = (request, response, modifyResponse, toPort) ->
+  if firstPage
+    firstPage = false
+    console.log "--> #{request.method} #{request.url} (prime the browser)"
+    return success(response)
+
   console.log "--> #{request.method} #{request.url}"
 
   remoteRequestOptions = buildRemoteRequestOptions(request, toPort)
   console.log "    #{JSON.stringify remoteRequestOptions}"
 
-  if firstPage
-    firstPage = false
-    return success(response)
-  else if isNewPage(request.url)
+  if isNewPage(request.url)
     modifyRequest(remoteRequestOptions, newPageOptions)
 
   remoteRequest = http.request remoteRequestOptions, (remoteResponse) ->

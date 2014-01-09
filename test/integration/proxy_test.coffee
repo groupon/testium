@@ -37,3 +37,7 @@ describe 'proxy', ->
       # if we don't wait on the client-side
     ), 50
 
+  it 'handles hashes in urls', ->
+    @browser.navigateTo '/#deals'
+    assert.equal 'statuscode', 200, @browser.getStatusCode()
+
