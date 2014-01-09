@@ -67,6 +67,7 @@ process.on 'message', (options) ->
     defaults =
       reporter: 'spec'
       timeout: 20000
+      slow: 2000
     options = extend {}, defaults, mochaOptions
     mocha = new Mocha(options)
 
