@@ -1,6 +1,6 @@
 {
   "name": "testium",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Synchronous integration testing with Node.js bindings for WebDriver",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
   },
   "main": "lib/index.js",
   "bin": "./cli.sh",
-  "scripts":{
+  "scripts": {
     "test": "make test"
   },
   "dependencies": {
