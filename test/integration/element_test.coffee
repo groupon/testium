@@ -11,6 +11,15 @@ describe 'element', ->
     text = element.get 'text'
     assert.equal 'Element text was not found', 'Test Page!', text
 
+  it "can get special properties from an element", ->
+    # the "checked" property (when it doesn't exist)
+    # returns a non-standard response from selenium;
+    # let's make sure we can handle it properly
+
+    element = @browser.getElement '#checkbox'
+    checked = element.get 'checked'
+    assert.equal 'checked is null', null, checked
+
   it "returns null when the element can not be found", ->
     element = @browser.getElement '.non-existing'
     assert.equal 'Element magically appeared on the page', null, element
