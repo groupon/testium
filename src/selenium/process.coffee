@@ -96,7 +96,7 @@ createSeleniumArguments = ->
   args.push '-debug' if DEBUG
   args
 
-startSelenium = (logStream, javaHeapSize=128) ->
+startSelenium = (logStream, javaHeapSize=256) ->
   (callback) ->
     logStream.log "Starting selenium"
 
