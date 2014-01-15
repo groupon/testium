@@ -5,7 +5,8 @@ describe 'dialogs', ->
   before ->
     @browser = getBrowser()
     @browser.navigateTo '/'
-    assert.equal 200, @browser.getStatusCode()
+    @browser.assert.httpStatus 200
+
     @target = @browser.getElement '#alert_target'
     @browser.click '.link_to_clear_alert_target'
 

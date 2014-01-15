@@ -21,7 +21,7 @@ describe 'browse', ->
   before ->
     @browser = getBrowser()
     @browser.navigateTo '/my-account'
-    assert.equal 200, @browser.getStatusCode()
+    @browser.assert.httpStatus 200
 
   it 'is serving up gzipped content', ->
     assert.equal 'gzip', @browser.getHeader('Content-Encoding')
@@ -180,6 +180,7 @@ Method | Description
 `browser.assert.elementNotVisible(selector)` | Throws exceptions if selector doesn't exist or is visible.
 `browser.assert.elementExists(selector)` | Throws exceptions if selector doesn't exist.
 `browser.assert.elementDoesntExist(selector)` | Throws exceptions if selector exists.
+`browser.assert.httpStatus(statusCode)` | Throws exceptions if current status code is not equal to the provided statusCode.
 `browser.assert.imgLoaded(selector)` | Throws exceptions if selector doesn't match a single `<img>` element that has both loaded and been decoded successfully. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails.
 `browser.assert.imagesMatch(image1, image2, tolerance=0)` | Throws exceptions if the images don't match within the given tolerance. Warning: this method is experimental and slow. You can use `@slow(4000)` in tests to notify mocha of this.
 

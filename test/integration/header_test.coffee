@@ -8,7 +8,7 @@ describe 'headers', ->
   describe 'can be retireved', ->
     before ->
       @browser.navigateTo '/'
-      assert.equal 200, @browser.getStatusCode()
+      @browser.assert.httpStatus 200
 
     it 'as a group', ->
       headers = @browser.getHeaders()

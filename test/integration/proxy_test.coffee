@@ -8,20 +8,20 @@ describe 'proxy', ->
   describe 'handles errors', ->
     it 'with no content type and preserves status code', ->
       @browser.navigateTo '/'
-      assert.equal 'statuscode', 200, @browser.getStatusCode()
+      @browser.assert.httpStatus 200
 
       @browser.navigateTo '/error'
-      assert.equal 'statuscode', 500, @browser.getStatusCode()
+      @browser.assert.httpStatus 500
 
     it 'that crash and preserves status code', ->
       @browser.navigateTo '/crash'
-      assert.equal 'statuscode', 500, @browser.getStatusCode()
+      @browser.assert.httpStatus 500
 
   it 'handles request abortion', (done) ->
     # loads a page that has a resource that will
     # be black holed
     @browser.navigateTo '/blackholed-resource.html'
-    assert.equal 'statuscode', 200, @browser.getStatusCode()
+    @browser.assert.httpStatus 200
 
     setTimeout (=>
       # when navigating away, the proxy should
@@ -29,7 +29,7 @@ describe 'proxy', ->
       # this should not interfere with the new page load
       # or status code retrieval
       @browser.navigateTo '/'
-      assert.equal 'statuscode', 200, @browser.getStatusCode()
+      @browser.assert.httpStatus 200
       done()
 
       # this can't simply be sync
@@ -39,5 +39,5 @@ describe 'proxy', ->
 
   it 'handles hashes in urls', ->
     @browser.navigateTo '/#deals'
-    assert.equal 'statuscode', 200, @browser.getStatusCode()
+    @browser.assert.httpStatus 200
 

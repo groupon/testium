@@ -5,7 +5,7 @@ describe 'form', ->
   before ->
     @browser = getBrowser()
     @browser.navigateTo '/'
-    assert.equal 200, @browser.getStatusCode()
+    @browser.assert.httpStatus 200
 
   it "can get an input's value", ->
     element = @browser.getElement '#text-input'

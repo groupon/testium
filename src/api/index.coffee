@@ -60,13 +60,16 @@ module.exports = class
     @driver.on 'response', @log.response
 
     @alert = createAlertApi(@driver)
-    @assert = createAssertApi(@driver)
 
     extend this, createNavigationApi(@driver)
     extend this, createPageApi(@driver)
     extend this, createElementApi(@driver)
     extend this, createInputApi(@driver)
     extend this, createCookieApi(@driver)
+
+    # asserts go last so that
+    # they can use testium methods
+    @assert = createAssertApi(this)
 
   close: (callback) ->
     truthy 'close(callback) - requires callback', callback
