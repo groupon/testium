@@ -37,7 +37,7 @@ store.set
   logDirectory: logDirectory
   browser: browserName
   screenshotDirectory: "#{logDirectory}/screenshots"
-  seleniumServer: 'http://localhost:4444/wd/hub'
+  seleniumServer: 'http://127.0.0.1:4444/wd/hub'
 
 csrepl = require 'coffee-script-redux/lib/repl'
 selenium = require './selenium'
