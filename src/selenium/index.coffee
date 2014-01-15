@@ -50,6 +50,6 @@ module.exports =
       seleniumProcess = processes.selenium
       proxyProcess = processes.proxy
 
-      seleniumServerUrl ?= 'http://localhost:4444/wd/hub'
+      seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
       callback(null, seleniumServerUrl)
 

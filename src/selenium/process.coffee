@@ -68,7 +68,7 @@ module.exports = (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort
 waitForPort = (port, timeout, callback) ->
   startTime = Date.now()
   check = ->
-    portscanner.checkPortStatus port, 'localhost', (error, status) ->
+    portscanner.checkPortStatus port, '127.0.0.1', (error, status) ->
       logError error.message if error?
 
       if error? || status == 'closed'
