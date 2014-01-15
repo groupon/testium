@@ -3,7 +3,7 @@ assert = require 'assertive'
 
 getIndexScreenshot = (browser) ->
   browser.navigateTo '/'
-  assert.equal 200, browser.getStatusCode()
+  browser.assert.httpStatus 200
   browser.getScreenshot()
 
 describe 'screenshots', ->
@@ -30,7 +30,7 @@ describe 'screenshots', ->
 
     it 'to something else fails', ->
       @browser.navigateTo '/other-page.html'
-      assert.equal 200, @browser.getStatusCode()
+      @browser.assert.httpStatus 200
       otherScreenshot = @browser.getScreenshot()
 
       error = assert.throws =>
@@ -40,7 +40,7 @@ describe 'screenshots', ->
 
     it 'allows tolerance', ->
       @browser.navigateTo '/index-diff.html'
-      assert.equal 200, @browser.getStatusCode()
+      @browser.assert.httpStatus 200
       diffScreenshot = @browser.getScreenshot()
       @browser.assert.imagesMatch(@indexScreenshot, diffScreenshot, 60.00)
 

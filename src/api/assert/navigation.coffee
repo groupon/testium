@@ -30,19 +30,10 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{extend} = require 'underscore'
-buildElementAsserts = require './element'
-buildNavigationAsserts = require './navigation'
-buildImgLoadedAsserts = require './imgLoaded'
-imgDiff = require '../img_diff'
+assert = require 'assertive'
 
-module.exports = (testium) ->
-  asserts = {}
-
-  extend asserts, buildElementAsserts(testium.driver)
-  extend asserts, buildNavigationAsserts(testium)
-  extend asserts, buildImgLoadedAsserts(testium.driver)
-  extend asserts, imgDiff
-
-  asserts
+module.exports = (api) ->
+  httpStatus: (expectedStatus) ->
+    actualStatus = api.getStatusCode()
+    assert.equal 'statuscode', expectedStatus, actualStatus
 
