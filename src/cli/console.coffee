@@ -30,67 +30,68 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-browserName = process.argv[2] || 'firefox'
-logDirectory = "#{__dirname}/../log"
-store = require './test_setup/store'
-store.set
-  logDirectory: logDirectory
-  browser: browserName
-  screenshotDirectory: "#{logDirectory}/screenshots"
-  seleniumServer: 'http://127.0.0.1:4444/wd/hub'
-
-csrepl = require 'coffee-script-redux/lib/repl'
-selenium = require './selenium'
-{extend} = require 'underscore'
-{getBrowser} = require './test_setup/browser'
-
+LOG_DIRECTORY = "#{__dirname}/../../log"
 WELCOME_MESSAGE = """
 WebDriver repl!
 Methods are available in scope. Try: navigateTo 'google.com'
 Type `methods` to see what's available.
 """
 
-normalize = (url) ->
-  if url.indexOf('http') == -1
-    "http://#{url}"
-  else
-    url
+module.exports = (browserName) ->
+  (require '../test_setup/store').set {
+    logDirectory: LOG_DIRECTORY
+    browser: browserName
+    screenshotDirectory: "#{LOG_DIRECTORY}/screenshots"
+    seleniumServer: 'http://127.0.0.1:4444/wd/hub'
+  }
 
-createBrowser = ->
-  browser = getBrowser()
-  _navigateTo = browser.navigateTo
+  selenium = require '../selenium'
+  csrepl = require 'coffee-script-redux/lib/repl'
+  {extend} = require 'underscore'
+  {getBrowser} = require '../test_setup/browser'
 
-  browser.navigateTo = (url, options) ->
-    url = normalize(url)
-    _navigateTo.call(browser, url, options)
 
-  browser
+  normalize = (url) ->
+    if url.indexOf('http') == -1
+      "http://#{url}"
+    else
+      url
 
-selenium.start null, null, logDirectory, 80, (error) ->
-  throw error if error?
+  createBrowser = ->
+    browser = getBrowser()
+    _navigateTo = browser.navigateTo
 
-  require 'coffee-script-redux/register'
+    browser.navigateTo = (url, options) ->
+      url = normalize(url)
+      _navigateTo.call(browser, url, options)
 
-  console.log WELCOME_MESSAGE
-  cli = csrepl.start { prompt: '%> ' }
-  cli.on 'exit', (exitCode) ->
-    browser.close ->
-      selenium.cleanup ->
-        process.exit(exitCode)
+    browser
 
-  browser = createBrowser()
-  extend cli.context, browser
-  cli.context.methods = getMethods(browser)
+  selenium.start null, null, LOG_DIRECTORY, 80, (error) ->
+    throw error if error?
 
-getMethods = (browser) ->
-  properties = Object.keys browser
-  methods = []
-  for prop in properties
-    if typeof browser[prop] == 'function'
-      methods.push(prop)
-  methods.sort().join(', ')
+    require 'coffee-script-redux/register'
 
-process.on 'unhandledException', ->
-  selenium.cleanup ->
-    process.exit(1)
+    console.log WELCOME_MESSAGE
+    cli = csrepl.start { prompt: '%> ' }
+    cli.on 'exit', (exitCode) ->
+      browser.close ->
+        selenium.cleanup ->
+          process.exit(exitCode)
+
+    browser = createBrowser()
+    extend cli.context, browser
+    cli.context.methods = getMethods(browser)
+
+  getMethods = (browser) ->
+    properties = Object.keys browser
+    methods = []
+    for prop in properties
+      if typeof browser[prop] == 'function'
+        methods.push(prop)
+    methods.sort().join(', ')
+
+  process.on 'unhandledException', ->
+    selenium.cleanup ->
+      process.exit(1)
 
