@@ -77,7 +77,26 @@ the first test run will download
 the latest selenium standalone server
 and chromedriver.
 
-## Testium Interactive Console
+## Testium Command-Line Tool
+
+### Updating Selenium
+
+When you run your first batch of tests,
+testium ensures that you have the latest
+selenium standalone server and chromedriver.
+
+If you want to make sure those
+continue to be up to date,
+you can use the command-line tool!
+
+```
+$ ./node_modules/.bin/testium --update-selenium
+[testium] grabbing selenium standalone server 2.39.0
+[testium] grabbing selenium chromedriver 2.8
+Up to date!
+```
+
+### Interactive Console
 
 Testium provides an interactive CoffeeScript console
 as a bin stub.
