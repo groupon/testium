@@ -2,6 +2,7 @@
   "name": "testium",
   "version": "1.2.0",
   "description": "Synchronous integration testing with Node.js bindings for WebDriver",
+  "keywords": ["testing", "selenium", "webdriver"],
   "repository": {
     "type": "git",
     "url": "git://github.com/groupon/testium"
