@@ -56,7 +56,7 @@ getFilesForPattern = (pattern) ->
     glob.sync(pattern)
 
 getPathsForDirectory = (directory) ->
-  readr.getPathsSync(directory, {extension: 'coffee'}).map (metadata) ->
+  readr.getPathsSync(directory, {extension: '{js,coffee}'}).map (metadata) ->
     metadata.path
 
 resolvePaths = (paths, appDirectory) ->
