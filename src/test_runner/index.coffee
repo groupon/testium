@@ -38,6 +38,15 @@ files = require './files'
 
 require('coffee-script-redux/register')
 
+BROWSERS = [
+  'phantomjs'
+  'chrome'
+  'firefox'
+  'htmlunit'
+  'internet explorer'
+  'iphone'
+]
+
 passValuesToTestiumBeforeTestFiles = (options) ->
   store.set
     logDirectory: options.logDirectory
@@ -46,14 +55,12 @@ passValuesToTestiumBeforeTestFiles = (options) ->
     screenshotDirectory: options.screenshotDirectory
     seleniumServer: options.seleniumServer
 
-validateBrowser = (browser) ->
-  return browser if browser in ['phantomjs', 'firefox', 'chrome']
-  return 'phantomjs' if !browser?
-
+validateBrowser = (browser='phantomjs') ->
+  return if browser in BROWSERS
   throw new Error "Browser not supported by Testium: #{browser}"
 
 process.on 'message', (options) ->
-  options.browser = validateBrowser(options.browser)
+  validateBrowser(options.browser)
   passValuesToTestiumBeforeTestFiles(options)
 
   {tests, beforeTests, mochaOptions, appDirectory} = options
