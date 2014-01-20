@@ -56,7 +56,7 @@ testOptions =
   tests: "#{__dirname}/test/integration" #string or array of absolute and/or directory paths and/or glob patterns
   applicationPort: 4000
   screenshotDirectory: "#{__dirname}/test/failed_screenshots"
-  browser: 'phantomjs' # chrome | firefox
+  browser: 'phantomjs' # chrome | firefox | internet explorer
   appDirectory: "#{__dirname}/.." # allows relative paths to files/dirs to test
   seleniumServer: 'http://localhost:9999/wd/hub' # optional external selenium server
   javaHeapSize: 256 # optional max java heap size; in megabytes
