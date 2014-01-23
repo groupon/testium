@@ -222,3 +222,7 @@ please check out:
 * [Roadmap](https://github.com/groupon/testium/wiki/Roadmap)
 * [Under the Hood](https://github.com/groupon/testium/wiki/Under-the-Hood)
 
+If you have questions,
+you can contact the author at: <br>
+[@endangeredmassa](https://twitter.com/endangeredmassa) <br>
+[smassa@groupon.com](mailto:smassa@groupon.com)
