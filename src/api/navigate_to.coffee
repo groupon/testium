@@ -30,32 +30,31 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-Driver = require '../api'
-store = require './store'
+urlParse = require('url').parse
 
-{seleniumServer, logDirectory, browser, http, appRoot} = store.get()
+normalizeUrl = (url, root) ->
+  hasProtocol = /^[^:\/?#]+:\/\//
+  if hasProtocol.test url
+    url
+  else
+    "#{root}#{url}"
 
-PROXY_PORT = 4445 # port for proxy to app under test
-PROXY_COMMAND_PORT = 4446 # port for commands
+getPath = (url) ->
+  urlParse(url).path
 
-browserInstance = null
+module.exports = (driver, url, appRoot, proxyCommandRoot, proxyRoot, options={}) ->
+  path = getPath(url)
 
-module.exports.getBrowser = ->
-  return browserInstance if browserInstance?
+  options.url = path
+  options.toUrl = normalizeUrl(url, appRoot)
+  driver.http.post "#{proxyCommandRoot}/new-page", options
 
-  browserOptions =
-    browserName: browser
-    applicationCacheEnabled: false
-  options =
-    logDirectory: logDirectory
-    http: http
+  url = "#{proxyRoot}#{path}"
 
-  browserInstance = new Driver appRoot, PROXY_PORT, PROXY_COMMAND_PORT, seleniumServer, browserOptions, options
+  # WebDriver does nothing if currentUrl is the same as targetUrl
+  currentUrl = driver.getUrl()
+  if currentUrl == url
+    driver.refresh()
+  else
+    driver.navigateTo(url)
 
-  # default to reasonable size
-  # fixes some phantomjs element size/position reporting
-  browserInstance.setPageSize
-    height: 768
-    width: 1024
-
-  browserInstance

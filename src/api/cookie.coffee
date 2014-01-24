@@ -54,7 +54,7 @@ getTestiumCookie = (cookies) ->
   testiumCookie = getCookie(cookies, '_testium_')
 
   if !testiumCookie?
-    throw new Error 'Unable to communicate with internal proxy. Make sure you are using relative paths.'
+    throw new Error 'Unable to communicate with internal proxy.'
 
   parseTestiumCookie(testiumCookie)
 

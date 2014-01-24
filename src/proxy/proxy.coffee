@@ -34,10 +34,11 @@ http = require('http')
 url = require('url')
 concat = require('concat-stream')
 
-buildRemoteRequestOptions = (request, toPort) ->
-  uri = url.parse(request.url)
+buildRemoteRequestOptions = (request, proxyToUrl) ->
+  uri = url.parse(proxyToUrl)
   opt =
-    port: toPort
+    host: uri.hostname || '127.0.0.1'
+    port: uri.port || 80
     path: uri.path
     method: request.method
     headers: request.headers
@@ -99,7 +100,7 @@ modifyRequest = (request, options) ->
   for header, value of options.headers
     request.headers[header] = value
 
-proxyRequest = (request, response, modifyResponse, toPort) ->
+proxyRequest = (request, response, modifyResponse) ->
   if firstPage
     firstPage = false
     console.log "--> #{request.method} #{request.url} (prime the browser)"
@@ -107,7 +108,7 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
 
   console.log "--> #{request.method} #{request.url}"
 
-  remoteRequestOptions = buildRemoteRequestOptions(request, toPort)
+  remoteRequestOptions = buildRemoteRequestOptions(request, newPageOptions.toUrl)
   console.log "    #{JSON.stringify remoteRequestOptions}"
 
   if isNewPage(request.url)
@@ -145,11 +146,11 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
   request.on 'end', ->
     remoteRequest.end()
 
-module.exports = (fromPort, toPort, commandPort, modifyResponse) ->
+module.exports = (fromPort, commandPort, modifyResponse) ->
   server = http.createServer (request, response) ->
-    proxyRequest(request, response, modifyResponse, toPort)
+    proxyRequest(request, response, modifyResponse)
   server.listen fromPort
-  console.log "Listening on port #{fromPort} and proxying to #{toPort}."
+  console.log "Listening on port #{fromPort}."
 
   commandServer = http.createServer (request, response) ->
     request.pipe concat (body) ->
