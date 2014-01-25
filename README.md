@@ -44,7 +44,7 @@ If you see `execvp(): No such file or directory`,
 you may not have java installed.
 You can install OpenJDK or JDK 7.
 
-Install Testium by adding `"testium": "~1.0.0"` to your package.json
+Install Testium by adding `"testium": "~1.3.0"` to your package.json
 and running `npm install`.
 
 Then, you need to require it and run it, like so!
