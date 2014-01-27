@@ -32,17 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 proxy = require './proxy'
 webdriverWorkaround = require './webdriver_workaround'
-{truthy} = require 'assertive'
 
-getPortParam = ->
-  truthy 'proxy requires process.argv[2] to be a port number', process.argv[2]
-  port = parseInt(process.argv[2], 10)
-  truthy 'proxy requires process.argv[2] to be a port number', port
-  port
-
-toPort = getPortParam()
 fromPort = 4445
 commandPort = 4446
 
-proxy fromPort, toPort, commandPort, webdriverWorkaround
+proxy fromPort, commandPort, webdriverWorkaround
 

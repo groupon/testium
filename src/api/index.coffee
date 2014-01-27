@@ -44,15 +44,17 @@ createInputApi = require './input'
 createCookieApi = require './cookie'
 
 module.exports = class
-  constructor: (targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities, options={}) ->
-    invocation = 'new Driver(targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities)'
+  constructor: (appRoot, targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities, options={}) ->
+    invocation = 'new Driver(appRoot, targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities)'
+    truthy "#{invocation} - requires appRoot", appRoot
     truthy "#{invocation} - requires targetPort", targetPort
     truthy "#{invocation} - requires proxyCommandPort", proxyCommandPort
-    truthy "#{invocation} - requires webdriverServerUrl", webdriverServerUrl
     truthy "#{invocation} - requires desiredCapabilities", desiredCapabilities
 
+    @appRoot = appRoot
     @proxyCommandRoot = "http://127.0.0.1:#{proxyCommandPort}"
-    @urlRoot = "http://127.0.0.1:#{targetPort}"
+    @proxyRoot = "http://127.0.0.1:#{targetPort}"
+
     @log = log(options.logDirectory)
 
     @driver = new WebDriver(webdriverServerUrl, desiredCapabilities, options.http)
