@@ -30,48 +30,31 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-fs = require 'fs'
-logError = require './error'
+_ = require 'underscore'
 
-DEFAULT_LOG_DIRECTORY = "#{__dirname}/../log"
+logMap =
+  'SEVERE': 'error'
+  'WARNING': 'warn'
+  'INFO': 'log'
+  'DEBUG': 'debug'
 
-createLog = (path) ->
-  fs.createWriteStream path, {flags: 'w', encoding: 'utf-8'}
+filterLogs = (type) ->
+  (log) ->
+    log.type != type
 
-module.exports = (logDirectory=DEFAULT_LOG_DIRECTORY) ->
-  logStream = createLog "#{logDirectory}/webdriver.log"
-  verboseLogStream = createLog "#{logDirectory}/webdriver-verbose.log"
-
-  stringifyBuffers = (key, value) ->
-    return value unless value instanceof Buffer
-    """Buffer("#{ value.toString() }")"""
-
-  log = (message) ->
-    message = message + '\n'
-    logStream.write(message)
-    verboseLogStream.write(message)
-
-  log.error = logError
-
-  log.response = (response) ->
-    response = JSON.stringify response, stringifyBuffers
-    verboseLogStream.write "----> #{response}"
-    if response.data?.length
-      verboseLogStream.write(response.data.toString())
-
-    verboseLogStream.write('\n')
-
-  log.flush = (callback) ->
-    oneDone = false
-
-    logStream.end ->
-      if oneDone
-        return callback()
-      oneDone = true
-
-    verboseLogStream.end ->
-      if oneDone
-        return callback()
-      oneDone = true
-
+convertLogType = (log) ->
+  if log.level?
+    log.type = logMap[log.level]
+    delete log.level
   log
+
+module.exports =
+  parseLogs: (logs) ->
+    _.map(logs, convertLogType)
+
+  filterLogs: (logs, type) ->
+    return {matched: logs} if !type?
+
+    _.groupBy logs, (log) ->
+      if log.type == type then 'matched' else 'rest'
+

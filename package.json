@@ -30,8 +30,8 @@
   "dependencies": {
     "underscore": "1.4.4",
     "coffee-script-redux": "2.0.0-beta7",
-    "webdriver-http-sync": "~0.6.0",
-    "mocha": "~1.17.0",
+    "webdriver-http-sync": "~0.7.0",
+    "mocha": "~1.17.1",
     "assertive": "~1.2.0",
     "mkdirp": "~0.3.5",
     "async": "~0.2.9",

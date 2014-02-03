@@ -2,35 +2,6 @@
 <html>
   <head>
     <title>Test Title</title>
-    <script>
-      window.setAlertTarget = function(text) {
-        document.getElementById('alert_target').innerHTML = text;
-      };
-
-      window.doAlert = function() {
-        window.alert('An alert!');
-        window.setAlertTarget('alerted');
-      };
-
-      window.doConfirm = function() {
-        if (window.confirm('A confirmation!'))
-          window.setAlertTarget('confirmed');
-        else
-          window.setAlertTarget('dismissed');
-      };
-
-      window.doPrompt = function() {
-        var x;
-        if (x = window.prompt('A prompt!', ''))
-          window.setAlertTarget(x);
-        else
-          window.setAlertTarget('dismissed');
-      };
-
-      window.doClear = function() {
-        window.setAlertTarget('');
-      }
-    </script>
     <style>
       body { background-color: white; }
     </style>
@@ -55,6 +26,8 @@
       <input id="checkbox" type="checkbox"></input>
       <textarea id="text-area">initialvalue</textarea>
     </form>
+
+    <button id="log-button" onclick="window.pushLogs()">Populate Logs</button>
 
     <div>This and everything below should be PURPLE!</div>
 

@@ -42,6 +42,7 @@ createNavigationApi = require './navigation'
 createPageApi = require './page'
 createInputApi = require './input'
 createCookieApi = require './cookie'
+createDebugApi = require './debug'
 
 module.exports = class
   constructor: (appRoot, targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities, options={}) ->
@@ -60,6 +61,7 @@ module.exports = class
     @driver = new WebDriver(webdriverServerUrl, desiredCapabilities, options.http)
     @driver.on 'request', @log
     @driver.on 'response', @log.response
+    @capabilities = @driver.capabilities
 
     @alert = createAlertApi(@driver)
 
@@ -68,6 +70,7 @@ module.exports = class
     extend this, createElementApi(@driver)
     extend this, createInputApi(@driver)
     extend this, createCookieApi(@driver)
+    extend this, createDebugApi(@driver)
 
     # asserts go last so that
     # they can use testium methods
