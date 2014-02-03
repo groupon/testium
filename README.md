@@ -134,6 +134,7 @@ Method | Description
 :----- | :----------
 `browser.navigateTo(url, options)` | Navigates the browser to the specificed relative or absolute url. If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`, where `applicatioAnPort` is passed in to the options for `testium.runTests`. `options` can include a `headers` param with headers to pass along with the request.
 `browser.refresh()` | Refresh the current page.
+`browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports. 
 `browser.getElement(cssSelector)` | Finds an element on the page using the `cssSelector` and returns an Element.
 `browser.getElements(cssSelector)` | Finds all elements on the page using the `cssSelector` and returns an array of Elements.
 `browser.waitForElement(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible. Times out after `timeout` ms.
@@ -159,6 +160,7 @@ Method | Description
 `browser.getStatusCode()` | Returns the response status code for the current page.
 `browser.getHeader(name)` | Returns the value of the response header with the provided name.
 `browser.getHeaders()` | Returns all response headers for the current page.
+`browser.getConsoleLogs(logLevel='all')` | Returns all log events with `logLevel` (log/warn/error/debug) since the last time this method was called.
 `browser.close(callback)` | Closes the Testium session.
 
 ### Alert

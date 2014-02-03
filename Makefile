@@ -15,17 +15,30 @@ setup:
 	npm install
 
 .PHONY: test
-test: build
-	@./node_modules/.bin/coffee test/integration_runner.coffee
-	@./node_modules/.bin/coffee test/screenshot_integration_runner.coffee
+test: test-unit test-integration test-screenshot
 
-test-only: build
+test-integration: build
+	@echo "# Integration Tests #"
 	@./node_modules/.bin/coffee test/integration_runner.coffee
+	@echo ""
+	@echo ""
+
+test-screenshot: build
+	@echo "# Automatic Screenshot Tests #"
+	@./node_modules/.bin/coffee test/screenshot_integration_runner.coffee
+	@echo ""
+	@echo ""
+
+test-unit: build
+	@echo "# Unit Tests #"
+	@./node_modules/.bin/mocha --compilers coffee:coffee-script-redux/register --recursive test/unit
+	@echo ""
+	@echo ""
 
 test-all: build
-	@BROWSER=phantomjs,firefox,chrome ./node_modules/.bin/coffee test/integration_runner.coffee
-	@./node_modules/.bin/coffee test/screenshot_integration_runner.coffee
-
+	@BROWSER=phantomjs,firefox,chrome make test-integration
+	@make test-screenshot
+	@make test-unit
 
 build: $(LIB)
 	@./node_modules/.bin/npub prep lib

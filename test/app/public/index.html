@@ -29,7 +29,16 @@
 
       window.doClear = function() {
         window.setAlertTarget('');
-      }
+      };
+
+      window.pushLogs = function() {
+        console.log('a test log entry');
+        console.warn('a test warn entry');
+        console.debug('a test debug entry');
+        console.error('a test error entry');
+      };
+
+      window.pushLogs();
     </script>
     <style>
       body { background-color: white; }
@@ -55,6 +64,8 @@
       <input id="checkbox" type="checkbox"></input>
       <textarea id="text-area">initialvalue</textarea>
     </form>
+
+    <button id="log-button" onclick="window.pushLogs()">Populate Logs</button>
 
     <a class="link_to_open_an_alert" href="#" onclick="doAlert()">Alert</a>
     <a class="link_to_open_a_confirm" href="#" onclick="doConfirm()">Confirm</a>

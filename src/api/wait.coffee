@@ -32,7 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {isString, isRegExp} = require 'underscore'
 
-# TODO: Generalize this
 module.exports = (stringOrRegex, waitingFor, getValue, timeout) ->
   test = null
 

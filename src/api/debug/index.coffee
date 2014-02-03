@@ -30,48 +30,25 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-fs = require 'fs'
-logError = require './error'
+assert = require 'assertive'
+{ parseLogs, filterLogs } = require './console'
 
-DEFAULT_LOG_DIRECTORY = "#{__dirname}/../log"
+TYPES = [
+  'error'
+  'warn'
+  'log'
+  'debug'
+]
 
-createLog = (path) ->
-  fs.createWriteStream path, {flags: 'w', encoding: 'utf-8'}
+cachedLogs = []
 
-module.exports = (logDirectory=DEFAULT_LOG_DIRECTORY) ->
-  logStream = createLog "#{logDirectory}/webdriver.log"
-  verboseLogStream = createLog "#{logDirectory}/webdriver-verbose.log"
+module.exports = (driver) ->
+  getConsoleLogs: (type) ->
+    assert.include(type, TYPES) if type?
 
-  stringifyBuffers = (key, value) ->
-    return value unless value instanceof Buffer
-    """Buffer("#{ value.toString() }")"""
+    newLogs = parseLogs driver.getConsoleLogs()
+    logs = cachedLogs.concat(newLogs)
+    { matched, rest } = filterLogs logs, type
+    cachedLogs = rest || []
+    matched || []
 
-  log = (message) ->
-    message = message + '\n'
-    logStream.write(message)
-    verboseLogStream.write(message)
-
-  log.error = logError
-
-  log.response = (response) ->
-    response = JSON.stringify response, stringifyBuffers
-    verboseLogStream.write "----> #{response}"
-    if response.data?.length
-      verboseLogStream.write(response.data.toString())
-
-    verboseLogStream.write('\n')
-
-  log.flush = (callback) ->
-    oneDone = false
-
-    logStream.end ->
-      if oneDone
-        return callback()
-      oneDone = true
-
-    verboseLogStream.end ->
-      if oneDone
-        return callback()
-      oneDone = true
-
-  log

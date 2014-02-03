@@ -36,8 +36,6 @@ PROXY_PORT = 4445
 PROXY_TIMEOUT = 1000 # 1 second
 DEFAULT_LOG_DIRECTORY = "#{__dirname}/../../log"
 
-DEBUG = false
-
 path = require 'path'
 mkdirp = require 'mkdirp'
 async = require 'async'
@@ -83,18 +81,16 @@ waitForPort = (port, timeout, callback) ->
 
 createSeleniumArguments = ->
   chromeDriverPath = path.join __dirname, '../../bin/chromedriver'
-  chromeArgs = '--disable-application-cache --media-cache-size=1 --disk-cache-size=1 --disk-cache-dir=/dev/null --disable-cache'
+  chromeArgs = '--disable-application-cache --media-cache-size=1 --disk-cache-size=1 --disk-cache-dir=/dev/null --disable-cache --disable-desktop-notifications'
   firefoxProfilePath = path.join __dirname, './firefox_profile.js'
 
-  args = [
+  [
     "-Dwebdriver.chrome.driver=#{chromeDriverPath}"
     "-Dwebdriver.chrome.args=\"#{chromeArgs}\""
     '-firefoxProfileTemplate', firefoxProfilePath
     '-ensureCleanSession'
+    '-debug'
   ]
-
-  args.push '-debug' if DEBUG
-  args
 
 startSelenium = (logStream, javaHeapSize=256) ->
   (callback) ->
