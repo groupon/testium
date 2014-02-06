@@ -31,22 +31,7 @@ For help debugging your tests,
 check out
 [the wiki page](https://github.com/groupon/testium/wiki/Debugging-Your-Tests).
 
-## Installing Testium
-
-On Ubuntu, you need to make sure you have libcurl installed.
-`sudo apt-get install libcurl4-openssl-dev`
-
-If you want to use the experimental image diffing,
-you must have libpng installed.
-`sudo apt-get install libpng-dev`
-
-If you see `execvp(): No such file or directory`,
-you may not have java installed.
-You can install OpenJDK or JDK 7.
-
-If you are using phantomjs,
-make sure you have version 1.9.2 installed.
-Version 1.9.6 currently has a webdriver issue.
+## Getting Started
 
 Install Testium by running `npm install --save testium`.
 
@@ -54,10 +39,44 @@ Then, you need to require it and run it, like so!
 
 ```coffeescript
 testium = require 'testium'
+
+testOptions =
+  tests: "#{__dirname}/test/integration" #string or array of absolute and/or directory paths and/or glob patterns
+  applicationPort: 4000 # used to resolve relative paths in navigateTo calls
+  browser: 'phantomjs' # chrome | firefox | internet explorer
+
+testium.run testOptions, (error, exitCode) ->
+  # handle result
+```
+
+### Detailed Setup
+
+Testium might require that you install some
+system-level libraries.
+
+**required**
+
+- **libcurl** (for sync http)
+<br>[Ubuntu] `sudo apt-get install libcurl4-openssl-dev`
+<br>[OS X] `brew install curl`
+- **java 7+** (for selenium)
+
+**optional**
+
+- **libpng** (for image diffing)
+<br>[Ubuntu] `sudo apt-get install libpng-dev`
+<br>[OS X] `brew install libpng`
+- **phantomjs 1.9.7+** (for headless running)
+
+Below are all of the options you can specify
+with their defaults as an example.
+
+```coffeescript
+testium = require 'testium'
 testOptions =
   beforeTests: "#{__dirname}/test/setup.coffee" # custom test setup script
   tests: "#{__dirname}/test/integration" #string or array of absolute and/or directory paths and/or glob patterns
-  applicationPort: 4000
+  applicationPort: 4000 # used to resolve relative paths in navigateTo calls
   screenshotDirectory: "#{__dirname}/test/failed_screenshots"
   browser: 'phantomjs' # chrome | firefox | internet explorer
   appDirectory: "#{__dirname}/.." # allows relative paths to files/dirs to test
