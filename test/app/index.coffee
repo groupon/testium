@@ -19,6 +19,7 @@ echo = (request, response) ->
 
 error = (response) ->
   response.statusCode = 500
+  response.write '500 SERVER ERROR'
   response.end()
 
 crash = (response) ->
