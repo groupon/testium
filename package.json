@@ -1,6 +1,6 @@
 {
   "name": "testium",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Synchronous integration testing with Node.js bindings for WebDriver",
   "keywords": [
     "testing",
