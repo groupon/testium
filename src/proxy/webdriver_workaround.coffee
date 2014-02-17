@@ -54,6 +54,7 @@ module.exports = (response) ->
   response.headers["Set-Cookie"] = buildCookie(response.headers, response.statusCode)
   # force to 200 because phantomjs doesn't like
   # non-200 when taking screenshots
-  response.statusCode = 200
+  if response.statusCode >= 400
+    response.statusCode = 200
   console.log "<-- Set-Cookie: " + response.headers["Set-Cookie"]
 
