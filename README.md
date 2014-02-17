@@ -231,6 +231,12 @@ Method | Description
 
 `element = browser.getElement(selector)`
 
+Note: `selector` can be anything
+[WebDriver's CSS Selector](http://www.w3.org/TR/2013/WD-webdriver-20130117/#css-selectors)
+can accept.
+Where supported by browsers,
+this is equivalent to `document.querySelectorAll(selector)`.
+
 Method | Description
 :----- | :----------
 `element.get(attribute)` | Returns the element's specified attribute, which can be `text`. Note that WebDriver (and therefore testium) will not return text of hidden elements.
