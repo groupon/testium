@@ -5,10 +5,6 @@ describe 'navigation', ->
   before ->
     @browser = getBrowser()
 
-  it 'to absolute url', ->
-    @browser.navigateTo 'http://127.0.0.1:4003/'
-    @browser.assert.httpStatus 200
-
   it 'directly', ->
     @browser.navigateTo '/'
     @browser.assert.httpStatus 200

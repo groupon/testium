@@ -122,7 +122,7 @@ startProxy = (applicationPort, logStream) ->
     proxyProcess.stdout.pipe logStream
     proxyProcess.stderr.pipe logStream
 
-    logStream.log "waiting for webdriver proxy to listen on port #{PROXY_PORT}"
+    logStream.log "waiting for webdriver proxy to listen on port #{PROXY_PORT} and proxy to #{applicationPort}"
     waitForPort PROXY_PORT, PROXY_TIMEOUT, (timedOut) ->
       if timedOut
         return callback new Error "Timeout occurred waiting for the testium proxy to be ready on port #{PROXY_PORT}."
