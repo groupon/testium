@@ -52,8 +52,12 @@ module.exports = (response) ->
 
   response.headers['Cache-Control'] = 'no-store'
   response.headers["Set-Cookie"] = buildCookie(response.headers, response.statusCode)
-  # force to 200 because phantomjs doesn't like
-  # non-200 when taking screenshots
-  response.statusCode = 200
+
+  if response.statusCode >= 400
+    # force to 200 because phantomjs doesn't like
+    # 400 and 500 status codes when taking screenshots
+    console.log "<-- forcing status code from #{response.statusCode} to 200"
+    response.statusCode = 200
+
   console.log "<-- Set-Cookie: " + response.headers["Set-Cookie"]
 
