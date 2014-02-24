@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 fs = require 'fs'
-http = require 'http'
+http = require('follow-redirects').https
 
 doneEvent = do ->
   nodeVersion = process.version.match(/^v(\d+\.\d+)/)[1]

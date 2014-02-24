@@ -30,20 +30,48 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-FALLBACK_CHROMEDRIVER_VERSION = '2.8'
+FALLBACK_CHROMEDRIVER_VERSION = '2.9'
 FALLBACK_SELENIUM_VERSION = '2.39.0'
 
 async = require 'async'
 request = require 'request'
 parseXml = require('xml2js').parseString
+{find} = require 'underscore'
+
+parseSelenium = (body) ->
+  releases = JSON.parse body
+  release = releases[0]
+
+  asset = find release.assets, (asset) ->
+    asset.name.indexOf('selenium-server-standalone') > -1
+  url = asset.url
+
+  versionRegex = /selenium-(\d+.\d+.\d+)/
+  version = versionRegex.exec(release.tag_name)[1]
+
+  version
 
 getLatestSeleniumVersion = (callback) ->
-  request 'https://code.google.com/p/selenium/downloads/list', (error, response, body) ->
+  url = 'https://api.github.com/repos/SeleniumHQ/selenium/releases'
+  headers =
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
+  request {url, headers}, (error, response, body) ->
     return callback error if error?
 
-    versionRegex = /selenium-server-standalone-(\d+.\d+.\d+)\.jar/
-    version = versionRegex.exec(body)[1]
-    callback(null, version)
+    error = null
+    version = null
+    try
+      version = parseSelenium(body)
+    catch parseError
+      error = parseError
+
+    callback error, version
+
+parseChrome = (result) ->
+  prefixes = result.ListBucketResult.CommonPrefixes
+  prefix = prefixes[prefixes.length-2] # last item is /Icons, get 2nd to last
+  versionPath = prefix.Prefix[0] # something like "2.8/"
+  versionPath.substring(0, versionPath.length-1)
 
 getLatestChromedriverVersion = (callback) ->
   request 'http://chromedriver.storage.googleapis.com/?delimiter=/&prefix=', (error, response, body) ->
@@ -52,11 +80,14 @@ getLatestChromedriverVersion = (callback) ->
     parseXml body, (error, result) ->
       return callback(error) if error?
 
-      prefixes = result.ListBucketResult.CommonPrefixes
-      prefix = prefixes[prefixes.length-2] # last item is /Icons, get 2nd to last
-      versionPath = prefix.Prefix[0] # something like "2.8/"
-      version = versionPath.substring(0, versionPath.length-1)
-      callback null, version
+      version = null
+      error = null
+      try
+        version = parseChrome(result)
+      catch parseError
+        error = parseError
+
+      callback error, version
 
 module.exports = (callback) ->
   async.parallel [
@@ -65,15 +96,17 @@ module.exports = (callback) ->
   ], (error, results) ->
     return callback error if error?
 
-    selenium = FALLBACK_SELENIUM_VERSION
-    chromedriver = FALLBACK_CHROMEDRIVER_VERSION
+    selenium = null
+    chromedriver = null
 
     if !results?[0]
+      selenium = FALLBACK_SELENIUM_VERSION
       console.log "[testium] Unable to determine latest version of selenium standalone server; using #{selenium}"
     else
       selenium = results[0]
 
     if !results?.length > 1 || !results?[1]
+      chromedriver = FALLBACK_CHROMEDRIVER_VERSION
       console.log "[testium] Unable to determine latest version of selenium chromedriver; using #{chromedriver}"
     else
       chromedriver = results[1]

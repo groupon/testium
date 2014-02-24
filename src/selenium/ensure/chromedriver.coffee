@@ -69,7 +69,7 @@ unzip = (tempPath, filePath, callback) ->
 module.exports = (binPath, tempPath, version) ->
   (callback) ->
     {platform, bitness} = getArchitecture()
-    url = "http://chromedriver.storage.googleapis.com/#{version}/chromedriver_#{platform}#{bitness}.zip"
+    url = "https://chromedriver.storage.googleapis.com/#{version}/chromedriver_#{platform}#{bitness}.zip"
     chromedriverPath = "#{binPath}/chromedriver"
     return callback() if fs.existsSync chromedriverPath
 
