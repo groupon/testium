@@ -54,7 +54,6 @@ passValuesToTestiumBeforeTestFiles = (options) ->
     browser: options.browser
     screenshotDirectory: options.screenshotDirectory
     seleniumServer: options.seleniumServer
-    appRoot: "http://127.0.0.1:#{options.applicationPort}"
 
 validateBrowser = (browser='phantomjs') ->
   return if browser in BROWSERS

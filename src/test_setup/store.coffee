@@ -41,6 +41,5 @@ module.exports =
     values.browser = options.browser
     values.http = options.http || {}
     values.seleniumServer = options.seleniumServer
-    values.appRoot = options.appRoot
 
   get: -> values

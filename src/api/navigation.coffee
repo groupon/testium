@@ -33,13 +33,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 waitFor = require './wait'
 urlParse = require('url').parse
 {truthy} = require 'assertive'
-navigateTo  = require './navigate_to'
 
 module.exports = (driver) ->
   navigateTo: (url, options) ->
     truthy 'navigateTo(url) - requires url', url
 
-    navigateTo(driver, url, @appRoot, @proxyCommandRoot, @proxyRoot, options)
+    options ?= {}
+    options.url = url
+
+    hasProtocol = /^[^:\/?#]+:\/\//
+    unless hasProtocol.test url
+      url = "#{@urlRoot}#{url}"
+
+    driver.http.post "#{@proxyCommandRoot}/new-page", options
+
+    # WebDriver does nothing if currentUrl is the same as targetUrl
+    currentUrl = driver.getUrl()
+    if currentUrl == url
+      driver.refresh()
+    else
+      driver.navigateTo(url)
 
   refresh: ->
     driver.refresh()
