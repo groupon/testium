@@ -43,13 +43,13 @@ module.exports = (browserName) ->
     browser: browserName
     screenshotDirectory: "#{LOG_DIRECTORY}/screenshots"
     seleniumServer: 'http://127.0.0.1:4444/wd/hub'
-    appRoot: 'http://127.0.0.1'
   }
 
   selenium = require '../selenium'
   csrepl = require 'coffee-script-redux/lib/repl'
   {extend} = require 'underscore'
   {getBrowser} = require '../test_setup/browser'
+
 
   normalize = (url) ->
     if url.indexOf('http') == -1
@@ -59,8 +59,8 @@ module.exports = (browserName) ->
 
   createBrowser = ->
     browser = getBrowser()
-
     _navigateTo = browser.navigateTo
+
     browser.navigateTo = (url, options) ->
       url = normalize(url)
       _navigateTo.call(browser, url, options)
@@ -82,8 +82,6 @@ module.exports = (browserName) ->
     browser = createBrowser()
     extend cli.context, browser
     cli.context.methods = getMethods(browser)
-
-    browser.navigateTo '/testium-priming-load'
 
   getMethods = (browser) ->
     properties = Object.keys browser
