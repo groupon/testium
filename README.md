@@ -75,7 +75,7 @@ with their defaults as an example.
 testium = require 'testium'
 testOptions =
   beforeTests: "#{__dirname}/test/setup.coffee" # custom test setup script
-  tests: "#{__dirname}/test/integration" #string or array of absolute and/or directory paths and/or glob patterns
+  tests: "#{__dirname}/test/integration" # string or array of strings containing: glob pattern or an [absolute|relative] [file|directory]
   applicationPort: 4000 # used to resolve relative paths in navigateTo calls
   screenshotDirectory: "#{__dirname}/test/failed_screenshots"
   browser: 'phantomjs' # chrome | firefox | internet explorer
