@@ -60,7 +60,6 @@ process.on 'uncaughtException', exit
 
 {takeScreenshotOnFailure} = require './screenshot'
 store = require './store'
-{screenshotDirectory} = store.get()
 
 before ->
   # first page load is guranteed
@@ -69,6 +68,8 @@ before ->
   # right away in tests
   browser.navigateTo '/testium-priming-load'
 
-afterEach -> takeScreenshotOnFailure(screenshotDirectory, @currentTest, browser)
+afterEach ->
+  {screenshotDirectory} = store.get()
+  takeScreenshotOnFailure(screenshotDirectory, @currentTest, browser)
 after(global.exitMocha)
 
