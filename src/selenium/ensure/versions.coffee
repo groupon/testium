@@ -40,7 +40,7 @@ parseXml = require('xml2js').parseString
 
 parseSelenium = (body) ->
   releases = JSON.parse body
-  release = releases[0]
+  release = find releases, (release) -> release.assets?
 
   asset = find release.assets, (asset) ->
     asset.name.indexOf('selenium-server-standalone') > -1
@@ -94,20 +94,20 @@ module.exports = (callback) ->
     getLatestSeleniumVersion
     getLatestChromedriverVersion
   ], (error, results) ->
-    return callback error if error?
-
     selenium = null
     chromedriver = null
 
     if !results?[0]
       selenium = FALLBACK_SELENIUM_VERSION
       console.log "[testium] Unable to determine latest version of selenium standalone server; using #{selenium}"
+      console.error error.stack if error?
     else
       selenium = results[0]
 
     if !results?.length > 1 || !results?[1]
       chromedriver = FALLBACK_CHROMEDRIVER_VERSION
       console.log "[testium] Unable to determine latest version of selenium chromedriver; using #{chromedriver}"
+      console.error error.stack if error?
     else
       chromedriver = results[1]
 
