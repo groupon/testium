@@ -33,8 +33,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Driver = require '../api'
 store = require './store'
 
-{seleniumServer, logDirectory, browser, http} = store.get()
-
 TARGET_PORT = 4445 # port for proxy to app under test
 PROXY_COMMAND_PORT = 4446 # port for commands
 
@@ -42,6 +40,8 @@ browserInstance = null
 
 module.exports.getBrowser = ->
   return browserInstance if browserInstance?
+
+  {seleniumServer, logDirectory, browser, http} = store.get()
 
   browserOptions =
     browserName: browser
