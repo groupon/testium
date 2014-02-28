@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 fs = require 'fs'
 logError = require './error'
 
-DEFAULT_LOG_DIRECTORY = "#{__dirname}/../log"
+DEFAULT_LOG_DIRECTORY = "#{__dirname}/../../log"
 
 createLog = (path) ->
   fs.createWriteStream path, {flags: 'w', encoding: 'utf-8'}
