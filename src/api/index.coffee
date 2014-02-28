@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 WebDriver = require 'webdriver-http-sync'
 log = require '../log'
-{truthy} = require 'assertive'
+{truthy, hasType} = require 'assertive'
 {extend} = require 'underscore'
 
 createAlertApi = require './alert'
@@ -47,10 +47,10 @@ createDebugApi = require './debug'
 module.exports = class
   constructor: (targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities, options={}) ->
     invocation = 'new Driver(targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities)'
-    truthy "#{invocation} - requires targetPort", targetPort
-    truthy "#{invocation} - requires proxyCommandPort", proxyCommandPort
-    truthy "#{invocation} - requires webdriverServerUrl", webdriverServerUrl
-    truthy "#{invocation} - requires desiredCapabilities", desiredCapabilities
+    hasType "#{invocation} - requires (Number) targetPort", Number, targetPort
+    hasType "#{invocation} - requires (Number) proxyCommandPort", Number, proxyCommandPort
+    hasType "#{invocation} - requires (String) webdriverServerUrl", String, webdriverServerUrl
+    hasType "#{invocation} - requires (Object) desiredCapabilities", Object, desiredCapabilities
 
     @proxyCommandRoot = "http://127.0.0.1:#{proxyCommandPort}"
     @urlRoot = "http://127.0.0.1:#{targetPort}"
@@ -75,7 +75,7 @@ module.exports = class
     @assert = createAssertApi(this)
 
   close: (callback) ->
-    truthy 'close(callback) - requires callback', callback
+    hasType 'close(callback) - requires (Function) callback', Function, callback
 
     @driver.close()
     @log.flush(callback)
@@ -84,10 +84,13 @@ module.exports = class
     if arguments.length > 1
       [args..., clientFunction] = arguments
 
-    truthy 'evaluate(clientFunction) - requires clientFunction', clientFunction
-    if typeof clientFunction is 'function'
+    invocation = 'evaluate(clientFunction) - requires (Function|String) clientFunction'
+    truthy invocation, clientFunction
+    if typeof clientFunction == 'function'
       args = JSON.stringify(args ? [])
       clientFunction = "return (#{clientFunction}).apply(this, #{args});"
+    else if typeof clientFunction != 'string'
+      throw new Error invocation
 
     @driver.evaluate(clientFunction)
 

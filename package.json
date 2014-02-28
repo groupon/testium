@@ -32,7 +32,7 @@
     "coffee-script-redux": "2.0.0-beta7",
     "webdriver-http-sync": "~0.7.0",
     "mocha": "~1.17.1",
-    "assertive": "~1.2.0",
+    "assertive": "~1.3.2",
     "mkdirp": "~0.3.5",
     "async": "~0.2.9",
     "moment": "~2.1.0",
@@ -50,7 +50,8 @@
   "devDependencies": {
     "node-static": "0.7.0",
     "async": "~0.2.9",
-    "npub": "~0.0.5"
+    "npub": "~0.0.5",
+    "bondjs": "^1.0.1"
   },
   "optionalDependencies": {
     "img-diff": "~0.1.0"
