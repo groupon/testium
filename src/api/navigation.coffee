@@ -32,11 +32,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 waitFor = require './wait'
 urlParse = require('url').parse
-{truthy} = require 'assertive'
+{hasType} = require 'assertive'
 
 module.exports = (driver) ->
   navigateTo: (url, options) ->
-    truthy 'navigateTo(url) - requires url', url
+    hasType 'navigateTo(url) - requires (String) url', String, url
 
     options ?= {}
     options.url = url
