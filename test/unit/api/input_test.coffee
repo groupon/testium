@@ -70,5 +70,3 @@ describe 'input api', ->
     it 'succeeds if all conditions are met', ->
       input.clearAndType(selector, keys)
 
-
-
