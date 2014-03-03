@@ -34,6 +34,7 @@ assert = require 'assertive'
 
 module.exports = (api) ->
   httpStatus: (expectedStatus) ->
+    assert.hasType 'assert.httpStatus(status) - requires (Number) status', Number, expectedStatus
     actualStatus = api.getStatusCode()
     assert.equal 'statuscode', expectedStatus, actualStatus
 
