@@ -49,7 +49,7 @@ module.exports = (driver) ->
     element.clear()
 
   clearAndType: (selector, keys...) ->
-    hasType 'clearAndType(selector, keys...) - requires selector', String, selector
+    hasType 'clearAndType(selector, keys...) - requires (String) selector', String, selector
     truthy 'clearAndType(selector, keys...) - requires keys', keys.length > 0
 
     element = driver.getElement(selector)
