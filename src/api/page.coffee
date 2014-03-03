@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 cropScreenshot = (require './img_diff').crop
+{hasType} = require 'assertive'
 
 cropScreenshotBySelector = (driver, screenshot, selector) ->
   element = driver.getElement(selector)
@@ -53,13 +54,19 @@ module.exports = (driver) ->
     driver.getPageSource()
 
   getScreenshot: (selector) ->
-    screenshot = driver.getScreenshot()
     if selector?
+      hasType 'getScreenshot(selector) - requires (String) selector or nothing', String, selector
+      screenshot = driver.getScreenshot()
       cropScreenshotBySelector(driver, screenshot, selector)
     else
-      screenshot
+      driver.getScreenshot()
 
-  setPageSize: ({height, width}) ->
+  setPageSize: (size) ->
+    invocation = 'setPageSize(size={height, width})'
+    hasType "#{invocation} - requires (Object) size", Object, size
+    {height, width} = size
+    hasType "#{invocation} - requires (Number) size.height", Number, height
+    hasType "#{invocation} - requires (Number) size.width", Number, width
     driver.setPageSize {height, width}
 
   getPageSize: ->
