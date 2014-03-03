@@ -30,6 +30,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+fs = require 'fs'
 mkdirp = require 'mkdirp'
 async = require 'async'
 tempdir = require './tempdir'
@@ -44,7 +45,14 @@ makePaths = ->
   mkdirp.sync BIN_PATH
   mkdirp.sync TEMP_PATH
 
+binariesExist = ->
+  return false if !fs.existsSync "#{BIN_PATH}/selenium.jar"
+  return false if !fs.existsSync "#{BIN_PATH}/chromedriver"
+  true
+
 module.exports = (callback) ->
+  return callback() if binariesExist()
+
   makePaths()
   getLatestVersions (error, versions) ->
     return callback(error) if error?
