@@ -46,9 +46,8 @@ makePaths = ->
   mkdirp.sync TEMP_PATH
 
 binariesExist = ->
-  return false if !fs.existsSync "#{BIN_PATH}/selenium.jar"
-  return false if !fs.existsSync "#{BIN_PATH}/chromedriver"
-  true
+  [ 'selenium.jar', 'chromedriver' ].every (binary) ->
+    fs.existsSync "#{BIN_PATH}/#{binary}"
 
 module.exports = (callback) ->
   return callback() if binariesExist()
