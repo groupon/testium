@@ -51,7 +51,7 @@
     "node-static": "0.7.0",
     "async": "~0.2.9",
     "npub": "~0.0.5",
-    "bondjs": "^1.0.1"
+    "bondjs": "~1.0.1"
   },
   "optionalDependencies": {
     "img-diff": "~0.1.0"
