@@ -6,11 +6,6 @@ describe 'imgLoaded', ->
     @browser = getBrowser()
     @browser.navigateTo '/'
 
-  it 'throws an error when passed bad arguments', ->
-    msg = 'imgLoaded(selector) - requires selector string'
-    err = assert.throws => @browser.assert.imgLoaded()
-    assert.include msg, err.message
-
   it 'throws an error when the image was not found', ->
     msg = 'imgLoaded "img.not-in-the-page": element not found'
     err = assert.throws => @browser.assert.imgLoaded 'img.not-in-the-page'
