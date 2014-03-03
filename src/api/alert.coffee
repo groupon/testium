@@ -30,7 +30,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{truthy} = require 'assertive'
+{hasType} = require 'assertive'
 
 module.exports = (driver) ->
   accept: ->
@@ -43,6 +43,6 @@ module.exports = (driver) ->
     driver.getAlertText()
 
   type: (text) ->
-    truthy 'type(text) - requires text', text
+    hasType 'type(text) - requires (String) text', String, text
     driver.typeAlert text
 

@@ -30,21 +30,23 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{truthy} = require 'assertive'
+{truthy, hasType} = require 'assertive'
 getElementWithoutError = require './safeElement'
 
 module.exports = (driver) ->
   getElement: (selector) ->
-    truthy 'getElement(selector) - requires selector', selector
+    hasType 'getElement(selector) - requires (String) selector', String, selector
 
     getElementWithoutError(driver, selector)
 
   getElements: (selector) ->
-    truthy 'getElements(selector) - requires selector', selector
+    hasType 'getElements(selector) - requires (String) selector', String, selector
 
     driver.getElements(selector)
 
   waitForElement: (selector, timeout=3000) ->
+    hasType 'getElements(selector) - requires (String) selector', String, selector
+
     start = Date.now()
     driver.setElementTimeout(timeout)
 
@@ -62,7 +64,7 @@ module.exports = (driver) ->
     foundElement
 
   click: (selector) ->
-    truthy 'click(selector) - requires selector', selector
+    hasType 'click(selector) - requires (String) selector', String, selector
 
     element = driver.getElement(selector)
     truthy "Element not found at selector: #{selector}", element

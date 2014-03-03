@@ -32,12 +32,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 assert = require 'assertive'
 imgLoaded = require './imgLoaded_client'
-{isString, isNumber} = require 'underscore'
+{isNumber} = require 'underscore'
 
 module.exports = (driver) ->
   imgLoaded: (selector) ->
     [doc, selector] = arguments if arguments.length > 1
-    assert.truthy 'imgLoaded(selector) - requires selector string', isString selector
+    assert.hasType 'imgLoaded(selector) - requires (String) selector', String, selector
 
     fail = (message) ->
       message = "#{doc}\n#{message}" if doc?

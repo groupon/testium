@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 {tryParse} = require './json'
-{truthy} = require 'assertive'
+{truthy, hasType} = require 'assertive'
 
 decode = (value) ->
   (new Buffer value, 'base64').toString('utf8')
@@ -62,9 +62,16 @@ removeTestiumCookie = (cookies) ->
   cookies.filter (item) ->
     item.name != '_testium_'
 
+validateCookie = (invocation, cookie) ->
+  hasType "#{invocation} - cookie must be an object", Object, cookie
+  if !cookie.name
+    throw new Error "#{invocation} - cookie must contain `name`"
+  if !cookie.value
+    throw new Error "#{invocation} - cookie must contain `value`"
+
 module.exports = (driver) ->
   setCookie: (cookie) ->
-    truthy 'setCookie(cookie) - requires cookie', cookie
+    validateCookie 'setCookie(cookie)', cookie
 
     driver.setCookie(cookie)
 
@@ -73,7 +80,7 @@ module.exports = (driver) ->
       @setCookie(cookie)
 
   getCookie: (name) ->
-    truthy 'getCookie(name) - requires name', name
+    hasType 'getCookie(name) - requires (String) name', String, name
 
     cookies = driver.getCookies()
     getCookie(cookies, name)
@@ -95,5 +102,6 @@ module.exports = (driver) ->
     testiumCookie?.headers
 
   getHeader: (name) ->
+    hasType 'getHeader(name) - require (String) name', String, name
     @getHeaders()[name]
 

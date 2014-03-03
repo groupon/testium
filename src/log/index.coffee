@@ -31,14 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 fs = require 'fs'
+mkdirp = require 'mkdirp'
 logError = require './error'
 
-DEFAULT_LOG_DIRECTORY = "#{__dirname}/../log"
+DEFAULT_LOG_DIRECTORY = "#{__dirname}/../../log"
 
 createLog = (path) ->
   fs.createWriteStream path, {flags: 'w', encoding: 'utf-8'}
 
 module.exports = (logDirectory=DEFAULT_LOG_DIRECTORY) ->
+  mkdirp.sync logDirectory
   logStream = createLog "#{logDirectory}/webdriver.log"
   verboseLogStream = createLog "#{logDirectory}/webdriver-verbose.log"
 

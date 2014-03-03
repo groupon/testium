@@ -30,11 +30,11 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{truthy} = require 'assertive'
+{truthy, hasType} = require 'assertive'
 
 module.exports = (driver) ->
   type: (selector, keys...) ->
-    truthy 'type(selector, keys...) - requires selector', selector
+    hasType 'type(selector, keys...) - requires (String) selector', String, selector
     truthy 'type(selector, keys...) - requires keys', keys.length > 0
 
     element = driver.getElement(selector)
@@ -42,14 +42,14 @@ module.exports = (driver) ->
     element.type keys...
 
   clear: (selector) ->
-    truthy 'clear(selector) - requires selector', selector
+    hasType 'clear(selector) - requires (String) selector', String, selector
 
     element = driver.getElement(selector)
     truthy "Element not found at selector: #{selector}", element
     element.clear()
 
   clearAndType: (selector, keys...) ->
-    truthy 'clearAndType(selector, keys...) - requires selector', selector
+    hasType 'clearAndType(selector, keys...) - requires (String) selector', String, selector
     truthy 'clearAndType(selector, keys...) - requires keys', keys.length > 0
 
     element = driver.getElement(selector)
