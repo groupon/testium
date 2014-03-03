@@ -32,12 +32,12 @@ describe 'element', ->
   describe 'elementIsVisible', ->
     it 'fails if element does not exist', ->
       error = assert.throws => @browser.assert.elementIsVisible '.non-existing'
-      expectedError = 'Assertion failed: Element not found for selector: .non-existing\nExpected \u001b[31mnull\u001b[39m to be truthy'
+      expectedError = 'Assertion failed: Element not found for selector: .non-existing\n\u001b[39;49;00mExpected \u001b[31mnull\u001b[39m to be truthy'
       assert.equal expectedError, error.message
 
     it 'fails if element exists, but is not visible', ->
       error = assert.throws => @browser.assert.elementIsVisible '#hidden_thing'
-      expectedError = 'Assertion failed: Element should be visible for selector: #hidden_thing\nExpected \u001b[31mfalse\u001b[39m to be truthy'
+      expectedError = 'Assertion failed: Element should be visible for selector: #hidden_thing\n\u001b[39;49;00mExpected \u001b[31mfalse\u001b[39m to be truthy'
       assert.equal expectedError, error.message
 
     it 'succeeds if element exists and is visible', ->
@@ -46,12 +46,12 @@ describe 'element', ->
   describe 'elementNotVisible', ->
     it 'fails if element does not exist', ->
       error = assert.throws => @browser.assert.elementNotVisible '.non-existing'
-      expectedError = 'Assertion failed: Element not found for selector: .non-existing\nExpected \u001b[31mnull\u001b[39m to be truthy'
+      expectedError = 'Assertion failed: Element not found for selector: .non-existing\n\u001b[39;49;00mExpected \u001b[31mnull\u001b[39m to be truthy'
       assert.equal expectedError, error.message
 
     it 'fails if element exists, but is visible', ->
       error = assert.throws => @browser.assert.elementNotVisible 'h1'
-      expectedError = 'Assertion failed: Element should not be visible for selector: h1\nExpected \u001b[31mtrue\u001b[39m to be falsey'
+      expectedError = 'Assertion failed: Element should not be visible for selector: h1\n\u001b[39;49;00mExpected \u001b[31mtrue\u001b[39m to be falsey'
       assert.equal expectedError, error.message
 
     it 'succeeds if element exists and is not visible', ->
@@ -60,7 +60,7 @@ describe 'element', ->
   describe 'elementExists', ->
     it 'fails if element does not exist', ->
       error = assert.throws => @browser.assert.elementExists '.non-existing'
-      expectedError = 'Assertion failed: Element not found for selector: .non-existing\nExpected \u001b[31mnull\u001b[39m to be truthy'
+      expectedError = 'Assertion failed: Element not found for selector: .non-existing\n\u001b[39;49;00mExpected \u001b[31mnull\u001b[39m to be truthy'
       assert.equal expectedError, error.message
 
     it 'succeeds if element exists', ->
@@ -72,7 +72,7 @@ describe 'element', ->
 
     it 'fails if element exists', ->
       error = assert.throws => @browser.assert.elementDoesntExist 'h1'
-      expectedError = 'Assertion failed: Element found for selector: h1\nExpected \u001b[31mElement\u001b[39m to be falsey'
+      expectedError = 'Assertion failed: Element found for selector: h1\n\u001b[39;49;00mExpected \u001b[31mElement\u001b[39m to be falsey'
       assert.equal expectedError, error.message
 
   describe 'elementHasText', ->
@@ -84,7 +84,7 @@ describe 'element', ->
       error = assert.throws =>
         @browser.assert.elementHasText('.only', 'the wrong text')
 
-      expected = 'Assertion failed: elementHasText: .only\ninclude expected needle to be found in haystack\n- needle: \"the wrong text\"\nhaystack: \"only one here\"'
+      expected = 'Assertion failed: elementHasText: .only\n\u001b[39;49;00minclude expected needle to be found in haystack\n- needle: \"the wrong text\"\nhaystack: \"only one here\"'
       assert.equal expected, error.message
 
     it 'finds no elements', ->
@@ -111,7 +111,7 @@ describe 'element', ->
       error = assert.throws =>
         @browser.assert.elementLacksText('.only', 'only')
 
-      expected = 'Assertion failed: elementLacksText: .only\nnotInclude expected needle not to be found in haystack\n- needle: \"only\"\nhaystack: \"only one here\"'
+      expected = 'Assertion failed: elementLacksText: .only\n\u001b[39;49;00mnotInclude expected needle not to be found in haystack\n- needle: \"only\"\nhaystack: \"only one here\"'
       assert.equal expected, error.message
 
   describe 'elementHasValue', ->
@@ -131,7 +131,7 @@ describe 'element', ->
       error = assert.throws =>
         @browser.assert.elementLacksValue('#text-input', 'initialvalue')
 
-      expected = 'Assertion failed: elementLacksValue: #text-input\nnotInclude expected needle not to be found in haystack\n- needle: \"initialvalue\"\nhaystack: \"initialvalue\"'
+      expected = 'Assertion failed: elementLacksValue: #text-input\n\u001b[39;49;00mnotInclude expected needle not to be found in haystack\n- needle: \"initialvalue\"\nhaystack: \"initialvalue\"'
       assert.equal expected, error.message
 
   describe 'waitForElement', ->

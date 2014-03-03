@@ -6,11 +6,6 @@ describe 'evaluate', ->
     @browser = getBrowser()
     @browser.navigateTo '/'
 
-  it 'throws an error when passing bad arguments', ->
-    explanation = 'evaluate(clientFunction) - requires clientFunction'
-    err = assert.throws => @browser.evaluate()
-    assert.include explanation, err.message
-
   it 'runs JavaScript passed as a String', ->
     value = @browser.evaluate 'return 3;'
     assert.equal 3, value
