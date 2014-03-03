@@ -1,4 +1,4 @@
-Element = require '../../../lib/api/assert/element'
+Element = require '../../../../lib/api/assert/element'
 assert = require 'assertive'
 
 describe 'assert', ->
