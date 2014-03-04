@@ -6,10 +6,9 @@
   "scripts": {
     "test": "make all"
   },
-  "publishConfig": {},
   "devDependencies": {
     "coffee-script-redux": "^2.0.0-beta7",
-    "npub": "0.0.5"
+    "npub": "0.0.6"
   },
   "dependencies": {
     "mkdirp": "^0.3.5",
