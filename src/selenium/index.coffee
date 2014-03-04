@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 cleanup = require './cleanup'
 startProcesses = require './process'
-ensureBinaries = require './ensure'
+ensureBinaries = (require 'selenium-download').ensure
 
 seleniumProcess = null
 proxyProcess = null
