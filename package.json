@@ -50,7 +50,7 @@
   "devDependencies": {
     "node-static": "0.7.0",
     "async": "~0.2.9",
-    "npub": "~0.0.5",
+    "npub": "~0.0.6",
     "bondjs": "~1.0.1"
   },
   "optionalDependencies": {
