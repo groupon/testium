@@ -36,7 +36,9 @@ optimist = require('optimist').usage(USAGE)
 options = optimist.argv
 
 if options['update-selenium']
-  (require './update_selenium')()
+  binPath = "#{__dirname}/../../bin"
+  (require 'selenium-download').update binPath, ->
+    process.exit(0)
 else if options.help
   console.log optimist.help()
 else

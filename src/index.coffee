@@ -54,7 +54,8 @@ startSelenium = ({seleniumServer, javaHeapSize, logDirectory, applicationPort}, 
   if seleniumServer
     selenium.start seleniumServer, javaHeapSize, logDirectory, applicationPort, callback
   else
-    selenium.ensure (error) ->
+    binPath = "#{__dirname}/../bin"
+    selenium.ensure binPath, (error) ->
       return callback(error) if error?
       selenium.start null, javaHeapSize, logDirectory, applicationPort, callback
 
