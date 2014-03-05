@@ -30,23 +30,17 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+{beforeAll, afterEach, exit} = require './hooks'
 logError = require '../log/error'
-{getBrowser} = require './browser'
-browser = getBrowser()
+store = require './store'
+{screenshotDirectory} = store.get()
 
-global.exitMocha = (done) ->
-  if browser?
-    browser.close(done)
-    browser = undefined
-  else
-    done()
-
-exit = (error) ->
+processExit = (error) ->
   logError error
 
   try
     console.error 'Attempting to close the WebDriver session'
-    global.exitMocha ->
+    exit ->
       process.exit(-2)
   catch error
     logError error
@@ -56,20 +50,9 @@ exit = (error) ->
     process.exit(-4)
   ), 1000
 
-process.on 'uncaughtException', exit
-
-{takeScreenshotOnFailure} = require './screenshot'
-store = require './store'
-
-before ->
-  # first page load is guranteed
-  # by the proxy to be a success
-  # this allows us to set cookies
-  # right away in tests
-  browser.navigateTo '/testium-priming-load'
-
-afterEach ->
-  {screenshotDirectory} = store.get()
-  takeScreenshotOnFailure(screenshotDirectory, @currentTest, browser)
-after(global.exitMocha)
+global.exitMocha = exit
+global.before(beforeAll)
+global.afterEach(afterEach(screenshotDirectory))
+global.after(exit)
+process.on 'uncaughtException', processExit
 
