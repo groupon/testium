@@ -1,6 +1,6 @@
 {
   "name": "selenium-download",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "allow downloading of latest selenium standalone server and chromedriver",
   "repository": {
     "type": "git",
