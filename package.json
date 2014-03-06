@@ -1,7 +1,11 @@
 {
   "name": "selenium-download",
   "version": "1.0.0",
-  "description": "",
+  "description": "allow downloading of latest selenium standalone server and chromedriver",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/groupon-testium/selenium-download"
+  },
   "main": "lib/index.js",
   "scripts": {
     "test": "make all"
