@@ -22,8 +22,8 @@ describe 'assert', ->
         assert.throws ->
           element.elementHasText(selector, undefined)
 
-      it 'suceeds if all conditions are met', ->
-        element.elementHasText(selector, text)
+      it 'returns the element if all conditions are met', ->
+        assert.truthy element.elementHasText(selector, text)
 
     describe 'Value', ->
       it 'fails if selector is undefined', ->
@@ -38,8 +38,8 @@ describe 'assert', ->
         assert.throws ->
           element.elementHasValue(selector, undefined)
 
-      it 'suceeds if all conditions are met', ->
-        element.elementHasValue(selector, text)
+      it 'returns the element if all conditions are met', ->
+        assert.truthy element.elementHasValue(selector, text)
 
   describe '#elementLacks', ->
     driver =
@@ -63,8 +63,8 @@ describe 'assert', ->
         assert.throws ->
           element.elementLacksText(selector, undefined)
 
-      it 'suceeds if all conditions are met', ->
-        element.elementLacksText(selector, text)
+      it 'returns the element if all conditions are met', ->
+        assert.truthy element.elementLacksText(selector, text)
 
     describe 'Value', ->
       it 'fails if selector is undefined', ->
@@ -79,8 +79,8 @@ describe 'assert', ->
         assert.throws ->
           element.elementLacksValue(selector, undefined)
 
-      it 'suceeds if all conditions are met', ->
-        element.elementLacksValue(selector, text)
+      it 'returns the element if all conditions are met', ->
+        assert.truthy element.elementLacksValue(selector, text)
 
   describe '#elementIsVisible', ->
     driver =
@@ -96,8 +96,8 @@ describe 'assert', ->
       assert.throws ->
         element.elementIsVisible(->)
 
-    it 'succeeds if all conditions are met', ->
-      element.elementIsVisible('.box')
+    it 'returns the element if all conditions are met', ->
+      assert.truthy element.elementIsVisible('.box')
 
   describe '#elementNotVisible', ->
     driver =
@@ -113,8 +113,8 @@ describe 'assert', ->
       assert.throws ->
         element.elementNotVisible(->)
 
-    it 'succeeds if all conditions are met', ->
-      element.elementNotVisible('.box')
+    it 'returns the element if all conditions are met', ->
+      assert.truthy element.elementNotVisible('.box')
 
   describe '#elementExists', ->
     driver =
@@ -130,10 +130,10 @@ describe 'assert', ->
       assert.throws ->
         element.elementExists(->)
 
-    it 'succeeds if all conditions are met', ->
-      element.elementExists('.box')
+    it 'returns the element if all conditions are met', ->
+      assert.truthy element.elementExists('.box')
 
-  describe '#elementExists', ->
+  describe '#elementDoesntExist', ->
     driver =
       getElement: -> null
     element = Element(driver)
