@@ -46,6 +46,32 @@ describe 'navigation', ->
       expectedError = 'Timed out (5ms) waiting for url (/some-random-place.html). Last url was: http://127.0.0.1:4445/index.html'
       assert.equal expectedError, error.message
 
+    describe 'groks url and query object', ->
+      it 'can make its own query regexp', ->
+        @browser.navigateTo '/redirect-to-query.html'
+        @browser.waitForUrl '/index.html',
+          'a b': 'A B'
+          c: '1,7'
+        @browser.assert.httpStatus 200
+
+      it 'can find query arguments in any order', ->
+        @browser.navigateTo '/redirect-to-query.html'
+        @browser.waitForUrl '/index.html',
+          c: '1,7'
+          'a b': 'A B'
+
+      it 'can handle regexp query arguments', ->
+        @browser.navigateTo '/redirect-to-query.html'
+        @browser.waitForUrl '/index.html',
+          c: /[\d,]+/
+          'a b': 'A B'
+
+      it 'detects non-matches too', ->
+        @browser.navigateTo '/redirect-to-query.html'
+
+        error = assert.throws => @browser.waitForUrl '/index.html', no: 'q', 200
+        assert.match /Timed out .* waiting for url/, error.message
+
   describe 'waiting for a path', ->
     it 'can work with a string', ->
       @browser.navigateTo '/redirect-after.html'

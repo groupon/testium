@@ -30,47 +30,27 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-waitFor = require './wait'
-urlParse = require('url').parse
-makeUrlRegExp = require './makeUrlRegExp'
-{hasType} = require 'assertive'
+{isRegExp} = require 'underscore'
 
-module.exports = (driver) ->
-  navigateTo: (url, options) ->
-    hasType 'navigateTo(url) - requires (String) url', String, url
+quoteRegExp = (s) ->
+  s.replace /[-\\\/\[\]{}()*+?.^$|]/g, '\\$&'
 
-    options ?= {}
-    options.url = url
+uriComponent = (s) -> # match a URI-encoded or non-URI-encoded string
+  quoteRegExp(encodeURIComponent s).replace /%([0-9a-f]{2})/gi, (all, hex) ->
+    character = quoteRegExp String.fromCharCode parseInt hex, 16
+    character += '|\\+'  if hex is '20' # and also handle ' ' = '+'
+    "(?:#{ all }|#{ character })"
 
-    hasProtocol = /^[^:\/?#]+:\/\//
-    unless hasProtocol.test url
-      url = "#{@urlRoot}#{url}"
+module.exports = (url, query = {}) ->
+  url = quoteRegExp url
 
-    driver.http.post "#{@proxyCommandRoot}/new-page", options
-
-    # WebDriver does nothing if currentUrl is the same as targetUrl
-    currentUrl = driver.getUrl()
-    if currentUrl == url
-      driver.refresh()
+  for own key, val of query
+    key = uriComponent key
+    if isRegExp val # splice in the regexp into our regexp
+      val = val.toString().slice 1, -1
     else
-      driver.navigateTo(url)
+      val = uriComponent val
+    # match every query param via a clever positive look-ahead hack
+    url += "(?=(?:\\?|.*&)#{ key }=#{ val })"
 
-  refresh: ->
-    driver.refresh()
-
-  getUrl: ->
-    driver.getUrl()
-
-  getPath: ->
-    url = driver.getUrl()
-    urlParse(url).path
-
-  waitForUrl: (url, query, timeout) ->
-    if typeof query is 'number'
-      timeout = query
-    else
-      url = makeUrlRegExp url, query
-    waitFor(url, 'Url', (=> driver.getUrl()), timeout ? 5000)
-
-  waitForPath: (url, timeout=5000) ->
-    waitFor(url, 'Path', (=> @getPath()), timeout)
+  new RegExp url
