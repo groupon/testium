@@ -219,9 +219,9 @@ Method | Description
 `browser.assert.elementLacksText(selector, text)` | Throws exceptions if selector doesn't match a single node, or that node does contain the given text. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails. Returns the element.
 `browser.assert.elementHasValue(selector, text)` | Throws exceptions if selector doesn't match a single node, or that node's value does not contain the given text. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails. Returns the element.
 `browser.assert.elementLacksValue(selector, text)` | Throws exceptions if selector doesn't match a single node, or that node's value does contain the given text. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails. Returns the element.
-`browser.assert.elementIsVisible(selector)` | Throws exceptions if selector doesn't exist or is not visible.
-`browser.assert.elementNotVisible(selector)` | Throws exceptions if selector doesn't exist or is visible.
-`browser.assert.elementExists(selector)` | Throws exceptions if selector doesn't exist.
+`browser.assert.elementIsVisible(selector)` | Throws exceptions if selector doesn't exist or is not visible. Returns the element.
+`browser.assert.elementNotVisible(selector)` | Throws exceptions if selector doesn't exist or is visible. Returns the element.
+`browser.assert.elementExists(selector)` | Throws exceptions if selector doesn't exist. Returns the element.
 `browser.assert.elementDoesntExist(selector)` | Throws exceptions if selector exists.
 `browser.assert.httpStatus(statusCode)` | Throws exceptions if current status code is not equal to the provided statusCode.
 `browser.assert.imgLoaded(selector)` | Throws exceptions if selector doesn't match a single `<img>` element that has both loaded and been decoded successfully. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails.
