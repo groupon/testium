@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 waitFor = require './wait'
 urlParse = require('url').parse
 makeUrlRegExp = require './makeUrlRegExp'
+{isObject} = require 'underscore'
 {hasType} = require 'assertive'
 
 module.exports = (driver) ->
@@ -68,7 +69,7 @@ module.exports = (driver) ->
   waitForUrl: (url, query, timeout) ->
     if typeof query is 'number'
       timeout = query
-    else
+    else if isObject query
       url = makeUrlRegExp url, query
     waitFor(url, 'Url', (=> driver.getUrl()), timeout ? 5000)
 
