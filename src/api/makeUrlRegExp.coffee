@@ -32,8 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {isRegExp} = require 'underscore'
 
-quoteRegExp = (s) ->
-  s.replace /[-\\\/\[\]{}()*+?.^$|]/g, '\\$&'
+quoteRegExp = (string) ->
+  string.replace /[-\\\/\[\]{}()*+?.^$|]/g, '\\$&'
 
 bothCases = (alpha) ->
   up = alpha.toUpperCase()
