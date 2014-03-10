@@ -35,21 +35,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 quoteRegExp = (s) ->
   s.replace /[-\\\/\[\]{}()*+?.^$|]/g, '\\$&'
 
-uriComponent = (s) -> # match a URI-encoded or non-URI-encoded string
-  quoteRegExp(encodeURIComponent s).replace /%([0-9a-f]{2})/gi, (all, hex) ->
-    character = quoteRegExp String.fromCharCode parseInt hex, 16
-    character += '|\\+'  if hex is '20' # and also handle ' ' = '+'
-    "(?:#{ all }|#{ character })"
+bothCases = (alpha) ->
+  up = alpha.toUpperCase()
+  dn = alpha.toLowerCase()
+  "[#{ up }#{ dn }]"
+
+isHexaAlphaRE = /[a-f]/gi
+
+matchCharacter = (uriEncoded, hex) ->
+  uriEncoded = uriEncoded.replace isHexaAlphaRE, bothCases
+  codepoint = parseInt hex, 16
+  character = String.fromCharCode codepoint
+  character = quoteRegExp character
+  character += '|\\+'  if character is ' ' # grok form-url-encoded spaces too
+  "(?:#{ uriEncoded }|#{ character })"
+
+encodedCharRE = /%([0-9a-f]{2})/gi
+
+# produce a regexp string that matches a URI-encoded or non-URI-encoded string
+matchURI = (stringOrRegExp) ->
+  if isRegExp stringOrRegExp # just strip literal /s (and trailing flags) flags
+    return stringOrRegExp.toString().replace /^\/|\/\w*$/g, ''
+
+  fullyEncoded = encodeURIComponent stringOrRegExp
+  quoteRegExp(fullyEncoded).replace encodedCharRE, matchCharacter
 
 module.exports = (url, query = {}) ->
-  url = quoteRegExp url
+  url = matchURI url
 
   for own key, val of query
-    key = uriComponent key
-    if isRegExp val # splice in the regexp into our regexp
-      val = val.toString().slice 1, -1
-    else
-      val = uriComponent val
+    key = matchURI key
+    val = matchURI val
     # match every query param via a clever positive look-ahead hack
     url += "(?=(?:\\?|.*&)#{ key }=#{ val })"
 
