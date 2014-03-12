@@ -30,48 +30,43 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-waitFor = require './wait'
-urlParse = require('url').parse
-makeUrlRegExp = require './makeUrlRegExp'
-{isObject} = require 'underscore'
-{hasType} = require 'assertive'
+{isRegExp} = require 'underscore'
 
-module.exports = (driver) ->
-  navigateTo: (url, options) ->
-    hasType 'navigateTo(url) - requires (String) url', String, url
+quoteRegExp = (string) ->
+  string.replace /[-\\\/\[\]{}()*+?.^$|]/g, '\\$&'
 
-    options ?= {}
-    options.url = url
+bothCases = (alpha) ->
+  up = alpha.toUpperCase()
+  dn = alpha.toLowerCase()
+  "[#{ up }#{ dn }]"
 
-    hasProtocol = /^[^:\/?#]+:\/\//
-    unless hasProtocol.test url
-      url = "#{@urlRoot}#{url}"
+isHexaAlphaRE = /[a-f]/gi
 
-    driver.http.post "#{@proxyCommandRoot}/new-page", options
+matchCharacter = (uriEncoded, hex) ->
+  uriEncoded = uriEncoded.replace isHexaAlphaRE, bothCases
+  codepoint = parseInt hex, 16
+  character = String.fromCharCode codepoint
+  character = quoteRegExp character
+  character += '|\\+'  if character is ' ' # grok form-url-encoded spaces too
+  "(?:#{ uriEncoded }|#{ character })"
 
-    # WebDriver does nothing if currentUrl is the same as targetUrl
-    currentUrl = driver.getUrl()
-    if currentUrl == url
-      driver.refresh()
-    else
-      driver.navigateTo(url)
+encodedCharRE = /%([0-9a-f]{2})/gi
 
-  refresh: ->
-    driver.refresh()
+# produce a regexp string that matches a URI-encoded or non-URI-encoded string
+matchURI = (stringOrRegExp) ->
+  if isRegExp stringOrRegExp # just strip literal /s (and trailing flags) flags
+    return stringOrRegExp.toString().replace /^\/|\/\w*$/g, ''
 
-  getUrl: ->
-    driver.getUrl()
+  fullyEncoded = encodeURIComponent stringOrRegExp
+  quoteRegExp(fullyEncoded).replace encodedCharRE, matchCharacter
 
-  getPath: ->
-    url = driver.getUrl()
-    urlParse(url).path
+module.exports = (url, query = {}) ->
+  url = matchURI url
 
-  waitForUrl: (url, query, timeout) ->
-    if typeof query is 'number'
-      timeout = query
-    else if isObject query
-      url = makeUrlRegExp url, query
-    waitFor(url, 'Url', (=> driver.getUrl()), timeout ? 5000)
+  for own key, val of query
+    key = matchURI key
+    val = matchURI val
+    # match every query param via a clever positive look-ahead hack
+    url += "(?=(?:\\?|.*&)#{ key }=#{ val })"
 
-  waitForPath: (url, timeout=5000) ->
-    waitFor(url, 'Path', (=> @getPath()), timeout)
+  new RegExp url
