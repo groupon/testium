@@ -2,6 +2,7 @@
   "name": "testium",
   "version": "1.3.6",
   "description": "Synchronous integration testing with Node.js bindings for WebDriver",
+  "license" : "BSD-3-Clause",
   "keywords": [
     "testing",
     "selenium",
