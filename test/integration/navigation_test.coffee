@@ -9,6 +9,18 @@ describe 'navigation', ->
     @browser.navigateTo '/'
     @browser.assert.httpStatus 200
 
+  it 'with a query arg', ->
+    @browser.navigateTo '/', query: { 'a b': 'München', x: 0 }
+    @browser.assert.httpStatus 200
+
+    @browser.waitForUrl 'http://127.0.0.1:4445/?a%20b=M%C3%BCnchen&x=0', 100
+
+  it 'with a query string and query arg', ->
+    @browser.navigateTo '/?x=0', query: { 'a b': 'München' }
+    @browser.assert.httpStatus 200
+
+    @browser.waitForUrl 'http://127.0.0.1:4445/?x=0&a%20b=M%C3%BCnchen', 100
+
   it 'by clicking a link', ->
     @browser.navigateTo '/'
     @browser.assert.httpStatus 200

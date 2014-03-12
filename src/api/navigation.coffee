@@ -30,15 +30,22 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+qs = require 'querystring'
 waitFor = require './wait'
 urlParse = require('url').parse
 makeUrlRegExp = require './makeUrlRegExp'
-{isObject} = require 'underscore'
+{isObject, omit} = require 'underscore'
 {hasType} = require 'assertive'
 
 module.exports = (driver) ->
   navigateTo: (url, options) ->
     hasType 'navigateTo(url) - requires (String) url', String, url
+    query = options?.query
+    if query?
+      options = omit options, 'query'
+      hasType 'navigateTo(url, {query}) - requires (Object) query', Object, query
+      sep = if /\?/.test url then '&' else '?'
+      url += sep + qs.encode query
 
     options ?= {}
     options.url = url
