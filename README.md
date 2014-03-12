@@ -151,7 +151,7 @@ before setting up an actual test.
 
 Method | Description
 :----- | :----------
-`browser.navigateTo(url, options)` | Navigates the browser to the specificed relative or absolute url. If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`, where `applicatioAnPort` is passed in to the options for `testium.runTests`. `options` can include a `headers` param with headers to pass along with the request.
+`browser.navigateTo(url, options)` | Navigates the browser to the specificed relative or absolute url. If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`, where `applicationPort` is passed in to the options for `testium.runTests`. `options` can include a `headers` param with headers to pass along with the request, and a `query` object with query arguments to add.
 `browser.refresh()` | Refresh the current page.
 `browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports. 
 `browser.getElement(cssSelector)` | Finds an element on the page using the `cssSelector` and returns an Element.
