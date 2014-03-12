@@ -43,7 +43,9 @@ module.exports = (driver) ->
     query = options?.query
     if query?
       options = omit options, 'query'
-      hasType 'navigateTo(url, {query}) - requires (Object) query', Object, query
+      hasType '''
+        navigateTo(url, {query}) - query must be an Object, if provided
+      ''', Object, query
       sep = if /\?/.test url then '&' else '?'
       url += sep + qs.encode query
 
