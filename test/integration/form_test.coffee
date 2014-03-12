@@ -24,11 +24,19 @@ describe 'form', ->
     value = element.get 'value'
     assert.equal 'Input value was not typed', 'new stuff', value
 
-  it "can replace the input's value", ->
+  it.only "can replace the input's value", ->
     element = @browser.getElement '#text-input'
+    element = @browser.getElement '#text-input'
+    element = @browser.getElement '#text-input2'
+    element = @browser.getElement '#text-input3'
+    element = @browser.getElement '#text-input'
+
     value = element.get 'value'
     assert.notEqual 'Input value is already empty', '', value
-    @browser.clearAndType '#text-input', 'new stuff2'
+    @browser.clear '#text-input'
+    value = element.get 'value'
+    #@browser.clear '#text-input'
+    #@browser.type '#text-input', 'new stuff2'
     value = element.get 'value'
     assert.equal 'Input value was not typed', 'new stuff2', value
 

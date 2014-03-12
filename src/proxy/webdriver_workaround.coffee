@@ -34,6 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # This module stores those in a special cookie that can be read
 # from normal WebDriver methods.
 
+log = require './log'
+
 encode = (string) ->
   (new Buffer string).toString('base64')
 
@@ -48,7 +50,7 @@ module.exports = (response) ->
 
   type = response.headers["content-type"]
   if response.headers["Set-Cookie"]
-    console.log "Existing Set-Cookie Header!! #{response.headers["Set-Cookie"]}"
+    log "Existing Set-Cookie Header!! #{response.headers["Set-Cookie"]}"
 
   response.headers['Cache-Control'] = 'no-store'
   response.headers["Set-Cookie"] = buildCookie(response.headers, response.statusCode)
@@ -56,8 +58,8 @@ module.exports = (response) ->
   if response.statusCode >= 400
     # force to 200 because phantomjs doesn't like
     # 400 and 500 status codes when taking screenshots
-    console.log "<-- forcing status code from #{response.statusCode} to 200"
+    log "<-- forcing status code from #{response.statusCode} to 200"
     response.statusCode = 200
 
-  console.log "<-- Set-Cookie: " + response.headers["Set-Cookie"]
+  log "<-- Set-Cookie: " + response.headers["Set-Cookie"]
 

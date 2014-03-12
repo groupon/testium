@@ -30,9 +30,10 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-http = require('http')
-url = require('url')
-concat = require('concat-stream')
+http = require 'http'
+url = require 'url'
+concat = require 'concat-stream'
+log = require './log'
 
 buildRemoteRequestOptions = (request, toPort) ->
   uri = url.parse(request.url)
@@ -60,10 +61,10 @@ firstPage = true
 newPageOptions = {}
 markNewPage = (options, response) ->
   newPageOptions = normalizeOptions(options)
-  console.log "\n[System] Marking new page request with options: #{JSON.stringify newPageOptions}"
+  log "[SYSTEM] - Marking new page request with options: #{JSON.stringify newPageOptions}"
 
   for request in openRequests
-    console.log '[System] Aborting request for: ' + request.path
+    log '[SYSTEM] - Aborting request for: ' + request.path
     request.aborted = true
     request.abort()
   openRequests = []
@@ -78,7 +79,7 @@ markRequestClosed = (targetRequest) ->
     request != targetRequest
 
 commandError = (url, response) ->
-  console.log "[System] Unknown command: #{url}"
+  log "[SYSTEM] - Unknown command: #{url}"
   response.statusCode = 500
   response.writeHead response.statusCode, response.headers
   response.end()
@@ -102,13 +103,13 @@ modifyRequest = (request, options) ->
 proxyRequest = (request, response, modifyResponse, toPort) ->
   if firstPage
     firstPage = false
-    console.log "--> #{request.method} #{request.url} (prime the browser)"
+    log "--> #{request.method} #{request.url} (prime the browser)"
     return success(response)
 
-  console.log "--> #{request.method} #{request.url}"
+  log "--> #{request.method} #{request.url}"
 
   remoteRequestOptions = buildRemoteRequestOptions(request, toPort)
-  console.log "    #{JSON.stringify remoteRequestOptions}"
+  log "    #{JSON.stringify remoteRequestOptions}"
 
   if isNewPage(request.url)
     modifyRequest(remoteRequestOptions, newPageOptions)
@@ -121,7 +122,7 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
 
     response.writeHead remoteResponse.statusCode, remoteResponse.headers
     remoteResponse.on 'end', ->
-      console.log "<-- #{response.statusCode} #{request.url}"
+      log "<-- #{response.statusCode} #{request.url}"
 
     remoteResponse.pipe response
 
@@ -133,8 +134,8 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
     if isNewPage(request.url)
       modifyResponse(response)
 
-    console.log error.stack
-    console.log '<-- ' + response.statusCode + ' ' + request.url
+    log error.stack
+    log '<-- ' + response.statusCode + ' ' + request.url
 
     response.writeHead response.statusCode, response.headers
     response.end()
@@ -149,7 +150,7 @@ module.exports = (fromPort, toPort, commandPort, modifyResponse) ->
   server = http.createServer (request, response) ->
     proxyRequest(request, response, modifyResponse, toPort)
   server.listen fromPort
-  console.log "Listening on port #{fromPort} and proxying to #{toPort}."
+  log "[SYSTEM] - Listening on port #{fromPort} and proxying to #{toPort}."
 
   commandServer = http.createServer (request, response) ->
     request.pipe concat (body) ->
@@ -157,5 +158,5 @@ module.exports = (fromPort, toPort, commandPort, modifyResponse) ->
         options = JSON.parse(body.toString())
       proxyCommand(request.url, options, response)
   commandServer.listen commandPort
-  console.log "Listening for commands on port #{commandPort}."
+  log "[SYSTEM] - Listening for commands on port #{commandPort}."
 

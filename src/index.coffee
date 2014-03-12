@@ -30,52 +30,26 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-assert = require 'assertive'
-async = require 'async'
-{spawn} = require 'child_process'
-selenium = require './selenium'
 {getBrowser} = require './test_setup/browser'
+assert = require 'assertive'
+{spawn} = require 'child_process'
 
-runTests = (options={}, callback) ->
-  proc = spawn 'node', ['./test_runner/index.js'],
-    cwd: __dirname
-    stdio: [process.stdin, process.stdout, process.stderr, 'ipc']
-
-  error = null
-  proc.on 'error', (err) ->
-    error = err
-
-  proc.on 'exit', (exitCode) ->
-    callback(error, exitCode)
-
-  proc.send(options)
-
-startSelenium = ({seleniumServer, javaHeapSize, logDirectory, applicationPort}, callback) ->
-  if seleniumServer
-    selenium.start seleniumServer, javaHeapSize, logDirectory, applicationPort, callback
-  else
-    binPath = "#{__dirname}/../bin"
-    selenium.ensure binPath, (error) ->
-      return callback(error) if error?
-      selenium.start null, javaHeapSize, logDirectory, applicationPort, callback
-
-run = (options={}, callback) ->
+run = (options, callback) ->
   invocation = 'run(options, callback)'
   assert.truthy "#{invocation} - requires options.applicationPort", options.applicationPort
   assert.truthy "#{invocation} - requires options.tests", options.tests
-  assert.truthy "#{invocation} - requires callback", callback
 
-  startSelenium options, (error, serverUrl) ->
-    return callback(error) if error?
+  proc = spawn 'node', ['./test_runner.js'],
+    cwd: __dirname
+    stdio: [process.stdin, process.stdout, process.stderr, 'ipc']
 
-    options.seleniumServer = serverUrl
-    runTests options, (error, failedTests) ->
-      selenium.cleanup (cleanupError) ->
-        error ?= cleanupError
-        if error? && cleanupError?
-          error.inner = cleanupError
-        callback(error, failedTests)
+  error = undefined
+  proc.on 'error', (err) ->
+    error = err
+  proc.on 'exit', (exitCode) ->
+    callback(error, exitCode)
 
-cleanup = selenium.cleanup
-module.exports = { run, cleanup, getBrowser }
+  proc.send options
+
+module.exports = { run, getBrowser }
 

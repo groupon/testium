@@ -32,14 +32,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # this module contains otherwise global scope access
 
-values = {}
+{extend} = require 'underscore'
+
+values =
+  browser: 'phantomjs'
+  http: {}
 
 module.exports =
   set: (options) ->
-    values.logDirectory = options.logDirectory
-    values.screenshotDirectory = options.screenshotDirectory
-    values.browser = options.browser
-    values.http = options.http || {}
-    values.seleniumServer = options.seleniumServer
+    extend values, options
 
   get: -> values
+

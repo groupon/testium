@@ -37,7 +37,7 @@ runTests = (callback) ->
       browser: browser
       http:
         timeout: 60000
-        connectTimeout: 20000
+        connectTimeout: 20000 # TODO: doesn't change the timeout
     testium.run options, browserTested
 
   browserTests = browsers.map testBrowser

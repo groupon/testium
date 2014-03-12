@@ -32,25 +32,50 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {takeScreenshotOnFailure} = require './screenshot'
 {getBrowser} = require './browser'
-browser = getBrowser()
+store = require './store'
 
 exit = (done) ->
-  if browser?
-    browser.close(done)
-    browser = undefined
-  else
-    done()
+  selenium.cleanup ->
+    if browser?
+      browser.close(done)
+      browser = undefined
+    else
+      done()
 
-beforeAll = ->
-  # first page load is guranteed
-  # by the proxy to be a success
-  # this allows us to set cookies
-  # right away in tests
-  browser.navigateTo '/testium-priming-load'
+selenium = require '../selenium'
+startSelenium = ({seleniumServer, javaHeapSize, logDirectory, applicationPort}, callback) ->
+  if seleniumServer
+    selenium.start seleniumServer, javaHeapSize, logDirectory, applicationPort, callback
+  else
+    binPath = "#{__dirname}/../bin"
+    selenium.ensure binPath, (error) ->
+      return callback(error) if error?
+      selenium.start null, javaHeapSize, logDirectory, applicationPort, callback
+
+
+beforeAll = (options) ->
+  (done) ->
+    startSelenium options, (error, serverUrl) ->
+      return done(error) if error?
+
+      store.set {seleniumServer: serverUrl}
+
+      # first page load is guranteed
+      # by the proxy to be a success
+      # this allows us to set cookies
+      # right away in tests
+      browser = getBrowser()
+      browser.navigateTo '/testium-priming-load'
+
+      done()
+
+afterAll = (done) ->
+  exit(done)
 
 afterEach = (screenshotDirectory) ->
   ->
+    browser = getBrowser()
     takeScreenshotOnFailure(screenshotDirectory, @currentTest, browser)
 
-module.exports = { beforeAll, afterEach, exit }
+module.exports = { beforeAll, afterAll, afterEach, exit }
 

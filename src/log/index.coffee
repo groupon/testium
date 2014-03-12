@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 fs = require 'fs'
 mkdirp = require 'mkdirp'
+moment = require 'moment'
 logError = require './error'
 
 DEFAULT_LOG_DIRECTORY = "#{__dirname}/../../log"
@@ -49,15 +50,17 @@ module.exports = (logDirectory=DEFAULT_LOG_DIRECTORY) ->
     """Buffer("#{ value.toString() }")"""
 
   log = (message) ->
-    message = message + '\n'
+    time = moment().format('HH:mm:ss.SSS')
+    message = "#{time} #{message}\n"
     logStream.write(message)
     verboseLogStream.write(message)
 
   log.error = logError
 
   log.response = (response) ->
+    time = moment().format('HH:mm:ss.SSS')
     response = JSON.stringify response, stringifyBuffers
-    verboseLogStream.write "----> #{response}"
+    verboseLogStream.write "#{time} ----> #{response}"
     if response.data?.length
       verboseLogStream.write(response.data.toString())
 

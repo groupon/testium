@@ -30,11 +30,29 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{beforeAll, afterEach, exit} = require './hooks'
-logError = require '../log/error'
+{beforeAll, afterEach, afterAll, exit} = require './hooks'
 store = require './store'
-{screenshotDirectory} = store.get()
+options = store.get()
 
+
+BROWSERS = [
+  'phantomjs'
+  'chrome'
+  'firefox'
+  'htmlunit'
+  'internet explorer'
+  'iphone'
+]
+validateBrowser = (browser) ->
+  return if browser in BROWSERS
+  throw new Error "Browser not supported by Testium: #{browser}"
+
+validateBrowser(options.browser)
+
+
+
+{exit} = require './hooks'
+logError = require '../log/error'
 processExit = (error) ->
   logError error
 
@@ -49,10 +67,14 @@ processExit = (error) ->
   setTimeout (->
     process.exit(-4)
   ), 1000
+process.on 'uncaughtException', processExit
+
+
+
+
 
 global.exitMocha = exit
-global.before(beforeAll)
-global.afterEach(afterEach(screenshotDirectory))
-global.after(exit)
-process.on 'uncaughtException', processExit
+global.before(beforeAll(options))
+global.afterEach(afterEach(options.screenshotDirectory))
+global.after(afterAll)
 

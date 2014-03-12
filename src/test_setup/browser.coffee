@@ -59,3 +59,4 @@ module.exports.getBrowser = ->
     width: 1024
 
   browserInstance
+

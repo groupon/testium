@@ -134,6 +134,6 @@ createLog = (logPath) ->
   stream = createWriteStream logPath
   stream.log = (message) ->
     timestamp = moment().format('HH:mm:ss.SSS')
-    @write "[SERVICE] #{timestamp} - #{message}\n"
+    @write "#{timestamp} [SERVICE] - #{message}\n"
   stream
 
