@@ -5,6 +5,10 @@ to download the latest versions
 of the selenium standalone server
 and the chromedriver.
 
+Keep up to date with changes
+by checking the
+[releases](https://github.com/groupon-testium/selenium-download/releases).
+
 ## example
 
 ```coffee
