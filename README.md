@@ -2,10 +2,17 @@
 
 Testium is a testing platform focused on providing a simple,
 but effective,
-platform for testing your code in different browsers (via Selenium)
+platform for testing your code
+in different browsers (via Selenium)
 and headlessly (via PhantomJS).
 It uses [webdriver-http-sync](https://github.com/groupon/webdriver-http-sync)
-in order to communicate using the WebDriver protocol to a selenium server.
+in order to communicate
+(using the WebDriver protocol)
+with a selenium server.
+
+Keep up to date with changes
+by checking the
+[releases](https://github.com/groupon-testium/testium/releases).
 
 [Demo Video](https://www.youtube.com/watch?v=qmPlM_SqZes)
 
