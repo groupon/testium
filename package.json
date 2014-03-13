@@ -2,6 +2,7 @@
   "name": "selenium-download",
   "version": "1.0.1",
   "description": "allow downloading of latest selenium standalone server and chromedriver",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "git://github.com/groupon-testium/selenium-download"
