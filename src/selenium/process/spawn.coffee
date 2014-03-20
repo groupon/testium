@@ -30,42 +30,26 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-portscanner = require 'portscanner'
-logError = require '../../log/error'
+{spawn} = require 'child_process'
 
-isAvailable = (port, callback) ->
-  portscanner.checkPortStatus port, '127.0.0.1', (error, status) ->
-    return callback(error) if error?
-    callback null, (status == 'closed')
+module.exports = (command, args, name, logStream) ->
+  proc = spawn command, args
 
-procError = (proc) ->
-  error = new Error "Process \"#{proc.name}\" crashed. See log at: #{proc.logPath}."
-  error.stderr = proc.error
-  error
+  proc.alive = true
+  proc.name = name
+  proc.logPath = logStream.path
 
-waitFor = (proc, port, timeout, callback) ->
-  if !proc.alive
-    error = procError(proc)
-    return callback(error)
+  proc.stdout.pipe logStream
+  proc.stderr.pipe logStream
 
-  startTime = Date.now()
-  check = ->
-    portscanner.checkPortStatus port, '127.0.0.1', (error, status) ->
-      logError error.message if error?
+  error = ''
+  proc.stderr.on 'data', (data) ->
+    error += data.toString()
 
-      if !proc.alive
-        error = procError(proc)
-        return callback(error)
+  proc.on 'exit', (exitCode) ->
+    if exitCode != 0
+      proc.error = error
+    proc.alive = false
 
-      if error? || status == 'closed'
-        if (Date.now() - startTime) >= timeout
-          timedOut = true
-          return callback(null, timedOut)
-        setTimeout(check, 100)
-      else
-        callback()
-
-  check()
-
-module.exports = {isAvailable, waitFor}
+  proc
 

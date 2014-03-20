@@ -53,6 +53,10 @@ testOptions =
   browser: 'phantomjs' # chrome | firefox | internet explorer
 
 testium.run testOptions, (error, exitCode) ->
+  # error might have an extra property `.stderr`
+  # that captures the stderr of a crashed
+  # internal process
+
   # handle result
 ```
 

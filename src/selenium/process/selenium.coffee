@@ -34,7 +34,7 @@ SELENIUM_PORT = 4444
 SELENIUM_TIMEOUT = 90000 # 90 seconds
 
 path = require 'path'
-{spawn} = require 'child_process'
+spawn = require './spawn'
 port = require './port'
 
 createSeleniumArguments = ->
@@ -54,12 +54,8 @@ spawnProcess = (logStream, javaHeapSize) ->
   jarPath = path.join __dirname, '../../../bin/selenium.jar'
   javaHeapArg = "-Xmx#{javaHeapSize}m"
   args = [javaHeapArg, '-jar', jarPath].concat createSeleniumArguments()
-  seleniumProcess = spawn 'java', args
 
-  seleniumProcess.stdout.pipe logStream
-  seleniumProcess.stderr.pipe logStream
-
-  seleniumProcess
+  spawn 'java', args, 'selenium', logStream
 
 module.exports = (logStream, javaHeapSize=256) ->
   (callback) ->
@@ -74,7 +70,8 @@ module.exports = (logStream, javaHeapSize=256) ->
       seleniumProcess = spawnProcess(logStream, javaHeapSize)
 
       logStream.log "waiting for selenium to listen on port #{SELENIUM_PORT}"
-      port.waitFor SELENIUM_PORT, SELENIUM_TIMEOUT, (timedOut) ->
+      port.waitFor seleniumProcess, SELENIUM_PORT, SELENIUM_TIMEOUT, (error, timedOut) ->
+        return callback(error) if error?
         if timedOut
           return callback new Error "Timeout occurred waiting for selenium to be ready on port #{SELENIUM_PORT}. Check the log at: #{logStream.path}"
 
