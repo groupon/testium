@@ -50,17 +50,22 @@ createSeleniumArguments = ->
     '-debug'
   ]
 
+spawnProcess = (logStream, javaHeapSize) ->
+  jarPath = path.join __dirname, '../../../bin/selenium.jar'
+  javaHeapArg = "-Xmx#{javaHeapSize}m"
+  args = [javaHeapArg, '-jar', jarPath].concat createSeleniumArguments()
+  seleniumProcess = spawn 'java', args
+
+  seleniumProcess.stdout.pipe logStream
+  seleniumProcess.stderr.pipe logStream
+
+  seleniumProcess
+
 module.exports = (logStream, javaHeapSize=256) ->
   (callback) ->
     logStream.log "Starting selenium"
 
-    jarPath = path.join __dirname, '../../../bin/selenium.jar'
-    javaHeapArg = "-Xmx#{javaHeapSize}m"
-    args = [javaHeapArg, '-jar', jarPath].concat createSeleniumArguments()
-    seleniumProcess = spawn 'java', args
-
-    seleniumProcess.stdout.pipe logStream
-    seleniumProcess.stderr.pipe logStream
+    seleniumProcess = spawnProcess(logStream, javaHeapSize)
 
     logStream.log "waiting for selenium to listen on port #{SELENIUM_PORT}"
     waitForPort SELENIUM_PORT, SELENIUM_TIMEOUT, (timedOut) ->

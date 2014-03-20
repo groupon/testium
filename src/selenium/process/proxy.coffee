@@ -37,15 +37,20 @@ path = require 'path'
 {spawn} = require 'child_process'
 waitForPort = require './wait_for_port'
 
+spawnProcess = (logStream, applicationPort) ->
+  proxyPath = path.join __dirname, "../../proxy/index.js"
+  proxyProcess = spawn 'node', [proxyPath, applicationPort]
+
+  proxyProcess.stdout.pipe logStream
+  proxyProcess.stderr.pipe logStream
+
+  proxyProcess
+
 module.exports = (applicationPort, logStream) ->
   (callback) ->
     logStream.log "Starting webdriver proxy"
 
-    proxyPath = path.join __dirname, "../../proxy/index.js"
-    proxyProcess = spawn 'node', [proxyPath, applicationPort]
-
-    proxyProcess.stdout.pipe logStream
-    proxyProcess.stderr.pipe logStream
+    proxyProcess = spawnProcess(logStream, applicationPort)
 
     logStream.log "waiting for webdriver proxy to listen on port #{PROXY_PORT} and proxy to #{applicationPort}"
     waitForPort PROXY_PORT, PROXY_TIMEOUT, (timedOut) ->
@@ -54,3 +59,4 @@ module.exports = (applicationPort, logStream) ->
 
       logStream.log "webdriver proxy is ready!"
       callback(null, proxyProcess)
+
