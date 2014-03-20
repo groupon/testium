@@ -39,7 +39,14 @@ port = require './port'
 
 createSeleniumArguments = ->
   chromeDriverPath = path.join __dirname, '../../../bin/chromedriver'
-  chromeArgs = '--disable-application-cache --media-cache-size=1 --disk-cache-size=1 --disk-cache-dir=/dev/null --disable-cache --disable-desktop-notifications'
+  chromeArgs = [
+    '--disable-application-cache'
+    '--media-cache-size=1'
+    '--disk-cache-size=1'
+    '--disk-cache-dir=/dev/null'
+    '--disable-cache'
+    '--disable-desktop-notifications'
+  ].join(' ')
   firefoxProfilePath = path.join __dirname, './firefox_profile.js'
 
   [
