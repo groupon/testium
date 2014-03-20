@@ -30,26 +30,14 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-cleanup = require './cleanup'
-startProcesses = require './process'
-ensureBinaries = (require 'selenium-download').ensure
+moment = require 'moment'
+{createWriteStream} = require 'fs'
 
-seleniumProcess = null
-proxyProcess = null
-
-module.exports =
-  ensure: ensureBinaries
-
-  cleanup: (callback) ->
-    cleanup(seleniumProcess, proxyProcess, callback)
-
-  start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
-    startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
-      seleniumProcess = processes.selenium
-      proxyProcess = processes.proxy
-
-      return callback(error) if error?
-
-      seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
-      callback(null, seleniumServerUrl)
+module.exports = (logPath) ->
+  stream = createWriteStream logPath
+  stream.path = logPath
+  stream.log = (message) ->
+    timestamp = moment().format('HH:mm:ss.SSS')
+    @write "[SERVICE] #{timestamp} - #{message}\n"
+  stream
 

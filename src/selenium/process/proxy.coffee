@@ -30,26 +30,41 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-cleanup = require './cleanup'
-startProcesses = require './process'
-ensureBinaries = (require 'selenium-download').ensure
+PROXY_PORT = 4445
+PROXY_TIMEOUT = 1000 # 1 second
 
-seleniumProcess = null
-proxyProcess = null
+path = require 'path'
+spawn = require './spawn'
+port = require './port'
 
-module.exports =
-  ensure: ensureBinaries
+spawnProcess = (logStream, applicationPort) ->
+  proxyPath = path.join __dirname, "../../proxy/index.js"
+  args = [proxyPath, applicationPort]
 
-  cleanup: (callback) ->
-    cleanup(seleniumProcess, proxyProcess, callback)
+  spawn 'node', args, 'testium proxy', logStream
 
-  start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
-    startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
-      seleniumProcess = processes.selenium
-      proxyProcess = processes.proxy
+module.exports = (applicationPort, logStream) ->
+  (parallelCallback) ->
+    callback = (error, process) ->
+      # skip short circuiting of async.parallel
+      parallelCallback(null, {error, process})
 
+    logStream.log "Starting webdriver proxy"
+
+    port.isAvailable PROXY_PORT, (error, isAvailable) ->
       return callback(error) if error?
 
-      seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
-      callback(null, seleniumServerUrl)
+      if !isAvailable
+        return callback new Error "Port #{PROXY_PORT} (requested by testium proxy) is already in use."
+
+      proxyProcess = spawnProcess(logStream, applicationPort)
+
+      logStream.log "waiting for webdriver proxy to listen on port #{PROXY_PORT} and proxy to #{applicationPort}"
+      port.waitFor proxyProcess, PROXY_PORT, PROXY_TIMEOUT, (error, timedOut) ->
+        return callback(error) if error?
+        if timedOut
+          return callback new Error "Timeout occurred waiting for the testium proxy to be ready on port #{PROXY_PORT}. Check the log at: #{logStream.path}"
+
+        logStream.log "webdriver proxy is ready!"
+        callback(null, proxyProcess)
 

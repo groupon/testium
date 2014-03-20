@@ -27,7 +27,7 @@ ensureEmpty = (path) ->
 
 runTests = (callback) ->
   testBrowser = (browser) -> (browserTested) ->
-    console.error "\nTesting against: #{browser}\n"
+    console.log "\nTesting against: #{browser}\n"
     options =
       tests: TEST_DIRECTORY
       screenshotDirectory: SCREENSHOT_DIRECTORY
@@ -56,9 +56,17 @@ if process.env.BROWSER
 ensureEmpty LOG_DIRECTORY
 ensureEmpty SCREENSHOT_DIRECTORY
 
+indent = (string) ->
+  lines = string.split('\n')
+  lines = lines.map (line) -> "  #{line}"
+  lines.join '\n'
+
 testApp.listen 4003, ->
-  runTests (err, failedTestCounts) ->
-    throw err if err
+  runTests (error, failedTestCounts) ->
+    if error?
+      console.error error.stack
+      console.error indent(error.stderr) if error.stderr?
+      process.exit(1)
 
     failedTests = 0
     browsers.forEach (browser, index) ->
@@ -71,3 +79,4 @@ testApp.listen 4003, ->
       console.error "All browsers: #{failedTests} failed test(s)"
       code = if failedTests == 0 then 0 else 1
       process.exit code
+

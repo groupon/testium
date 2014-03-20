@@ -30,26 +30,33 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-cleanup = require './cleanup'
-startProcesses = require './process'
-ensureBinaries = (require 'selenium-download').ensure
+DEFAULT_LOG_DIRECTORY = "#{__dirname}/../../../log"
 
-seleniumProcess = null
-proxyProcess = null
+mkdirp = require 'mkdirp'
+async = require 'async'
+startSelenium = require './selenium'
+startProxy = require './proxy'
+createLog = require './create_log'
 
-module.exports =
-  ensure: ensureBinaries
+module.exports = (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
+  logDirectory ?= DEFAULT_LOG_DIRECTORY
+  mkdirp.sync logDirectory
 
-  cleanup: (callback) ->
-    cleanup(seleniumProcess, proxyProcess, callback)
+  seleniumLog = createLog("#{logDirectory}/selenium.log")
+  proxyLog = createLog("#{logDirectory}/proxy.log")
 
-  start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
-    startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
-      seleniumProcess = processes.selenium
-      proxyProcess = processes.proxy
+  tasks =
+    proxy: startProxy(applicationPort, proxyLog)
 
-      return callback(error) if error?
+  if !seleniumServerUrl
+    tasks.selenium = startSelenium(seleniumLog, javaHeapSize)
 
-      seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
-      callback(null, seleniumServerUrl)
+  # ignoring the first arg (error)
+  # because it will short circuit the callback
+  async.parallel tasks, (dummySlot, results) ->
+    {proxy, selenium} = results
+    error = selenium.error || proxy.error
+    proxy = proxy.process
+    selenium = selenium.process
+    callback(error, {proxy, selenium})
 

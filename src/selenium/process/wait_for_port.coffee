@@ -30,26 +30,29 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-cleanup = require './cleanup'
-startProcesses = require './process'
-ensureBinaries = (require 'selenium-download').ensure
+portscanner = require 'portscanner'
+logError = require '../../log/error'
 
-seleniumProcess = null
-proxyProcess = null
+isAvailable = (port, callback) ->
+  portscanner.checkPortStatus port, '127.0.0.1', (error, status) ->
+    return callback(error) if error?
+    callback null, (status == 'closed')
 
-module.exports =
-  ensure: ensureBinaries
+waitFor = (port, timeout, callback) ->
+  startTime = Date.now()
+  check = ->
+    portscanner.checkPortStatus port, '127.0.0.1', (error, status) ->
+      logError error.message if error?
 
-  cleanup: (callback) ->
-    cleanup(seleniumProcess, proxyProcess, callback)
+      if error? || status == 'closed'
+        if (Date.now() - startTime) >= timeout
+          timedOut = true
+          return callback timedOut
+        setTimeout(check, 100)
+      else
+        callback()
 
-  start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
-    startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
-      seleniumProcess = processes.selenium
-      proxyProcess = processes.proxy
+  check()
 
-      return callback(error) if error?
-
-      seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
-      callback(null, seleniumServerUrl)
+module.exports = {isAvailable, waitFor}
 

@@ -30,26 +30,26 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-cleanup = require './cleanup'
-startProcesses = require './process'
-ensureBinaries = (require 'selenium-download').ensure
+{spawn} = require 'child_process'
 
-seleniumProcess = null
-proxyProcess = null
+module.exports = (command, args, name, logStream) ->
+  proc = spawn command, args
 
-module.exports =
-  ensure: ensureBinaries
+  proc.alive = true
+  proc.name = name
+  proc.logPath = logStream.path
 
-  cleanup: (callback) ->
-    cleanup(seleniumProcess, proxyProcess, callback)
+  proc.stdout.pipe logStream
+  proc.stderr.pipe logStream
 
-  start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
-    startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
-      seleniumProcess = processes.selenium
-      proxyProcess = processes.proxy
+  error = ''
+  proc.stderr.on 'data', (data) ->
+    error += data.toString()
 
-      return callback(error) if error?
+  proc.on 'exit', (exitCode) ->
+    if exitCode != 0
+      proc.error = error
+    proc.alive = false
 
-      seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
-      callback(null, seleniumServerUrl)
+  proc
 
