@@ -4,6 +4,7 @@ mkdirp = require 'mkdirp'
 assert = require 'assertive'
 testApp = require './app'
 testium = require '../lib/index'
+{format} = require 'format-error'
 
 TEST_DIRECTORY = "#{__dirname}/screenshot_integration"
 LOG_DIRECTORY = "#{__dirname}/screenshot_integration_log"
@@ -38,10 +39,10 @@ runTests = (callback) ->
   testium.run options, callback
 
 exit = (error) ->
-  console.error error if error?
+  console.error format(error) if error?
 
   testium.cleanup (error) ->
-    console.error error if error?
+    console.error format(error) if error?
     process.exit(-1)
 
 process.on 'uncaughtException', exit
@@ -67,8 +68,9 @@ testApp.listen 4003, ->
       console.error "SUCCESS: The expected screenshots were made."
     catch assertionError
       exitCode = 1
-      console.error assertionError.stack
+      console.error format(assertionError)
 
     deleteFolderRecursive SCREENSHOT_DIRECTORY
     testApp.kill ->
       process.exit exitCode
+

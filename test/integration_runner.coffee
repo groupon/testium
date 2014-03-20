@@ -3,6 +3,7 @@ mkdirp = require 'mkdirp'
 testApp = require './app'
 testium = require '../lib/index'
 {series} = require 'async'
+{format} = require 'format-error'
 
 TEST_DIRECTORY = "#{__dirname}/integration"
 LOG_DIRECTORY = "#{__dirname}/integration_log"
@@ -44,7 +45,7 @@ runTests = (callback) ->
   series browserTests, callback
 
 exit = (error) ->
-  console.error error.stack if error?
+  console.error format(error) if error?
   process.exit(-1)
 
 process.on 'uncaughtException', exit
@@ -56,16 +57,10 @@ if process.env.BROWSER
 ensureEmpty LOG_DIRECTORY
 ensureEmpty SCREENSHOT_DIRECTORY
 
-indent = (string) ->
-  lines = string.split('\n')
-  lines = lines.map (line) -> "  #{line}"
-  lines.join '\n'
-
 testApp.listen 4003, ->
   runTests (error, failedTestCounts) ->
     if error?
-      console.error error.stack
-      console.error indent(error.stderr) if error.stderr?
+      console.error format(error)
       process.exit(1)
 
     failedTests = 0
