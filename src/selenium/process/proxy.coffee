@@ -44,7 +44,11 @@ spawnProcess = (logStream, applicationPort) ->
   spawn 'node', args, 'testium proxy', logStream
 
 module.exports = (applicationPort, logStream) ->
-  (callback) ->
+  (parallelCallback) ->
+    callback = (error, process) ->
+      # skip short circuiting of async.parallel
+      parallelCallback(null, {error, process})
+
     logStream.log "Starting webdriver proxy"
 
     port.isAvailable PROXY_PORT, (error, isAvailable) ->

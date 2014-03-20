@@ -45,10 +45,10 @@ module.exports =
 
   start: (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, callback) ->
     startProcesses seleniumServerUrl, javaHeapSize, logDirectory, applicationPort, (error, processes) ->
-      return callback(error) if error?
-
       seleniumProcess = processes.selenium
       proxyProcess = processes.proxy
+
+      return callback(error) if error?
 
       seleniumServerUrl ?= 'http://127.0.0.1:4444/wd/hub'
       callback(null, seleniumServerUrl)

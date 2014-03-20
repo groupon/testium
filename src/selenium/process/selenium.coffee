@@ -58,7 +58,11 @@ spawnProcess = (logStream, javaHeapSize) ->
   spawn 'java', args, 'selenium', logStream
 
 module.exports = (logStream, javaHeapSize=256) ->
-  (callback) ->
+  (parallelCallback) ->
+    callback = (error, process) ->
+      # skip short circuiting of async.parallel
+      parallelCallback(null, {error, process})
+
     logStream.log "Starting selenium"
 
     port.isAvailable SELENIUM_PORT, (error, isAvailable) ->

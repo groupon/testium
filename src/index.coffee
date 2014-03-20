@@ -66,7 +66,12 @@ run = (options={}, callback) ->
   assert.truthy "#{invocation} - requires callback", callback
 
   startSelenium options, (error, serverUrl) ->
-    return callback(error) if error?
+    if error?
+      return selenium.cleanup (cleanupError) ->
+        error ?= cleanupError
+        if error? && cleanupError?
+          error.inner = cleanupError
+        callback(error) if error?
 
     options.seleniumServer = serverUrl
     runTests options, (error, failedTests) ->

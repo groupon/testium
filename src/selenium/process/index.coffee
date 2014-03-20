@@ -51,8 +51,12 @@ module.exports = (seleniumServerUrl, javaHeapSize, logDirectory, applicationPort
   if !seleniumServerUrl
     tasks.selenium = startSelenium(seleniumLog, javaHeapSize)
 
-  async.parallel tasks, (error, processes) ->
-    return callback(error) if error?
-
-    callback(null, processes)
+  # ignoring the first arg (error)
+  # because it will short circuit the callback
+  async.parallel tasks, (dummySlot, results) ->
+    {proxy, selenium} = results
+    error = selenium.error || proxy.error
+    proxy = proxy.process
+    selenium = selenium.process
+    callback(error, {proxy, selenium})
 
