@@ -35,7 +35,7 @@ SELENIUM_TIMEOUT = 90000 # 90 seconds
 
 path = require 'path'
 {spawn} = require 'child_process'
-waitForPort = require './wait_for_port'
+port = require './port'
 
 createSeleniumArguments = ->
   chromeDriverPath = path.join __dirname, '../../../bin/chromedriver'
@@ -65,13 +65,19 @@ module.exports = (logStream, javaHeapSize=256) ->
   (callback) ->
     logStream.log "Starting selenium"
 
-    seleniumProcess = spawnProcess(logStream, javaHeapSize)
+    port.isAvailable SELENIUM_PORT, (error, isAvailable) ->
+      return callback(error) if error?
 
-    logStream.log "waiting for selenium to listen on port #{SELENIUM_PORT}"
-    waitForPort SELENIUM_PORT, SELENIUM_TIMEOUT, (timedOut) ->
-      if timedOut
-        return callback new Error "Timeout occurred waiting for selenium to be ready on port #{SELENIUM_PORT}. Check the log at: #{logStream.path}"
+      if !isAvailable
+        return callback new Error "Port #{SELENIUM_PORT} (requested by selenium) is already in use."
 
-      logStream.log "selenium is ready!"
-      callback(null, seleniumProcess)
+      seleniumProcess = spawnProcess(logStream, javaHeapSize)
+
+      logStream.log "waiting for selenium to listen on port #{SELENIUM_PORT}"
+      port.waitFor SELENIUM_PORT, SELENIUM_TIMEOUT, (timedOut) ->
+        if timedOut
+          return callback new Error "Timeout occurred waiting for selenium to be ready on port #{SELENIUM_PORT}. Check the log at: #{logStream.path}"
+
+        logStream.log "selenium is ready!"
+        callback(null, seleniumProcess)
 

@@ -35,7 +35,7 @@ PROXY_TIMEOUT = 1000 # 1 second
 
 path = require 'path'
 {spawn} = require 'child_process'
-waitForPort = require './wait_for_port'
+port = require './port'
 
 spawnProcess = (logStream, applicationPort) ->
   proxyPath = path.join __dirname, "../../proxy/index.js"
@@ -50,13 +50,19 @@ module.exports = (applicationPort, logStream) ->
   (callback) ->
     logStream.log "Starting webdriver proxy"
 
-    proxyProcess = spawnProcess(logStream, applicationPort)
+    port.isAvailable PROXY_PORT, (error, isAvailable) ->
+      return callback(error) if error?
 
-    logStream.log "waiting for webdriver proxy to listen on port #{PROXY_PORT} and proxy to #{applicationPort}"
-    waitForPort PROXY_PORT, PROXY_TIMEOUT, (timedOut) ->
-      if timedOut
-        return callback new Error "Timeout occurred waiting for the testium proxy to be ready on port #{PROXY_PORT}. Check the log at: #{logStream.path}"
+      if !isAvailable
+        return callback new Error "Port #{PROXY_PORT} (requested by testium proxy) is already in use."
 
-      logStream.log "webdriver proxy is ready!"
-      callback(null, proxyProcess)
+      proxyProcess = spawnProcess(logStream, applicationPort)
+
+      logStream.log "waiting for webdriver proxy to listen on port #{PROXY_PORT} and proxy to #{applicationPort}"
+      port.waitFor PROXY_PORT, PROXY_TIMEOUT, (timedOut) ->
+        if timedOut
+          return callback new Error "Timeout occurred waiting for the testium proxy to be ready on port #{PROXY_PORT}. Check the log at: #{logStream.path}"
+
+        logStream.log "webdriver proxy is ready!"
+        callback(null, proxyProcess)
 
