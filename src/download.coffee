@@ -34,10 +34,9 @@ fs = require 'fs'
 http = require('follow-redirects').https
 download = require 'download'
 
-module.exports = (url, destinationDir, fileName, callback) ->
-  console.log "!%!% #{url} !% #{destinationDir} !% #{fileName} !%!%"
+module.exports = (url, destinationDir, fileName, options, callback) ->
   fileOptions = { url, name: fileName }
-  stream = download(fileOptions, destinationDir)
+  stream = download(fileOptions, destinationDir, options)
   stream.on 'error', (error) ->
     callback(error)
   stream.on 'close', ->

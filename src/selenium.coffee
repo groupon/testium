@@ -48,7 +48,7 @@ module.exports = (binPath, tempPath, version) ->
     if fs.existsSync tempFilePath
       copy tempFilePath, binFilePath, callback
     else
-      downloadFile url, tempPath, tempFileName, (error) ->
+      downloadFile url, tempPath, tempFileName, {}, (error) ->
         return callback error if error?
         copy tempFilePath, binFilePath, callback
 

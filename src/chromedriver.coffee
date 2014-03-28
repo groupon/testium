@@ -84,7 +84,7 @@ module.exports = (binPath, tempPath, version) ->
     else
 
       async.series [
-        (done) -> downloadFile url, tempPath, tempFileName, done
+        (done) -> downloadFile url, tempPath, tempFileName, {}, done
         (done) -> unzip tempPath, tempFilePath, done
         (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
         (done) -> copy tempFilePath, chromedriverPath, done
