@@ -31,49 +31,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 fs = require 'fs'
-async = require 'async'
-{copy, move} = require 'fs.extra'
-downloadFile = require './download'
+{copy} = require 'fs.extra'
+downloadFile = require '../download'
 
-getArchitecture = ->
-  platform = process.platform
+module.exports = (binPath, tempPath, url, version, callback) ->
+  file = 'selenium.jar'
+  binFilePath = "#{binPath}/#{file}"
+  return callback() if fs.existsSync binFilePath
 
-  unless platform in ['linux', 'darwin', 'win32']
-    throw new Error("Unsupported platform #{platform}. Only linux, darwin, and win32 are supported.")
-
-  bitness = process.arch.substr(1)
-
-  if platform == 'darwin'
-    platform = 'mac'
-    bitness = '32'
-
-  if platform == 'win32'
-    platform = 'win'
-    bitness = '32'
-
-  { platform, bitness }
-
-module.exports = (binPath, tempPath, version) ->
-  (callback) ->
-    {platform, bitness} = getArchitecture()
-    url = "https://chromedriver.storage.googleapis.com/#{version}/chromedriver_#{platform}#{bitness}.zip"
-    chromedriverPath = "#{binPath}/chromedriver"
-    return callback() if fs.existsSync chromedriverPath
-
-    console.log "[testium] grabbing selenium chromedriver #{version}"
-
-    tempFileName = "chromedriver_#{version}"
-    tempFilePath = "#{tempPath}/#{tempFileName}"
-    if fs.existsSync tempFilePath
-      copy tempFilePath, chromedriverPath, (error) ->
-        return callback error if error?
-        fs.chmod chromedriverPath, '755', callback
-    else
-
-      async.series [
-        (done) -> downloadFile url, tempPath, tempFileName, {extract: true}, done
-        (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
-        (done) -> copy tempFilePath, chromedriverPath, done
-        (done) -> fs.chmod chromedriverPath, '755', done
-      ], callback
+  tempFileName = "selenium_#{version}.jar"
+  tempFilePath = "#{tempPath}/#{tempFileName}"
+  if fs.existsSync tempFilePath
+    copy tempFilePath, binFilePath, callback
+  else
+    downloadFile url, tempPath, tempFileName, {}, (error) ->
+      return callback error if error?
+      copy tempFilePath, binFilePath, callback
 

@@ -30,13 +30,15 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-download = require 'download'
+download = require './download'
+getLatestVersion = require './version'
 
-module.exports = (url, destinationDir, fileName, options, callback) ->
-  fileOptions = { url, name: fileName }
-  stream = download(fileOptions, destinationDir, options)
-  stream.on 'error', (error) ->
-    callback(error)
-  stream.on 'close', ->
-    callback()
+module.exports = (binPath, tempPath) ->
+  (callback) ->
+    getLatestVersion (error, metadata) ->
+      return callback(error) if error?
+
+      console.log "[testium] grabbing selenium chromedriver #{metadata.version}"
+
+      download binPath, tempPath, metadata.version, metadata.downloadUrl, callback
 

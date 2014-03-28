@@ -34,7 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 mkdirp = require 'mkdirp'
 async = require 'async'
 tempdir = require './tempdir'
-getLatestVersions = require './versions'
 ensureSelenium = require './selenium'
 ensureChromedriver = require './chromedriver'
 
@@ -56,13 +55,10 @@ ensure = (binPath, callback) ->
 
   makePaths(binPath, TEMP_PATH)
 
-  getLatestVersions (error, versions) ->
-    return callback(error) if error?
-
-    async.parallel [
-      ensureSelenium(binPath, TEMP_PATH, versions.selenium)
-      ensureChromedriver(binPath, TEMP_PATH, versions.chromedriver)
-    ], callback
+  async.parallel [
+    ensureSelenium(binPath, TEMP_PATH)
+    ensureChromedriver(binPath, TEMP_PATH)
+  ], callback
 
 update = (binPath, callback) ->
   removeFile "#{binPath}/selenium.jar"

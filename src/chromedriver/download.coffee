@@ -31,25 +31,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 fs = require 'fs'
+async = require 'async'
 {copy, move} = require 'fs.extra'
-downloadFile = require './download'
+downloadFile = require '../download'
 
-module.exports = (binPath, tempPath, version) ->
-  (callback) ->
-    minorVersion = version.split('.').slice(0, 2).join('.')
-    url = "http://selenium-release.storage.googleapis.com/#{minorVersion}/selenium-server-standalone-#{version}.jar"
-    file = 'selenium.jar'
-    binFilePath = "#{binPath}/#{file}"
-    return callback() if fs.existsSync binFilePath
+module.exports = (binPath, tempPath, version, url, callback) ->
+  chromedriverPath = "#{binPath}/chromedriver"
+  return callback() if fs.existsSync chromedriverPath
 
-    console.log "[testium] grabbing selenium standalone server #{version}"
+  tempFileName = "chromedriver_#{version}"
+  tempFilePath = "#{tempPath}/#{tempFileName}"
+  if fs.existsSync tempFilePath
+    copy tempFilePath, chromedriverPath, (error) ->
+      return callback error if error?
+      fs.chmod chromedriverPath, '755', callback
+  else
 
-    tempFileName = "selenium_#{version}.jar"
-    tempFilePath = "#{tempPath}/#{tempFileName}"
-    if fs.existsSync tempFilePath
-      copy tempFilePath, binFilePath, callback
-    else
-      downloadFile url, tempPath, tempFileName, {}, (error) ->
-        return callback error if error?
-        copy tempFilePath, binFilePath, callback
+    async.series [
+      (done) -> downloadFile url, tempPath, tempFileName, {extract: true}, done
+      (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
+      (done) -> copy tempFilePath, chromedriverPath, done
+      (done) -> fs.chmod chromedriverPath, '755', done
+    ], callback
 
