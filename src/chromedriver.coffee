@@ -32,7 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 fs = require 'fs'
 async = require 'async'
-AdmZip = require 'adm-zip'
 {copy, move} = require 'fs.extra'
 downloadFile = require './download'
 
@@ -54,18 +53,6 @@ getArchitecture = ->
 
   { platform, bitness }
 
-unzip = (tempPath, filePath, callback) ->
-  # This is file-based instead of stream-based
-  # because none of the stream options worked for me
-  tempFilePath = "#{filePath}.tmp"
-  move filePath, tempFilePath, (error) ->
-    return callback error if error?
-
-    zip = new AdmZip tempFilePath
-    zip.extractAllTo tempPath
-    fs.unlinkSync tempFilePath
-    callback()
-
 module.exports = (binPath, tempPath, version) ->
   (callback) ->
     {platform, bitness} = getArchitecture()
@@ -84,8 +71,7 @@ module.exports = (binPath, tempPath, version) ->
     else
 
       async.series [
-        (done) -> downloadFile url, tempPath, tempFileName, {}, done
-        (done) -> unzip tempPath, tempFilePath, done
+        (done) -> downloadFile url, tempPath, tempFileName, {extract: true}, done
         (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
         (done) -> copy tempFilePath, chromedriverPath, done
         (done) -> fs.chmod chromedriverPath, '755', done
