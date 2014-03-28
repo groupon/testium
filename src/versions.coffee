@@ -38,34 +38,39 @@ request = require 'request'
 parseXml = require('xml2js').parseString
 {find} = require 'underscore'
 
-parseSelenium = (body) ->
-  releases = JSON.parse body
-  release = find releases, (release) -> release.assets?
+parseSeleniumMinor = (result) ->
+  prefixes = result.ListBucketResult.CommonPrefixes
+  prefix = prefixes[prefixes.length-2] # last item is /Icons, get 2nd to last
+  versionPath = prefix.Prefix[0] # something like "2.41.0/"
+  versionPath.substring(0, versionPath.length-1)
 
-  asset = find release.assets, (asset) ->
-    asset.name.indexOf('selenium-server-standalone') > -1
-  url = asset.url
-
-  versionRegex = /selenium-(\d+.\d+.\d+)/
-  version = versionRegex.exec(release.tag_name)[1]
-
-  version
+parseSelenium = (result) ->
+  contents = result.ListBucketResult.Contents
+  content = find contents, (content) ->
+    content.Key[0].match /selenium-server-standalone-/
+  content.Key[0].match(/(\d+\.\d+\.\d+)/)[0]
 
 getLatestSeleniumVersion = (callback) ->
-  url = 'https://api.github.com/repos/SeleniumHQ/selenium/releases'
-  headers =
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
-  request {url, headers}, (error, response, body) ->
+  url = 'http://selenium-release.storage.googleapis.com/?delimiter=/&prefix='
+  request url, (error, response, body) ->
     return callback error if error?
 
-    error = null
-    version = null
-    try
-      version = parseSelenium(body)
-    catch parseError
-      error = parseError
+    parseXml body, (error, result) ->
+      return callback(error) if error?
 
-    callback error, version
+      try
+        minorVersion = parseSeleniumMinor(result)
+        request "http://selenium-release.storage.googleapis.com/?delimiter=/&prefix=#{minorVersion}/", (error, response, body) ->
+          return callback(error) if error?
+
+          parseXml body, (error, result) ->
+            return callback(error) if error?
+
+            version = parseSelenium(result)
+            callback null, version
+
+      catch parseError
+        callback parseError
 
 parseChrome = (result) ->
   prefixes = result.ListBucketResult.CommonPrefixes

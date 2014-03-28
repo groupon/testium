@@ -36,7 +36,8 @@ downloadFile = require './download'
 
 module.exports = (binPath, tempPath, version) ->
   (callback) ->
-    url = "https://github.com/SeleniumHQ/selenium/releases/download/selenium-#{version}/selenium-server-standalone-#{version}.jar"
+    minorVersion = version.split('.').slice(0, 2).join('.')
+    url = "http://selenium-release.storage.googleapis.com/#{minorVersion}/selenium-server-standalone-#{version}.jar"
     file = 'selenium.jar'
     binFilePath = "#{binPath}/#{file}"
     return callback() if fs.existsSync binFilePath
