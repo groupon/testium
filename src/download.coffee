@@ -32,18 +32,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 fs = require 'fs'
 http = require('follow-redirects').https
+download = require 'download'
 
-doneEvent = do ->
-  nodeVersion = process.version.match(/^v(\d+\.\d+)/)[1]
-  if nodeVersion == "0.8"
-    'close'
-  else
-    'finish'
-
-module.exports = (url, filePath, callback) ->
-  file = fs.createWriteStream(filePath)
-  http.get url, (response) ->
-    response.pipe(file)
-    file.on doneEvent, ->
-      callback()
+module.exports = (url, destinationDir, fileName, callback) ->
+  console.log "!%!% #{url} !% #{destinationDir} !% #{fileName} !%!%"
+  fileOptions = { url, name: fileName }
+  stream = download(fileOptions, destinationDir)
+  stream.on 'error', (error) ->
+    callback(error)
+  stream.on 'close', ->
+    callback()
 

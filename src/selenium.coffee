@@ -43,11 +43,12 @@ module.exports = (binPath, tempPath, version) ->
 
     console.log "[testium] grabbing selenium standalone server #{version}"
 
-    tempFilePath = "#{tempPath}/selenium_#{version}.jar"
+    tempFileName = "selenium_#{version}.jar"
+    tempFilePath = "#{tempPath}/#{tempFileName}"
     if fs.existsSync tempFilePath
       copy tempFilePath, binFilePath, callback
     else
-      downloadFile url, tempFilePath, (error) ->
+      downloadFile url, tempPath, tempFileName, (error) ->
         return callback error if error?
         copy tempFilePath, binFilePath, callback
 

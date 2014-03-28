@@ -75,7 +75,8 @@ module.exports = (binPath, tempPath, version) ->
 
     console.log "[testium] grabbing selenium chromedriver #{version}"
 
-    tempFilePath = "#{tempPath}/chromedriver_#{version}"
+    tempFileName = "chromedriver_#{version}"
+    tempFilePath = "#{tempPath}/#{tempFileName}"
     if fs.existsSync tempFilePath
       copy tempFilePath, chromedriverPath, (error) ->
         return callback error if error?
@@ -83,7 +84,7 @@ module.exports = (binPath, tempPath, version) ->
     else
 
       async.series [
-        (done) -> downloadFile url, tempFilePath, done
+        (done) -> downloadFile url, tempPath, tempFileName, done
         (done) -> unzip tempPath, tempFilePath, done
         (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
         (done) -> copy tempFilePath, chromedriverPath, done
