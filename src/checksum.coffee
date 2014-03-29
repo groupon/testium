@@ -30,26 +30,22 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-fs = require 'fs'
-{copy} = require 'fs.extra'
-downloadFile = require '../download'
-validate = require '../checksum'
+fs = require('fs')
+{createHash} = require('crypto')
 
-module.exports = (binPath, tempPath, url, version, callback) ->
-  file = 'selenium.jar'
-  binFilePath = "#{binPath}/#{file}"
-  return callback() if fs.existsSync binFilePath
+module.exports = (filePath, checksum, callback) ->
+  hash = createHash('md5')
 
-  tempFileName = "selenium_#{version}.jar"
-  tempFilePath = "#{tempPath}/#{tempFileName}"
-  if fs.existsSync tempFilePath
-    copy tempFilePath, binFilePath, callback
-  else
-    downloadFile url, tempPath, tempFileName, (error, hash) ->
-      return callback error if error?
+  stream = fs.ReadStream(filePath)
 
-      validate tempFilePath, hash, (error) ->
-        return callback error if error?
+  stream.on 'data', (data) ->
+    hash.update(data)
 
-        copy tempFilePath, binFilePath, callback
+  stream.on 'end', ->
+    digest = hash.digest('base64')
+    if digest != checksum
+      message = "File #{filePath} did not match checksum: expected #{checksum} but saw #{digest}"
+      return callback(new Error message)
+
+    callback()
 

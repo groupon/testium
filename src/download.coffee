@@ -32,11 +32,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 download = require 'download'
 
-module.exports = (url, destinationDir, fileName, options, callback) ->
+parseHashes = (rawHash) ->
+  # format: crc32c=qRiQ9g==, md5=AAQvmRLFWmGR17P+ASORNQ==
+  parse = (result, hash) ->
+    parts = hash.trim().split('=')
+    key = parts[0]
+    value = parts.splice(1).join('=')
+    result[key] = value
+    result
+
+  hashes = rawHash.split(',')
+  hashes.reduce parse, {}
+
+module.exports = (url, destinationDir, fileName, callback) ->
+  hash = null
+
   fileOptions = { url, name: fileName }
-  stream = download(fileOptions, destinationDir, options)
+  stream = download(fileOptions, destinationDir)
+
+  stream.on 'response', (response) ->
+    rawHash = response.headers['x-goog-hash']
+    hash = parseHashes(rawHash).md5
+
   stream.on 'error', (error) ->
     callback(error)
+
   stream.on 'close', ->
-    callback()
+    callback(null, hash)
 
