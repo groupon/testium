@@ -30,41 +30,15 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{unlinkSync, existsSync} = require 'fs'
-mkdirp = require 'mkdirp'
-async = require 'async'
-tempdir = require './tempdir'
-ensureSelenium = require './selenium'
-ensureChromedriver = require './chromedriver'
+download = require './download'
+getLatestVersion = require './version'
 
-TEMP_PATH = "#{tempdir}testium"
+module.exports = (binPath, tempPath) ->
+  (callback) ->
+    getLatestVersion (error, metadata) ->
+      return callback(error) if error?
 
-makePaths = (binPath, tempPath) ->
-  mkdirp.sync binPath
-  mkdirp.sync tempPath
+      console.log "[testium] grabbing selenium standalone server #{metadata.version}"
 
-removeFile = (file) ->
-  unlinkSync file if existsSync file
-
-binariesExist = (binPath) ->
-  [ 'selenium.jar', 'chromedriver' ].every (binary) ->
-    existsSync "#{binPath}/#{binary}"
-
-ensure = (binPath, callback) ->
-  return callback() if binariesExist(binPath)
-
-  makePaths(binPath, TEMP_PATH)
-
-  async.parallel [
-    ensureSelenium(binPath, TEMP_PATH)
-    ensureChromedriver(binPath, TEMP_PATH)
-  ], callback
-
-update = (binPath, callback) ->
-  removeFile "#{binPath}/selenium.jar"
-  removeFile "#{binPath}/chromedriver"
-
-  ensure(binPath, callback)
-
-module.exports = { update, ensure }
+      download binPath, tempPath, metadata.downloadUrl, metadata.version, callback
 

@@ -30,24 +30,22 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-fs = require 'fs'
-{copy, move} = require 'fs.extra'
-downloadFile = require './download'
+fs = require('fs')
+{createHash} = require('crypto')
 
-module.exports = (binPath, tempPath, version) ->
-  (callback) ->
-    url = "https://github.com/SeleniumHQ/selenium/releases/download/selenium-#{version}/selenium-server-standalone-#{version}.jar"
-    file = 'selenium.jar'
-    binFilePath = "#{binPath}/#{file}"
-    return callback() if fs.existsSync binFilePath
+module.exports = (filePath, checksum, callback) ->
+  hash = createHash('md5')
 
-    console.log "[testium] grabbing selenium standalone server #{version}"
+  stream = fs.ReadStream(filePath)
 
-    tempFilePath = "#{tempPath}/selenium_#{version}.jar"
-    if fs.existsSync tempFilePath
-      copy tempFilePath, binFilePath, callback
-    else
-      downloadFile url, tempFilePath, (error) ->
-        return callback error if error?
-        copy tempFilePath, binFilePath, callback
+  stream.on 'data', (data) ->
+    hash.update(data)
+
+  stream.on 'end', ->
+    digest = hash.digest('base64')
+    if digest != checksum
+      message = "File #{filePath} did not match checksum: expected #{checksum} but saw #{digest}"
+      return callback(new Error message)
+
+    callback()
 

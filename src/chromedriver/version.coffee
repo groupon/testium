@@ -30,11 +30,10 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-fs = require 'fs'
-async = require 'async'
-AdmZip = require 'adm-zip'
-{copy, move} = require 'fs.extra'
-downloadFile = require './download'
+FALLBACK_CHROMEDRIVER_VERSION = '2.9'
+
+request = require 'request'
+parseXml = require('xml2js').parseString
 
 getArchitecture = ->
   platform = process.platform
@@ -54,39 +53,45 @@ getArchitecture = ->
 
   { platform, bitness }
 
-unzip = (tempPath, filePath, callback) ->
-  # This is file-based instead of stream-based
-  # because none of the stream options worked for me
-  tempFilePath = "#{filePath}.tmp"
-  move filePath, tempFilePath, (error) ->
+parseChrome = (result) ->
+  version = null
+  error = null
+
+  try
+    prefixes = result.ListBucketResult.CommonPrefixes
+    prefix = prefixes[prefixes.length-2] # last item is /Icons, get 2nd to last
+    versionPath = prefix.Prefix[0] # something like "2.8/"
+    version = versionPath.substring(0, versionPath.length-1)
+  catch parseError
+    error = parseError
+
+  {error, version}
+
+requestXml = (url, callback) ->
+  request url, (error, response, body) ->
     return callback error if error?
 
-    zip = new AdmZip tempFilePath
-    zip.extractAllTo tempPath
-    fs.unlinkSync tempFilePath
-    callback()
+    parseXml body, (error, result) ->
+      return callback(error) if error?
 
-module.exports = (binPath, tempPath, version) ->
-  (callback) ->
+      callback(null, result)
+
+getLatestVersion = (callback) ->
+  requestXml 'http://chromedriver.storage.googleapis.com/?delimiter=/&prefix=', (error, result) ->
+    return callback(error) if error?
+
+    {error, version} = parseChrome(result)
+    callback error, version
+
+module.exports = (callback) ->
+  getLatestVersion (error, version) ->
+    if error?
+      version = FALLBACK_CHROMEDRIVER_VERSION
+      console.log "[testium] Unable to determine latest version of selenium chromedriver; using #{version}"
+      console.error (error.stack || error)
+
     {platform, bitness} = getArchitecture()
-    url = "https://chromedriver.storage.googleapis.com/#{version}/chromedriver_#{platform}#{bitness}.zip"
-    chromedriverPath = "#{binPath}/chromedriver"
-    return callback() if fs.existsSync chromedriverPath
+    downloadUrl = "https://chromedriver.storage.googleapis.com/#{version}/chromedriver_#{platform}#{bitness}.zip"
 
-    console.log "[testium] grabbing selenium chromedriver #{version}"
-
-    tempFilePath = "#{tempPath}/chromedriver_#{version}"
-    if fs.existsSync tempFilePath
-      copy tempFilePath, chromedriverPath, (error) ->
-        return callback error if error?
-        fs.chmod chromedriverPath, '755', callback
-    else
-
-      async.series [
-        (done) -> downloadFile url, tempFilePath, done
-        (done) -> unzip tempPath, tempFilePath, done
-        (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
-        (done) -> copy tempFilePath, chromedriverPath, done
-        (done) -> fs.chmod chromedriverPath, '755', done
-      ], callback
+    callback null, { downloadUrl, version }
 

@@ -30,41 +30,42 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{unlinkSync, existsSync} = require 'fs'
-mkdirp = require 'mkdirp'
+fs = require 'fs'
 async = require 'async'
-tempdir = require './tempdir'
-ensureSelenium = require './selenium'
-ensureChromedriver = require './chromedriver'
+{copy, move} = require 'fs.extra'
+AdmZip = require 'adm-zip'
+downloadFile = require '../download'
+validate = require '../checksum'
 
-TEMP_PATH = "#{tempdir}testium"
+unzip = (tempPath, filePath, callback) ->
+  tempFilePath = "#{filePath}.tmp"
+  move filePath, tempFilePath, (error) ->
+    return callback error if error?
 
-makePaths = (binPath, tempPath) ->
-  mkdirp.sync binPath
-  mkdirp.sync tempPath
+    zip = new AdmZip tempFilePath
+    zip.extractAllTo tempPath
+    fs.unlinkSync tempFilePath
+    callback()
 
-removeFile = (file) ->
-  unlinkSync file if existsSync file
+module.exports = (binPath, tempPath, version, url, callback) ->
+  chromedriverPath = "#{binPath}/chromedriver"
+  return callback() if fs.existsSync chromedriverPath
 
-binariesExist = (binPath) ->
-  [ 'selenium.jar', 'chromedriver' ].every (binary) ->
-    existsSync "#{binPath}/#{binary}"
+  tempFileName = "chromedriver_#{version}"
+  tempFilePath = "#{tempPath}/#{tempFileName}"
+  if fs.existsSync tempFilePath
+    copy tempFilePath, chromedriverPath, (error) ->
+      return callback error if error?
+      fs.chmod chromedriverPath, '755', callback
+  else
 
-ensure = (binPath, callback) ->
-  return callback() if binariesExist(binPath)
-
-  makePaths(binPath, TEMP_PATH)
-
-  async.parallel [
-    ensureSelenium(binPath, TEMP_PATH)
-    ensureChromedriver(binPath, TEMP_PATH)
-  ], callback
-
-update = (binPath, callback) ->
-  removeFile "#{binPath}/selenium.jar"
-  removeFile "#{binPath}/chromedriver"
-
-  ensure(binPath, callback)
-
-module.exports = { update, ensure }
+    unzippedFilePath = "#{tempPath}/chromedriver"
+    async.waterfall [
+      (done) -> downloadFile url, tempPath, tempFileName, done
+      (hash, done) -> validate tempFilePath, hash, done
+      (done) -> unzip tempPath, tempFilePath, done
+      (done) -> move unzippedFilePath, tempFilePath, done
+      (done) -> copy tempFilePath, chromedriverPath, done
+      (done) -> fs.chmod chromedriverPath, '755', done
+    ], callback
 

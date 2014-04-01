@@ -30,41 +30,26 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{unlinkSync, existsSync} = require 'fs'
-mkdirp = require 'mkdirp'
-async = require 'async'
-tempdir = require './tempdir'
-ensureSelenium = require './selenium'
-ensureChromedriver = require './chromedriver'
+fs = require 'fs'
+{copy} = require 'fs.extra'
+downloadFile = require '../download'
+validate = require '../checksum'
 
-TEMP_PATH = "#{tempdir}testium"
+module.exports = (binPath, tempPath, url, version, callback) ->
+  file = 'selenium.jar'
+  binFilePath = "#{binPath}/#{file}"
+  return callback() if fs.existsSync binFilePath
 
-makePaths = (binPath, tempPath) ->
-  mkdirp.sync binPath
-  mkdirp.sync tempPath
+  tempFileName = "selenium_#{version}.jar"
+  tempFilePath = "#{tempPath}/#{tempFileName}"
+  if fs.existsSync tempFilePath
+    copy tempFilePath, binFilePath, callback
+  else
+    downloadFile url, tempPath, tempFileName, (error, hash) ->
+      return callback error if error?
 
-removeFile = (file) ->
-  unlinkSync file if existsSync file
+      validate tempFilePath, hash, (error) ->
+        return callback error if error?
 
-binariesExist = (binPath) ->
-  [ 'selenium.jar', 'chromedriver' ].every (binary) ->
-    existsSync "#{binPath}/#{binary}"
-
-ensure = (binPath, callback) ->
-  return callback() if binariesExist(binPath)
-
-  makePaths(binPath, TEMP_PATH)
-
-  async.parallel [
-    ensureSelenium(binPath, TEMP_PATH)
-    ensureChromedriver(binPath, TEMP_PATH)
-  ], callback
-
-update = (binPath, callback) ->
-  removeFile "#{binPath}/selenium.jar"
-  removeFile "#{binPath}/chromedriver"
-
-  ensure(binPath, callback)
-
-module.exports = { update, ensure }
+        copy tempFilePath, binFilePath, callback
 

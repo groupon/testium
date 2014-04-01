@@ -30,20 +30,33 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-fs = require 'fs'
-http = require('follow-redirects').https
+download = require 'download'
 
-doneEvent = do ->
-  nodeVersion = process.version.match(/^v(\d+\.\d+)/)[1]
-  if nodeVersion == "0.8"
-    'close'
-  else
-    'finish'
+parseHashes = (rawHash) ->
+  # format: crc32c=qRiQ9g==, md5=AAQvmRLFWmGR17P+ASORNQ==
+  parse = (result, hash) ->
+    parts = hash.trim().split('=')
+    key = parts[0]
+    value = parts.splice(1).join('=')
+    result[key] = value
+    result
 
-module.exports = (url, filePath, callback) ->
-  file = fs.createWriteStream(filePath)
-  http.get url, (response) ->
-    response.pipe(file)
-    file.on doneEvent, ->
-      callback()
+  hashes = rawHash.split(',')
+  hashes.reduce parse, {}
+
+module.exports = (url, destinationDir, fileName, callback) ->
+  hash = null
+
+  fileOptions = { url, name: fileName }
+  stream = download(fileOptions, destinationDir)
+
+  stream.on 'response', (response) ->
+    rawHash = response.headers['x-goog-hash']
+    hash = parseHashes(rawHash).md5
+
+  stream.on 'error', (error) ->
+    callback(error)
+
+  stream.on 'close', ->
+    callback(null, hash)
 
