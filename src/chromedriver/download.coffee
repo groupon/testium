@@ -33,7 +33,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 fs = require 'fs'
 async = require 'async'
 {copy, move} = require 'fs.extra'
+AdmZip = require 'adm-zip'
 downloadFile = require '../download'
+validate = require '../checksum'
+
+unzip = (tempPath, filePath, callback) ->
+  tempFilePath = "#{filePath}.tmp"
+  move filePath, tempFilePath, (error) ->
+    return callback error if error?
+
+    zip = new AdmZip tempFilePath
+    zip.extractAllTo tempPath
+    fs.unlinkSync tempFilePath
+    callback()
 
 module.exports = (binPath, tempPath, version, url, callback) ->
   chromedriverPath = "#{binPath}/chromedriver"
@@ -47,9 +59,12 @@ module.exports = (binPath, tempPath, version, url, callback) ->
       fs.chmod chromedriverPath, '755', callback
   else
 
-    async.series [
-      (done) -> downloadFile url, tempPath, tempFileName, {extract: true}, done
-      (done) -> move "#{tempPath}/chromedriver", tempFilePath, done
+    unzippedFilePath = "#{tempPath}/chromedriver"
+    async.waterfall [
+      (done) -> downloadFile url, tempPath, tempFileName, done
+      (hash, done) -> validate tempFilePath, hash, done
+      (done) -> unzip tempPath, tempFilePath, done
+      (done) -> move unzippedFilePath, tempFilePath, done
       (done) -> copy tempFilePath, chromedriverPath, done
       (done) -> fs.chmod chromedriverPath, '755', done
     ], callback
