@@ -71,6 +71,7 @@ system-level libraries.
 <br>[Ubuntu] `sudo apt-get install libcurl4-openssl-dev`
 <br>[OS X] `brew install curl`
 - **java 7+** (for selenium)
+- **Node.js 0.10+** (for [testium@1.4.0](https://github.com/groupon-testium/testium/releases/tag/v1.4.0)+)
 
 **optional**
 
