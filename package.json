@@ -28,6 +28,9 @@
   "scripts": {
     "test": "make all"
   },
+  "engines": {
+    "node" : ">=0.10.0"
+  },
   "dependencies": {
     "underscore": "1.4.4",
     "coffee-script-redux": "2.0.0-beta7",
