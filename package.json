@@ -29,7 +29,7 @@
     "test": "make all"
   },
   "engines": {
-    "node" : ">=0.10.0"
+    "node" : ">=0.10.16"
   },
   "dependencies": {
     "underscore": "1.4.4",
