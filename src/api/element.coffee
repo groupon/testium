@@ -32,6 +32,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {truthy, hasType} = require 'assertive'
 getElementWithoutError = require './safeElement'
+deprecate = require './deprecate'
+
+waitForElement = (driver, selector, shouldBeVisible, timeout=3000) ->
+  start = Date.now()
+  driver.setElementTimeout(timeout)
+
+  foundElement = null
+  while (Date.now() - start) < timeout
+    element = getElementWithoutError(driver, selector)
+    if element?.isVisible() == shouldBeVisible
+      foundElement = element
+      break
+
+  driver.setElementTimeout(0)
+
+  if foundElement == null
+    negate = if shouldBeVisible then '' else 'not '
+    throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to #{negate}be visible."
+  foundElement
 
 module.exports = (driver) ->
   getElement: (selector) ->
@@ -44,24 +63,18 @@ module.exports = (driver) ->
 
     driver.getElements(selector)
 
-  waitForElement: (selector, timeout=3000) ->
+  waitForElement: (selector, timeout) ->
+    deprecate 'waitForElement', 'waitForElementVisible'
     hasType 'getElements(selector) - requires (String) selector', String, selector
+    waitForElement(driver, selector, true, timeout)
 
-    start = Date.now()
-    driver.setElementTimeout(timeout)
+  waitForElementVisible: (selector, timeout) ->
+    hasType 'getElements(selector) - requires (String) selector', String, selector
+    waitForElement(driver, selector, true, timeout)
 
-    foundElement = null
-    while (Date.now() - start) < timeout
-      element = @getElement(selector)
-      if element?.isVisible()
-        foundElement = element
-        break
-
-    driver.setElementTimeout(0)
-
-    if foundElement == null
-      throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to be visible."
-    foundElement
+  waitForElementNotVisible: (selector, timeout) ->
+    hasType 'getElements(selector) - requires (String) selector', String, selector
+    waitForElement(driver, selector, false, timeout)
 
   click: (selector) ->
     hasType 'click(selector) - requires (String) selector', String, selector
