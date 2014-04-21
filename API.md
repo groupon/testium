@@ -3,12 +3,12 @@
 Below is the complete description
 of the Testium API.
 
+## Browser
+
 ```coffee
 {getBrowser} = require 'testium'
 browser = getBrowser()
 ```
-
-## Browser
 
 ### browser.navigateTo(url, options)
 
