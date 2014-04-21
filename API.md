@@ -3,7 +3,7 @@
 Below is the complete description
 of the Testium API.
 
-```
+```coffee
 {getBrowser} = require 'testium'
 browser = getBrowser()
 ```
@@ -49,7 +49,7 @@ browser.getStatusCode()
 The following types of options
 can be provided.
 
-```coffees
+```coffee
 options:
   query:
     someQueryParam: 'someQueryValue'
@@ -91,7 +91,7 @@ Is an object describing the
 [Capabilities](#capabilities)
 that the current browser supports.
 
-````
+```coffee
 # only define a test if the current browser
 # can work with alerts
 if browser.capabilities.handlesAlerts
@@ -499,7 +499,7 @@ Returns all log events with
 `logLevel` (all/log/warn/error/debug)
 since the last time this method was called.
 
-```
+```coffee
 errorLogs = browser.getConsoleLogs('error')
 ```
 
@@ -520,7 +520,9 @@ browser.close ->
 An element object
 has the following properties.
 
-`element = browser.getElement(selector)`
+```coffee
+element = browser.getElement(selector)
+```
 
 Note: `selector` can be anything
 [WebDriver's CSS Selector](http://www.w3.org/TR/2013/WD-webdriver-20130117/#css-selectors)
@@ -574,7 +576,7 @@ don't support this part of the WebDriver spec.
 You can guard against this by checking
 the [Capabilities](#capabilities) object.
 
-```coffeescript
+```coffee
 describe 'alert-based tests', ->
   if !getBrowser().capabilities.handlesAlerts
     browserName = getBrowser().capabilities.browserName
