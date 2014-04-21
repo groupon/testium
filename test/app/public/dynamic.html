@@ -10,10 +10,18 @@
         document.querySelector(selector).style.display = 'block';
       }, ms);
     }
+    function hideElementAfter(selector, ms) {
+      setTimeout(function(){
+        document.querySelector(selector).style.display = 'none';
+      }, ms);
+    }
 
-    showElementAfter('.load_later', 20);
+    showElementAfter('.load_later', 300);
+    hideElementAfter('.hide_later', 300);
   </script>
   <div class="load_later">This just in!</div>
   <div class="load_never">This in never!</div>
+  <div class="hide_later">For a limitted time!</div>
+  <div class="hide_never">Here forever!</div>
 </body>
 </html>

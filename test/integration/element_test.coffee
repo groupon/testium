@@ -134,18 +134,39 @@ describe 'element', ->
       expected = 'Assertion failed: elementLacksValue: #text-input\n\u001b[39;49;00mnotInclude expected needle not to be found in haystack\n- needle: \"initialvalue\"\nhaystack: \"initialvalue\"'
       assert.equal expected, error.message
 
-  describe 'waitForElement', ->
+  describe 'waitForElementVisible', ->
     before ->
       @browser.navigateTo '/dynamic.html'
 
     it 'finds an element after waiting', ->
-      @browser.waitForElement('.load_later')
+      @browser.assert.elementNotVisible('.load_later')
+      @browser.waitForElementVisible('.load_later')
 
-    it 'fails to find an element that is not visible after the timeout', ->
-      error = assert.throws => @browser.waitForElement('.load_never', 10)
+    it 'fails to find a visible element within the timeout', ->
+      error = assert.throws =>
+        @browser.waitForElementVisible('.load_never', 10)
       assert.equal 'Timeout (10ms) waiting for element (.load_never) to be visible.', error.message
 
     it 'fails to find an element that never exists', ->
-      error = assert.throws => @browser.waitForElement('.does-not-exist', 10)
+      error = assert.throws =>
+        @browser.waitForElementVisible('.does-not-exist', 10)
       assert.equal 'Timeout (10ms) waiting for element (.does-not-exist) to be visible.', error.message
+
+  describe 'waitForElementNotVisible', ->
+    before ->
+      @browser.navigateTo '/dynamic.html'
+
+    it 'does not find an existing element after waiting for it to disappear', ->
+      @browser.assert.elementIsVisible('.hide_later')
+      @browser.waitForElementNotVisible('.hide_later')
+
+    it 'fails to find a not-visible element within the timeout', ->
+      error = assert.throws =>
+        @browser.waitForElementNotVisible('.hide_never', 10)
+      assert.equal 'Timeout (10ms) waiting for element (.hide_never) to not be visible.', error.message
+
+    it 'fails to find an element that never exists', ->
+      error = assert.throws =>
+        @browser.waitForElementNotVisible('.does-not-exist', 10)
+      assert.equal 'Timeout (10ms) waiting for element (.does-not-exist) to not be visible.', error.message
 
