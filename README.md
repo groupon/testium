@@ -157,15 +157,19 @@ before setting up an actual test.
 
 ## Testium API
 
+The complete description
+can be found at
+[API.md](API.md).
+
 `browser = getBrowser()`
 
 ### Browser
 
 Method | Description
 :----- | :----------
-`browser.navigateTo(url, options)` | Navigates the browser to the specificed relative or absolute url. If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`, where `applicationPort` is passed in to the options for `testium.runTests`. `options` can include a `headers` param with headers to pass along with the request, and a `query` object with query arguments to add.
+`browser.navigateTo(url, options)` | Navigates the browser to the specificed relative or absolute url with options such as headers.
 `browser.refresh()` | Refresh the current page.
-`browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports. 
+`browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports.
 `browser.getElement(cssSelector)` | Finds an element on the page using the `cssSelector` and returns an Element.
 `browser.getElements(cssSelector)` | Finds all elements on the page using the `cssSelector` and returns an array of Elements.
 `browser.waitForElement(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible, then returns the Element. Times out after `timeout` ms.
@@ -254,7 +258,9 @@ Method | Description
 :----- | :----------
 `element.get(attribute)` | Returns the element's specified attribute, which can be `text`. Note that WebDriver (and therefore testium) will not return text of hidden elements.
 `element.click()` | Calls click on the element.
-
+`element.isVisible()` | Returns `true` if the element is visible.
+`element.type(strings...)` | Sends `strings...` to the input element.
+`element.clear()` | Clears the input element.
 
 ## Contributing
 
