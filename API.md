@@ -1,0 +1,830 @@
+# Testium API
+
+Below is the complete description
+of the Testium API.
+
+```
+{getBrowser} = require 'testium'
+browser = getBrowser()
+```
+
+## Browser
+
+### browser.navigateTo(url, options)
+
+Navigates the browser to the specificed relative or absolute url.
+
+If `url` is the same as the current url,
+a page refresh is forced.
+This deviates from the WebDriver spec.
+
+**relative urls**
+
+If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`,
+where `applicationPort` is passed in to the options
+for `testium.runTests`.
+
+```coffee
+# navigates to "http://127.0.0.1:#{applicationPort}/products"
+browser.navigateTo('/products')
+```
+
+**absolute urls**
+
+If the url is absolute,
+any methods that depend on the proxy
+(`getStatusCode` and `getHeaders`)
+will not work.
+This is a bug and will be fixed.
+
+```coffee
+browser.navigateTo('http://www.google.com')
+
+# fails
+browser.getStatusCode()
+```
+
+**options**
+
+The following types of options
+can be provided.
+
+```coffees
+options:
+  query:
+    someQueryParam: 'someQueryValue'
+  headers:
+    locale: 'en_US'
+```
+
+The `headers` key provides
+headers to pass along with the request.
+
+```coffee
+browser.navigateTo '/products', headers: {
+  locale: 'en_US'
+}
+```
+
+The `query` key provides an object
+that will be converted to a querystring.
+
+```coffee
+# navigates to "/products?start=50&count=25"
+browser.navigateTo '/products', query: {
+  start: 50
+  count: 25
+}
+```
+
+### browser.refresh()
+
+Refresh the current page.
+
+```coffee
+browser.refresh()
+```
+
+### browser.capabilities
+
+Is an object describing the
+[Capabilities](#capabilities)
+that the current browser supports.
+
+````
+# only define a test if the current browser
+# can work with alerts
+if browser.capabilities.handlesAlerts
+  it 'shows an alert', ->
+    browser.click '.show-alert'
+    browser.alert.accept()
+else
+  browserName = browser.capabilities.browserName
+  xit 'pending: "shows an alert" because #{browserName} does not support alerts'
+```
+
+### browser.getElements(cssSelector)
+
+Finds an element on the page
+using the `cssSelector`
+and returns an [Element](#element).
+
+```coffee
+button = browser.getElement('.button')
+button.click()
+```
+
+### browser.getElements(cssSelector)
+
+Finds all elements on the page
+using the `cssSelector`
+and returns an array of
+[Element](#element) objects.
+
+```coffee
+fields = browser.getElements('input')
+```
+
+### browser.waitForElement(cssSelector, timeout=3000)
+
+Waits for the element at `cssSelector`
+to exist and be visible,
+then returns the [Element](#element).
+Times out after `timeout` milliseconds.
+
+```coffee
+browser.click '.menu-button'
+# wait up to 1 second
+# for the menu to show up
+browser.waitForElement('.menu', 1000)
+```
+
+### browser.getUrl()
+
+Returns the current url
+('http://127.0.0.1:1234/some/route')
+of the page.
+
+```coffee
+assert = require 'assertive'
+url = browser.getUrl()
+assert.equal 'is SSL', 0, url.indexOf('https')
+```
+
+### browser.waitForUrl(url, timeout=5000)
+
+Waits `timeout` milliseconds
+for the browser to be at the specified `url`.
+
+```coffee
+# wait up to 1 second for the url
+# to be exactly "http://127.0.0.1:3000/confirmation"
+browser.waitForUrl('http://127.0.0.1:3000/confirmation', 1000)
+```
+
+### browser.waitForUrl(url, query, timeout=5000)
+
+Waits `timeout` milliseconds
+for the browser
+to be at the specified `url`
+with query parameters
+in the `query` object.
+
+This allows the query params
+to be specified as an object
+instead of a specificly ordered
+query string.
+
+```coffee
+browser.navigateTo '/products?start=30&count=15'
+# returns immediately
+browser.waitForUrl '/products', {
+  start: 30
+  count: 15
+}
+
+# order doesn't matter
+
+browser.navigateTo '/products?count=15&start=30'
+# returns immediately
+browser.waitForUrl '/products', {
+  start: 30
+  count: 15
+}
+```
+
+### browser.getPath()
+
+Returns the current path ('/some/route') of the page.
+This is different from `getUrl` because only
+the path portion of the full url is returned.
+
+```coffee
+assert = require 'assertive'
+browser.navigateTo '/products'
+path = browser.getPath()
+assert.equal '/products', path
+```
+
+### browser.waitForPath(path, timeout=5000)
+
+Waits `timeout` milliseconds
+for the browser to be
+at the specified `path`.
+
+```coffee
+# waits up to one second for path to be "/products"
+browser.waitForPath('/products', 1000)
+```
+
+### browser.getPageTitle()
+
+Returns the current page title.
+
+```coffee
+title = browser.getPageTitle()
+```
+
+### browser.getPageSource()
+
+Returns the current page's html source.
+Using this method usually means
+that you are trying to test something
+that can be done without a browser.
+Consider writing a simpler test.
+
+```coffee
+assert = require 'assertive'
+source = browser.getPageSource()
+assert.matches /body/, source
+```
+
+Note that if the browser is presenting
+something like an XML or JSON response,
+this method will return
+the presented HTML,
+not the original XML or JSON response.
+If you need to simply test such a response,
+use a simpler test that
+doesn't involve a browser.
+
+### browser.getScreenshot()
+
+Returns screenshot as a base64 encoded PNG.
+
+```coffee
+browser.navigateTo '/products'
+screenshot1 = browser.getScreenshot()
+
+browser.navigateTo '/products-rewrite'
+screenshot2 = browser.getScreenshot()
+
+browser.assert.imagesMatch(screenshot1, screenshot2)
+```
+
+### browser.click(cssSelector)
+
+Finds an [Element](#element)
+based on the `cssSelector`
+and clicks it.
+
+```coffee
+browser.click('.menu-button')
+
+# is the same as
+
+button = browser.getElement('.menu-button')
+button.click()
+```
+
+### browser.type(cssSelector, keys...)
+
+Sends `keys...` to the input
+[Element](#element)
+found by the given `cssSelector`.
+
+This method does not clear the input field first.
+You can use `clear` to do that manually
+or `clearAndType` to combine both operations.
+
+```coffee
+browser.type('.first-name', 'John')
+browser.type('.last-name', 'Smith')
+browser.click('.submit')
+```
+
+### browser.clear(cssSelector)
+
+Clears the input [Element](#element)
+found by the given `cssSelector`.
+
+```coffee
+assert = require 'assertive'
+browser.type('.search', 'puppies')
+browser.clear('.search')
+searchValue = browser.getElement('.search').get('value)
+assert.falsey searchValue
+```
+
+### browser.clearAndType(cssSelector, keys...)
+
+Clears the input [Element](#element)
+found by the given `cssSelector`,
+then sends `keys...` to it.
+
+```coffee
+browser.clearAndType('.search', 'kittens')
+
+# is the same as
+
+browser.clear('.search')
+browser.type('.search', 'kittens')
+```
+
+### browser.evaluate( [String|Function] clientFunction )
+
+Executes the given JavaScript in the browser.
+The argument can be a String or a Function.
+
+Note that the client-side function
+will not have access to server-side values.
+
+**string**
+
+It must contain a return statement
+in order to get a value back.
+
+```js
+// JavaScript
+var clientFunction = "return document.querySelector('.menu').style;";
+style = browser.evaluate(clientFunction);
+```
+
+```coffee
+# CoffeeScript
+
+# the client-side string must still be JavaScript
+clientFunction = "return document.querySelector('.menu').style;"
+style = browser.evaluate(clientFunction)
+```
+
+**function**
+
+```js
+// JavaScript
+var clientFunction = function(){ 
+  // does not have access to the closure
+  // because this will be run on the client
+  return document.querySelector('.menu').style;
+};
+style = browser.evaluate(clientFunction);
+```
+
+```coffee
+# CoffeeScript
+
+# the client-side function can be written here
+# as CoffeeScript because it will
+# be converted for you
+clientFunction = ->
+  document.querySelector('.menu').style
+style = browser.evaluate(clientFunction)
+```
+
+### browser.evaluate(args..., function(args...))
+
+Same as above,
+but marshals the `args` as JSON
+and passes them to the function
+in the given order.
+
+```coffee
+hash = browser.evaluate 'hash', (prop) -> window.location[prop]
+
+# is the same as
+
+clientFunction = -> window.location['hash']
+hash = browser.evaluate(clientFunction)
+```
+
+### browser.setCookie(Cookie)
+
+Sets a [Cookie](#cookie) on the current page's domain.
+
+You can set cookies before loading your first page.
+Testium tells the browser to load a blank page
+at `/` so that cookies can be set
+before loading a real page.
+
+```coffee
+cookie =
+  name: 'userId'
+  value: '3'
+browser.setCookie(cookie)
+```
+
+### browser.setCookies([Cookie])
+
+Sets all [Cookie](#cookie) objects
+in the array.
+
+```cookie
+cookies = [
+  {name: 'userId', value: '3'}
+  {name: 'dismissedPopup', value: 'true'}
+]
+browser.setCookies(cookies)
+
+# is the same as
+
+cookies.forEach (cookie) ->
+  browser.setCookie(cookie)
+```
+
+### browser.getCookie(name)
+
+Returns the [Cookie](#cookie) visible
+to the current page with `name`.
+
+```cookie
+assert = require 'assertive'
+userIdCookie = browser.getCookie('userId')
+assert.equal 3, userIdCookie.value
+```
+
+### browser.getCookies()
+
+Returns all [Cookie](#cookie) objects
+visible to the current page.
+
+```coffee
+cookies = browser.getCookies()
+```
+
+### browser.clearCookies()
+
+Deletes all [Cookie](#cookie) objects
+visible to the current page.
+
+```coffee
+assert = require 'assertive'
+browser.clearCookies()
+cookies = browser.getCookies()
+assert.equal 0, cookies.length
+```
+
+### browser.getStatusCode()
+
+Returns the response status code
+for the current page.
+
+This uses an internal proxy
+to store the response status code.
+Therefore, this method does not currently work
+when navigating to absolute urls.
+
+```coffee
+browser.navigateTo '/products'
+statusCode = browser.getStatusCode()
+```
+
+### browser.getHeaders(name)
+
+Returns the value of the response header
+with the provided name.
+
+This uses an internal proxy
+to store the response headers.
+Therefore, this method does not currently work
+when navigating to absolute urls.
+
+```coffee
+browser.navigateTo '/products'
+contentLength = browser.getHeader('Content-Length')
+```
+
+### browser.getHeaders()
+
+Returns all response headers
+for the current page.
+
+```coffee
+browser.navigateTo '/products'
+allHeaders = browser.getHeaders()
+```
+
+### browser.getConsoleLogs(logLevel='all')
+
+Returns all log events with
+`logLevel` (all/log/warn/error/debug)
+since the last time this method was called.
+
+```
+errorLogs = browser.getConsoleLogs('error')
+```
+
+### browser.close(callback)
+
+Closes the Testium session
+and the browser attached to it.
+Calls the callback
+when everything is torn down.
+
+```coffee
+browser.close ->
+  console.log 'all done!'
+```
+
+## Element
+
+An element object
+has the following properties.
+
+`element = browser.getElement(selector)`
+
+Note: `selector` can be anything
+[WebDriver's CSS Selector](http://www.w3.org/TR/2013/WD-webdriver-20130117/#css-selectors)
+can accept.
+Where supported by browsers,
+this is equivalent to `document.querySelectorAll(selector)`.
+That means that advanced CSS selectors used by jQuery
+are not always supported.
+To debug, try your selector in the
+browser developer tools
+with `document.querySelectorAll(mySelector)`.
+
+### element.get(attribute)
+
+Returns the element's specified attribute,
+which can be `text`.
+Note that WebDriver (and therefore testium)
+will not return text of hidden elements.
+
+```coffee
+value = element.get('value')
+```
+
+### element.click()
+
+Calls click on the element.
+
+```coffee
+element.click()
+```
+
+### element.isVisible()
+
+Returns `true` if the element is visible.
+
+### element.type(strings...)
+
+Sends `strings...` to the input element.
+
+### element.clear()
+
+Clears the input element.
+
+## Alert
+
+This API allows you to interact with
+alert, confirm, and prompt dialogs.
+
+Some browsers, notable phantomjs,
+don't support this part of the WebDriver spec.
+You can guard against this by checking
+the [Capabilities](#capabilities) object.
+
+```coffeescript
+describe 'alert-based tests', ->
+  if !getBrowser().capabilities.handlesAlerts
+    browserName = getBrowser().capabilities.browserName
+    xit "skipping tests because browser #{browserName} doesn't support alerts"
+  else
+    # alert-based tests
+```
+
+### browser.alert.getText()
+
+Gets the text of a visible
+alert, prompt, or confirm dialog.
+
+```coffee
+alertText = browser.alert.getText()
+```
+
+### browser.alert.accept()
+
+Accepts a visible
+alert, prompt, or confirm dialog.
+
+```coffee
+browser.alert.accept()
+```
+
+### browser.alert.dismiss()
+
+Dismisses a visible
+alert, prompt, or confirm dialog.
+
+```coffee
+browser.alert.dismiss()
+```
+
+### browser.alert.type(keys...)
+
+Types into a visible prompt dialog.
+
+```coffee
+browser.alert.type('')
+```
+
+## Assertions
+
+### browser.assert.elementHasText( [docString,] selector, text)
+
+Asserts that the element at `selector`
+contains `text`.
+Returns the element.
+
+Throws exceptions if `selector`
+doesn't match a single node,
+or that node does not contain the given `text`.
+
+Allows an optional extra _initial_ docstring argument,
+for semantic documentation about the test
+when the assertion fails.
+
+```coffee
+browser.assert.elementHasText('.user-name', 'someone')
+
+# is the same as
+
+assert = require 'assertive'
+userName = browser.getElement('.user-name')
+assert.equal 'someone', userName.get('text')
+```
+
+### browser.assert.elementLacksText( [docString,] selector, text)
+
+Asserts that the element at `selector`
+does not contain `text`.
+Returns the element.
+
+Inverse of `assert.elementHasText`.
+
+### browser.assert.elementHasValue( [docString,] selector, text)
+
+Asserts that the element at `selector`
+does not have the value `text`.
+Returns the element.
+
+Throws exceptions if `selector`
+doesn't match a single node,
+or that node's value is not `text`.
+
+Allows an optional extra _initial_ docstring argument,
+for semantic documentation about the test
+when the assertion fails.
+
+```coffee
+browser.assert.elementHasValue('.user-name', 'someone else')
+
+# is the same as
+
+assert = require 'assertive'
+userName = browser.getElement('.user-name')
+assert.equal 'someone else', userName.get('value')
+```
+
+### browser.assert.elementLacksValue(selector, text)
+
+Asserts that the element at `selector`
+does not have the value `text`.
+Returns the element.
+
+Inverse of `assert.elementHasValue`.
+
+### browser.assert.elementIsVisible(selector)
+
+Asserts that the element at `selector`
+is visible.
+Returns the element.
+
+Throws exceptions if selector doesn't exist
+or is not visible.
+
+```coffee
+browser.assert.elementIsVisible('.user-name')
+
+# is the same as
+
+assert = require 'assertive'
+userName = browser.getElement('.user-name')
+assert.truthy userName.isVisible()
+```
+
+### browser.assert.elementNotVisible(selector)
+
+Asserts that the element at `selector`
+is not visible.
+Returns the element.
+
+Inverse of `assert.elementIsVisible`.
+
+
+### browser.assert.elementExists(selector)
+
+Asserts that the element at `selector` exists.
+Returns the element.
+
+Throws exceptions if selector doesn't exist. 
+
+```coffee
+browser.assert.elementExists('.user-name')
+```
+
+### browser.assert.elementDoesntExist(selector)
+
+Asserts that the element at `selector`
+doesn't exist.
+Returns the element.
+
+Inverse of `assert.elementExists`.
+
+### browser.assert.httpStatus(statusCode)
+
+Asserts that the most recent
+response status code is `statusCode`.
+
+```coffee
+browser.navigateTo '/products'
+browser.assert.httpStatus(200)
+```
+
+This is especially useful
+as a method to short circuit
+test failures.
+
+```coffee
+describe 'products', ->
+  before ->
+    @browser = getBrowser()
+    @browser.navigateTo '/products'
+    
+    # if this fails, the three tests below
+    # will not be run, saving output noise
+    @browser.assert.httpStatus 200
+    
+  it 'works 1', ->
+  it 'works 2', ->
+  it 'works 3', ->
+```
+
+### browser.assert.imgLoaded( [docString,] selector)
+
+Asserts that the image element at `selector`
+has both loaded and been decoded successfully.
+
+Allows an optional extra _initial_ docstring argument,
+for semantic documentation
+about the test when the assertion fails.
+
+```coffee
+browser.assert.imgLoaded '.logo'
+```
+
+### browser.assert.imagesMatch(image1, image2, tolerance=0)
+
+Asserts that the provided images
+are equal within the given `tolerance`.
+
+Images can be provided as
+base64-encoded PNG buffers.
+You can pass the value returned
+by `getScreenshot` directly into this method.
+
+It is recommended that you leave the `tolerance`
+value at 0 unless you are fully aware
+of what you are testing.
+Allowing a tolerance larger than 0
+can lead to tests that pass on bad input.
+
+Warning: this method is experimental and slow.
+It uses the [img-diff](https://github.com/groupon-testium/img-diff)
+library.
+You can use `@slow(4000)` in tests to
+notify mocha of this.
+
+```coffee
+it 'has the same UI across implementations', ->
+  @slow(5000)
+  
+  browser.navigateTo '/products'
+  screenshot1 = browser.getScreenshot()
+  
+  browser.navigateTo '/products-rewrite'
+  screenshot2 = browser.getScreenshot()
+  
+  browser.assert.imagesMatch(screenshot1, screenshot2)
+```
+
+## Capabilities
+
+This is an object based on
+the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object)
+object.
+
+
+## Cookie
+
+A Cookie object
+has the following properties.
+
+```coffee
+Cookie = {
+  name
+  value
+  path = '/'
+  domain = #{current_page_domain}
+}
+```
