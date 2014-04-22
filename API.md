@@ -352,7 +352,7 @@ style = browser.evaluate(clientFunction)
 
 ```js
 // JavaScript
-var clientFunction = function(){ 
+var clientFunction = function(){
   // does not have access to the closure
   // because this will be run on the client
   return document.querySelector('.menu').style;
@@ -719,7 +719,7 @@ Inverse of `assert.elementIsVisible`.
 Asserts that the element at `selector` exists.
 Returns the element.
 
-Throws exceptions if selector doesn't exist. 
+Throws exceptions if selector doesn't exist.
 
 ```coffee
 browser.assert.elementExists('.user-name')
@@ -752,11 +752,11 @@ describe 'products', ->
   before ->
     @browser = getBrowser()
     @browser.navigateTo '/products'
-    
+
     # if this fails, the three tests below
     # will not be run, saving output noise
     @browser.assert.httpStatus 200
-    
+
   it 'works 1', ->
   it 'works 2', ->
   it 'works 3', ->
@@ -800,13 +800,13 @@ notify mocha of this.
 ```coffee
 it 'has the same UI across implementations', ->
   @slow(5000)
-  
+
   browser.navigateTo '/products'
   screenshot1 = browser.getScreenshot()
-  
+
   browser.navigateTo '/products-rewrite'
   screenshot2 = browser.getScreenshot()
-  
+
   browser.assert.imagesMatch(screenshot1, screenshot2)
 ```
 
@@ -815,7 +815,44 @@ it 'has the same UI across implementations', ->
 This is an object based on
 the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object)
 object.
+It includes additional inferences
+about the capabilities of the attached browser
+stored under the `testium` key.
 
+### capabilities.testium.consoleLogs
+
+The browser can support
+three different levels of retrieving
+`console[log,warn,debug,error]`
+events.
+
+**none**
+
+The method `browser.getConsoleLogs` itself
+is not even supported.
+Do not call it without either
+(1) making sure you will never use
+a browser that doesn't support it or
+(2) guarding against it by checking
+the capabilities object first.
+
+**basic**
+
+The method `browser.getConsoleLogs` works,
+but it assumes that all log events are of type `log`,
+regardless of their actual values.
+That means that `console.error()` calls on the client
+will return as a `console.log` event by this method.
+
+**all**
+
+The method `browser.getConsoleLogs` works
+entirely as documented.
+
+```coffee
+if browser.capabilities.consoleLogs != 'none'
+  logs = browser.getConsoleLogs()
+```
 
 ## Cookie
 

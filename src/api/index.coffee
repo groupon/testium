@@ -35,6 +35,8 @@ log = require '../log'
 {truthy, hasType} = require 'assertive'
 {extend} = require 'underscore'
 
+inferCapabilities = require './capabilities'
+
 createAlertApi = require './alert'
 createAssertApi = require './assert'
 createElementApi = require './element'
@@ -59,7 +61,7 @@ module.exports = class
     @driver = new WebDriver(webdriverServerUrl, desiredCapabilities, options.http)
     @driver.on 'request', @log
     @driver.on 'response', @log.response
-    @capabilities = @driver.capabilities
+    @capabilities = inferCapabilities(@driver.capabilities)
 
     @alert = createAlertApi(@driver)
 
