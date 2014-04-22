@@ -34,7 +34,7 @@ describe 'element', ->
     it 'succeeds if selector is a String', ->
       element.getElements('.box')
 
-  describe '#waitForElement', ->
+  describe '#waitForElementVisible', ->
     driver =
       setElementTimeout: ->
       getElement: -> {isVisible: -> true}
@@ -42,14 +42,31 @@ describe 'element', ->
 
     it 'fails if selector is undefined', ->
       assert.throws ->
-        element.waitForElement(undefined)
+        element.waitForElementVisible(undefined)
 
     it 'fails if selector is not a String', ->
       assert.throws ->
-        element.waitForElement(->)
+        element.waitForElementVisible(->)
 
     it 'succeeds if selector is a String', ->
-      element.waitForElement('.box')
+      element.waitForElementVisible('.box')
+
+  describe '#waitForElementNotVisible', ->
+    driver =
+      setElementTimeout: ->
+      getElement: -> {isVisible: -> false}
+    element = Element(driver)
+
+    it 'fails if selector is undefined', ->
+      assert.throws ->
+        element.waitForElementNotVisible(undefined)
+
+    it 'fails if selector is not a String', ->
+      assert.throws ->
+        element.waitForElementNotVisible(->)
+
+    it 'succeeds if selector is a String', ->
+      element.waitForElementNotVisible('.box')
 
   describe '#click', ->
     driver =
