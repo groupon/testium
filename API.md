@@ -814,9 +814,10 @@ This is an object based on
 the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object)
 object.
 It includes additional inferences
-about the capabilities of the attached browser.
+about the capabilities of the attached browser
+stored under the `testium` key.
 
-### consoleLogs
+### capabilities.testium.consoleLogs
 
 The browser can support
 three different levels of retrieving

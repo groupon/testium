@@ -9,7 +9,8 @@ describe 'capabilities', ->
           browserName: 'chrome'
         expected =
           browserName: 'chrome'
-          consoleLogs: 'all'
+          testium:
+            consoleLogs: 'all'
         inferred = inferCapabilities(capabilities)
         assert.deepEqual expected, inferred
 
@@ -21,7 +22,8 @@ describe 'capabilities', ->
         expected =
           browserName: 'phantomjs'
           version: '1.9.7'
-          consoleLogs: 'basic'
+          testium:
+            consoleLogs: 'basic'
         inferred = inferCapabilities(capabilities)
         assert.deepEqual expected, inferred
 
@@ -32,7 +34,8 @@ describe 'capabilities', ->
         expected =
           browserName: 'phantomjs'
           version: '1.9.2'
-          consoleLogs: 'none'
+          testium:
+            consoleLogs: 'none'
         inferred = inferCapabilities(capabilities)
         assert.deepEqual expected, inferred
 

@@ -13,7 +13,7 @@ describe 'console logs', ->
 
     # incomplete WebDriver implementations
     # don't clear the log buffer
-    if @browser.capabilities.consoleLogs == 'all'
+    if @browser.capabilities.testium.consoleLogs == 'all'
       logs = @browser.getConsoleLogs()
       assert.equal 0, logs.length
 
