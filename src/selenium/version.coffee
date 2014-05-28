@@ -30,7 +30,13 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+buildDownloadUrl = (version, minorVersion) ->
+  "http://selenium-release.storage.googleapis.com/#{minorVersion}/selenium-server-standalone-#{version}.jar"
+
 FALLBACK_SELENIUM_VERSION = '2.41.0'
+FORCE_SELENIUM_VERSION =
+  downloadUrl: buildDownloadUrl('2.41.0', '2.41')
+  version: '2.41.0'
 
 request = require 'request'
 parseXml = require('xml2js').parseString
@@ -91,7 +97,11 @@ getLatestVersion = (callback) ->
       {error, version} = parseSelenium(result)
       callback error, version
 
+
 module.exports = (callback) ->
+  if FORCE_SELENIUM_VERSION?
+    return callback null, FORCE_SELENIUM_VERSION
+
   getLatestVersion (error, version) ->
     if error?
       version = FALLBACK_SELENIUM_VERSION
@@ -99,7 +109,7 @@ module.exports = (callback) ->
       console.error (error.stack || error)
 
     minorVersion = getMinor(version)
-    downloadUrl = "http://selenium-release.storage.googleapis.com/#{minorVersion}/selenium-server-standalone-#{version}.jar"
+    downloadUrl = buildDownloadUrl(version, minorVersion)
 
     callback null, { downloadUrl, version }
 
