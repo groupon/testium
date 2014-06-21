@@ -85,7 +85,7 @@ commandError = (url, response) ->
 
 success = (response) ->
   response.statusCode = 200
-  response.writeHead response.statusCode, response.headers
+  response.writeHead response.statusCode, {'Content-Type': 'text/html'}
   response.end()
 
 proxyCommand = (url, body, response) ->
