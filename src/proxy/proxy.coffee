@@ -83,9 +83,9 @@ commandError = (url, response) ->
   response.writeHead response.statusCode, response.headers
   response.end()
 
-success = (response) ->
-  response.statusCode = 200
-  response.writeHead response.statusCode, {'Content-Type': 'text/html'}
+emptySuccess = (response) ->
+  # force a blank, successful html response
+  response.writeHead 200, {'Content-Type': 'text/html'}
   response.end()
 
 proxyCommand = (url, body, response) ->
@@ -103,7 +103,7 @@ proxyRequest = (request, response, modifyResponse, toPort) ->
   if firstPage
     firstPage = false
     console.log "--> #{request.method} #{request.url} (prime the browser)"
-    return success(response)
+    return emptySuccess(response)
 
   console.log "--> #{request.method} #{request.url}"
 
