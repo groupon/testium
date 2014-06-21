@@ -20,6 +20,7 @@ describe 'dialogs', ->
 
       it "can get an alert text", ->
         text = @browser.alert.getText()
+        @browser.alert.accept()
         assert.equal 'Alert text was not found', 'An alert!', text
 
       it "can accept an alert", ->
@@ -36,6 +37,7 @@ describe 'dialogs', ->
 
       it "can get confirm text", ->
         text = @browser.alert.getText()
+        @browser.alert.accept()
         assert.equal 'Confirm text was not found', 'A confirmation!', text
 
       it "can accept a confirm", ->
@@ -52,6 +54,7 @@ describe 'dialogs', ->
 
       it "can get prompt text", ->
         text = @browser.alert.getText()
+        @browser.alert.accept()
         assert.equal 'Confirm text was not found', 'A prompt!', text
 
       it "can send text to and accept a prompt", ->
