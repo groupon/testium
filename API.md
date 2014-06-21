@@ -248,6 +248,39 @@ If you need to simply test such a response,
 use a simpler test that
 doesn't involve a browser.
 
+### browser.getPageSize()
+
+Returns the current window's page size
+as an object with height and width properties
+in pixels.
+
+```coffee
+size = browser.getPageSize()
+assert.equal 600, size.height
+assert.equal 800, size.width
+```
+
+This can be useful for responsive UI testing
+when combined with `browser.setPageSize`.
+Testium defaults the page size to
+`height: 768` and `width: 1024`.
+
+### browser.setPageSize({height, width})
+
+Sets the current window's page size
+in pixels.
+
+```coffee
+browser.setPageSize({height: 400, width: 200})
+# page has resized to a much smaller screen
+
+size = browser.getPageSize()
+assert.equal 400, size.height
+assert.equal 200, size.width
+```
+
+This can be useful for responsive UI testing.
+
 ### browser.getScreenshot()
 
 Returns screenshot as a base64 encoded PNG.
