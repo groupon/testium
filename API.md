@@ -655,15 +655,15 @@ browser.alert.type('')
 
 ## Assertions
 
-### browser.assert.elementHasText( [docString,] selector, text)
+### browser.assert.elementHasText( [docString,] selector, textOrRegex)
 
 Asserts that the element at `selector`
-contains `text`.
+contains `textOrRegex`.
 Returns the element.
 
 Throws exceptions if `selector`
 doesn't match a single node,
-or that node does not contain the given `text`.
+or that node does not contain the given `textOrRegex`.
 
 Allows an optional extra _initial_ docstring argument,
 for semantic documentation about the test
@@ -679,23 +679,23 @@ userName = browser.getElement('.user-name')
 assert.equal 'someone', userName.get('text')
 ```
 
-### browser.assert.elementLacksText( [docString,] selector, text)
+### browser.assert.elementLacksText( [docString,] selector, textOrRegex)
 
 Asserts that the element at `selector`
-does not contain `text`.
+does not contain `textOrRegex`.
 Returns the element.
 
 Inverse of `assert.elementHasText`.
 
-### browser.assert.elementHasValue( [docString,] selector, text)
+### browser.assert.elementHasValue( [docString,] selector, textOrRegex)
 
 Asserts that the element at `selector`
-does not have the value `text`.
+does not have the value `textOrRegex`.
 Returns the element.
 
 Throws exceptions if `selector`
 doesn't match a single node,
-or that node's value is not `text`.
+or that node's value is not `textOrRegex`.
 
 Allows an optional extra _initial_ docstring argument,
 for semantic documentation about the test
@@ -711,10 +711,10 @@ userName = browser.getElement('.user-name')
 assert.equal 'someone else', userName.get('value')
 ```
 
-### browser.assert.elementLacksValue(selector, text)
+### browser.assert.elementLacksValue(selector, textOrRegex)
 
 Asserts that the element at `selector`
-does not have the value `text`.
+does not have the value `textOrRegex`.
 Returns the element.
 
 Inverse of `assert.elementHasValue`.
