@@ -180,6 +180,8 @@ Method | Description
 `browser.waitForPath(path, timeout=5000)` | Waits `timeout` ms for the browser to be at the specified `path`.
 `browser.getPageTitle()` | Returns the current page title.
 `browser.getPageSource()` | Returns the current page's html source.
+`browser.getPageSize()` | Returns the current window's size.
+`browser.setPageSize({height, width})` | Sets the current window's size.
 `browser.getScreenshot()` | Returns screenshot as a base64 encoded PNG.
 `browser.click(cssSelector)` | Calls Click on the Element found by the given `cssSelector`.
 `browser.type(cssSelector, keys...)` | Sends `keys...` to the input Element found by the given `cssSelector`.
