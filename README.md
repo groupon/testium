@@ -184,9 +184,10 @@ Method | Description
 `browser.setPageSize({height, width})` | Sets the current window's size.
 `browser.getScreenshot()` | Returns screenshot as a base64 encoded PNG.
 `browser.click(cssSelector)` | Calls Click on the Element found by the given `cssSelector`.
-`browser.type(cssSelector, keys...)` | Sends `keys...` to the input Element found by the given `cssSelector`.
+`browser.type(cssSelector, value)` | Sends `value` to the input Element found by the given `cssSelector`.
+`browser.setValue(cssSelector, value)` | Set's the Element's value at `cssSelector` to `value`.
 `browser.clear(cssSelector)` | Clears the input Element found by the given `cssSelector`.
-`browser.clearAndType(cssSelector, keys...)` | Clears the input Element found by the given `cssSelector`, then sends `keys...` to it.
+`browser.clearAndType(cssSelector, value)` | Clears the input Element found by the given `cssSelector`, then sends `value` to it.
 `browser.evaluate(javascriptString)` | Executes the given javascript. It must contain a return statement in order to get a value back.
 `browser.evaluate(function)` | Returns the result of the given function, invoked on the webdriver side (so you can not bind its `this` object or access context variables via lexical closure).
 `browser.evaluate(args..., function(args...))` | Same as above, but marshals the args as JSON and passes them to the function in the given order. E g: `browser.evaluate 'hash', (prop) -> window.location[prop]` would return the current url fragment.
@@ -208,7 +209,7 @@ Method | Description
 `browser.alert.getText()` | Gets the text of a visible alert, prompt, or confirm dialog.
 `browser.alert.accept()` | Accepts a visible alert, prompt, or confirm dialog.
 `browser.alert.dismiss()` | Dismisses a visible alert, prompt, or confirm dialog.
-`browser.alert.type(keys...)` | Types into a visible prompt dialog.
+`browser.alert.type(value)` | Types into a visible prompt dialog.
 
 Note: Alerts effectively don't work when running with PhantomJS.
 `getText()` will throw an error and the others will just silently not work.

@@ -33,13 +33,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 {truthy, hasType} = require 'assertive'
 
 module.exports = (driver) ->
+  setValue = (selector, keys...) ->
+    element = driver.getElement(selector)
+    truthy "Element not found at selector: #{selector}", element
+    element.clear()
+    element.type keys...
+
   type: (selector, keys...) ->
     hasType 'type(selector, keys...) - requires (String) selector', String, selector
     truthy 'type(selector, keys...) - requires keys', keys.length > 0
-
     element = driver.getElement(selector)
     truthy "Element not found at selector: #{selector}", element
     element.type keys...
+
+  setValue: (selector, keys...) ->
+    hasType 'setValue(selector, keys...) - requires (String) selector', String, selector
+    truthy 'setValue(selector, keys...) - requires keys', keys.length > 0
+    setValue(selector, keys...)
 
   clear: (selector) ->
     hasType 'clear(selector) - requires (String) selector', String, selector
@@ -51,9 +61,5 @@ module.exports = (driver) ->
   clearAndType: (selector, keys...) ->
     hasType 'clearAndType(selector, keys...) - requires (String) selector', String, selector
     truthy 'clearAndType(selector, keys...) - requires keys', keys.length > 0
-
-    element = driver.getElement(selector)
-    truthy "Element not found at selector: #{selector}", element
-    element.clear()
-    element.type keys...
+    setValue(selector, keys...)
 

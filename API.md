@@ -310,19 +310,16 @@ button = browser.getElement('.menu-button')
 button.click()
 ```
 
-### browser.type(cssSelector, keys...)
+### browser.setValue(cssSelector, value)
 
-Sends `keys...` to the input
-[Element](#element)
-found by the given `cssSelector`.
+*Alias: browser.clearAndType*
 
-This method does not clear the input field first.
-You can use `clear` to do that manually
-or `clearAndType` to combine both operations.
+Set's the [Element](#element)'s value
+to `value` found by the given `cssSelector`.
 
 ```coffee
-browser.type('.first-name', 'John')
-browser.type('.last-name', 'Smith')
+browser.setValue('.first-name', 'John')
+browser.setValue('.last-name', 'Smith')
 browser.click('.submit')
 ```
 
@@ -339,11 +336,11 @@ searchValue = browser.getElement('.search').get('value)
 assert.falsey searchValue
 ```
 
-### browser.clearAndType(cssSelector, keys...)
+### browser.clearAndType(cssSelector, value)
 
 Clears the input [Element](#element)
 found by the given `cssSelector`,
-then sends `keys...` to it.
+then sends `value` to it.
 
 ```coffee
 browser.clearAndType('.search', 'kittens')
@@ -645,7 +642,7 @@ alert, prompt, or confirm dialog.
 browser.alert.dismiss()
 ```
 
-### browser.alert.type(keys...)
+### browser.alert.type(value)
 
 Types into a visible prompt dialog.
 
