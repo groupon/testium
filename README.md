@@ -199,7 +199,7 @@ Method | Description
 `browser.getStatusCode()` | Returns the response status code for the current page.
 `browser.getHeader(name)` | Returns the value of the response header with the provided name.
 `browser.getHeaders()` | Returns all response headers for the current page.
-`browser.getConsoleLogs(logLevel='all')` | Returns all log events with `logLevel` (log/warn/error/debug) since the last time this method was called.
+`browser.getConsoleLogs(logLevel='all')` | Returns all log events with `logLevel` (log/warn/error/debug) since the last time this method was called. Warning: Each browser implements this differently against the WebDriver spec.
 `browser.close(callback)` | Closes the Testium session.
 
 ### Alert
