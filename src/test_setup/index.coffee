@@ -58,9 +58,6 @@ exit = (error) ->
 
 process.on 'uncaughtException', exit
 
-{takeScreenshotOnFailure} = require './screenshot'
-store = require './store'
-
 before ->
   # first page load is guranteed
   # by the proxy to be a success
@@ -68,8 +65,5 @@ before ->
   # right away in tests
   browser.navigateTo '/testium-priming-load'
 
-afterEach ->
-  {screenshotDirectory} = store.get()
-  takeScreenshotOnFailure(screenshotDirectory, @currentTest, browser)
 after(global.exitMocha)
 

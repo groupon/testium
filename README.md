@@ -98,7 +98,7 @@ testOptions =
     timeout: 60000
     connectTimeout: 20000
   mochaOptions:
-    reporter: 'spec'
+    reporter: 'spec' # the screenshot on failure future will stop working if you set this
     timeout: 20000
     slow: 4000
 

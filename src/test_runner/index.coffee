@@ -34,6 +34,7 @@ Mocha = require 'mocha'
 path = require 'path'
 store = require '../test_setup/store'
 files = require './files'
+Reporter = require './reporter'
 {compact, extend} = require 'underscore'
 
 require('coffee-script-redux/register')
@@ -72,7 +73,7 @@ process.on 'message', (options) ->
 
   runMocha = (testFiles) ->
     defaults =
-      reporter: 'spec'
+      reporter: Reporter(options.screenshotDirectory)
       timeout: 20000
       slow: 2000
     options = extend {}, defaults, mochaOptions
