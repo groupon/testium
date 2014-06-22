@@ -533,6 +533,12 @@ since the last time this method was called.
 errorLogs = browser.getConsoleLogs('error')
 ```
 
+Warning: No browser appears to implement this
+exactly according to the spec.
+It's best used as extra information,
+not something you depend on to always work
+in the same way.
+
 ### browser.close(callback)
 
 Closes the Testium session
