@@ -4,6 +4,7 @@ testApp = require './app'
 testium = require '../lib/index'
 {series} = require 'async'
 
+APP_DIRECTORY = "#{__dirname}/.."
 TEST_DIRECTORY = "#{__dirname}/integration"
 LOG_DIRECTORY = "#{__dirname}/integration_log"
 SCREENSHOT_DIRECTORY = "#{LOG_DIRECTORY}/screenshots"
@@ -26,13 +27,16 @@ ensureEmpty = (path) ->
   mkdirp.sync path
 
 runTests = (callback) ->
+  tests = APP_DIRECTORY + '/' + process.env.TESTS
+  tests ?= TEST_DIRECTORY
+
   testBrowser = (browser) -> (browserTested) ->
     console.log "\nTesting against: #{browser}\n"
     options =
-      tests: TEST_DIRECTORY
+      tests: tests
       screenshotDirectory: SCREENSHOT_DIRECTORY
       logDirectory: LOG_DIRECTORY
-      appDirectory: "#{__dirname}/.."
+      appDirectory: APP_DIRECTORY
       applicationPort: 4003
       browser: browser
       http:
