@@ -19,7 +19,8 @@
   "publishConfig": {
     "license": {
       "exclude": [
-        "test"
+        "test",
+        "lib"
       ]
     }
   },
