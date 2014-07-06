@@ -30,14 +30,17 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-USAGE = 'Usage: $0 [browser|--updateSelenium|--help]'
+USAGE = 'Usage: $0 [browser | --update-selenium | --force-update | --help]'
+BIN_PATH = "#{__dirname}/../../bin"
 
 optimist = require('optimist').usage(USAGE)
 options = optimist.argv
 
 if options['update-selenium']
-  binPath = "#{__dirname}/../../bin"
-  (require 'selenium-download').update binPath, ->
+  (require 'selenium-download').update BIN_PATH, ->
+    process.exit(0)
+else if options['force-update']
+  (require 'selenium-download').forceUpdate BIN_PATH, ->
     process.exit(0)
 else if options.help
   console.log optimist.help()
