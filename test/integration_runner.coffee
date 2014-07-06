@@ -27,8 +27,10 @@ ensureEmpty = (path) ->
   mkdirp.sync path
 
 runTests = (callback) ->
-  tests = APP_DIRECTORY + '/' + process.env.TESTS
-  tests ?= TEST_DIRECTORY
+  tests = if process.env.TESTS?
+    APP_DIRECTORY + '/' + process.env.TESTS
+  else
+    TEST_DIRECTORY
 
   testBrowser = (browser) -> (browserTested) ->
     console.log "\nTesting against: #{browser}\n"
