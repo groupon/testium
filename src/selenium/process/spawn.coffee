@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 partialPipe = (source, dest) ->
   # don't allow 'end' events
   # to close the log stream
-  source.on 'data', dest.write
+  source.on 'data', dest.write.bind(dest)
 
 module.exports = (command, args, name, logStream) ->
   proc = spawn command, args

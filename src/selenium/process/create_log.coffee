@@ -37,11 +37,6 @@ module.exports = (logPath) ->
   stream = createWriteStream logPath
   stream.path = logPath
 
-  _write = stream.write.bind(stream)
-  stream.write = (message, encoding, callback) ->
-    # TODO: why does this work?
-    _write(message, encoding, callback)
-
   stream.log = (message) ->
     timestamp = moment().format('HH:mm:ss.SSS')
     @write "[SERVICE] #{timestamp} - #{message}\n"
