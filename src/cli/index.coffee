@@ -37,10 +37,10 @@ optimist = require('optimist').usage(USAGE)
 options = optimist.argv
 
 if options['update-selenium']
-  (require 'selenium-download').update BIN_PATH, ->
+  require('selenium-download').update BIN_PATH, ->
     process.exit(0)
 else if options['force-update']
-  (require 'selenium-download').forceUpdate BIN_PATH, ->
+  require('selenium-download').forceUpdate BIN_PATH, ->
     process.exit(0)
 else if options.help
   console.log optimist.help()
