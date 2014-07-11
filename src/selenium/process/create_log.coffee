@@ -36,8 +36,13 @@ moment = require 'moment'
 module.exports = (logPath) ->
   stream = createWriteStream logPath
   stream.path = logPath
+
   stream.log = (message) ->
     timestamp = moment().format('HH:mm:ss.SSS')
     @write "[SERVICE] #{timestamp} - #{message}\n"
+
+  stream.on 'error', (error) ->
+    console.error "Error writing to stream #{logPath}: ", error.stack
+
   stream
 

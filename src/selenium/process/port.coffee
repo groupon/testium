@@ -39,9 +39,9 @@ isAvailable = (port, callback) ->
     callback null, (status == 'closed')
 
 procError = (proc) ->
-  error = new Error "Process \"#{proc.name}\" crashed. See log at: #{proc.logPath}."
-  error.stderr = proc.error
-  error
+  message = "Process \"#{proc.name}\" crashed. See log at: #{proc.logPath}."
+  message += "\n#{proc.error.trim()}" if proc.error?.length > 0
+  new Error message
 
 waitFor = (proc, port, timeout, callback) ->
   if !proc.alive

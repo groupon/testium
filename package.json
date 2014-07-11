@@ -47,7 +47,7 @@
     "concat-stream": "~1.0.1",
     "request": "~2.30.0",
     "optimist": "~0.6.0",
-    "selenium-download": "~1.0.0",
+    "selenium-download": "~1.2.0",
     "semver": "^2.2.1"
   },
   "devDependencies": {

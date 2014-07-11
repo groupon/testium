@@ -32,6 +32,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 {spawn} = require 'child_process'
 
+partialPipe = (source, dest) ->
+  # don't allow 'end' events
+  # to close the log stream
+  source.on 'data', dest.write.bind(dest)
+
 module.exports = (command, args, name, logStream) ->
   proc = spawn command, args
 
@@ -39,16 +44,14 @@ module.exports = (command, args, name, logStream) ->
   proc.name = name
   proc.logPath = logStream.path
 
-  proc.stdout.pipe logStream
-  proc.stderr.pipe logStream
+  partialPipe proc.stdout, logStream
+  partialPipe proc.stderr, logStream
 
-  error = ''
+  proc.error = ''
   proc.stderr.on 'data', (data) ->
-    error += data.toString()
+    proc.error += data.toString()
 
   proc.on 'exit', (exitCode) ->
-    if exitCode != 0
-      proc.error = error
     proc.alive = false
 
   proc

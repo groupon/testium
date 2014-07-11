@@ -79,6 +79,10 @@ module.exports = (logStream, javaHeapSize=256) ->
         return callback new Error "Port #{SELENIUM_PORT} (requested by selenium) is already in use."
 
       seleniumProcess = spawnProcess(logStream, javaHeapSize)
+      seleniumProcess.stderr.on 'data', (data) ->
+        message = data.toString()
+        if message.indexOf('Invalid or corrupt jarfile') > -1
+          seleniumProcess.error += '[TESTIUM] try ./node_modules/.bin/testium --force-update'
 
       logStream.log "waiting for selenium to listen on port #{SELENIUM_PORT}"
       port.waitFor seleniumProcess, SELENIUM_PORT, SELENIUM_TIMEOUT, (error, timedOut) ->
