@@ -155,6 +155,7 @@ assert.equal 'is SSL', 0, url.indexOf('https')
 
 Waits `timeout` milliseconds
 for the browser to be at the specified `url`.
+`url` can be a String, or a Regular Expression.
 
 ```coffee
 # wait up to 1 second for the url
@@ -174,6 +175,8 @@ This allows the query params
 to be specified as an object
 instead of a specificly ordered
 query string.
+
+`url` can be a String, or a Regular Expression.
 
 ```coffee
 browser.navigateTo '/products?start=30&count=15'
@@ -211,6 +214,8 @@ assert.equal '/products', path
 Waits `timeout` milliseconds
 for the browser to be
 at the specified `path`.
+
+`path` can be a String, or a Regular Expression.
 
 ```coffee
 # waits up to one second for path to be "/products"
