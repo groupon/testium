@@ -41,7 +41,7 @@ test-all: build
 	@make test-unit
 
 build: $(LIB)
-	@./node_modules/.bin/npub prep lib
+	@./node_modules/.bin/npub prep src
 
 prepublish:
 	./node_modules/.bin/npub prep
