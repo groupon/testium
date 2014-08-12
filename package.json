@@ -1,6 +1,6 @@
 {
   "name": "testium",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Synchronous integration testing with Node.js bindings for WebDriver",
   "license": "BSD-3-Clause",
   "keywords": [
