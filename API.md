@@ -544,6 +544,75 @@ It's best used as extra information,
 not something you depend on to always work
 in the same way.
 
+### browser.switchToDefaultFrame()
+
+Switch focus to the default frame
+(i.e., the actual page).
+
+```coffee
+browser.switchToFrame('some-frame')
+browser.click('#some-button-in-frame')
+browser.switchToDefaultFrame()
+```
+
+### browser.switchToFrame(id)
+
+Switch focus to the frame
+with name or id `id`.
+
+```coffee
+browser.switchToFrame('some-frame')
+browser.click('#some-button-in-frame')
+browser.switchToDefaultFrame()
+```
+
+### browser.switchToDefaultWindow()
+
+Switch focus to the window
+that was most recently referenced
+by `navigateTo`.
+
+```coffee
+browser.navigateTo '/path'
+browser.click '#open-popup'
+browser.switchToWindow('popup1')
+browser.click '#some-button-in-popup'
+browser.closeWindow()
+browser.switchToDefaultWindow()
+```
+
+### browser.switchToWindow(name)
+
+Switch focus to the window with name `name`.
+
+```coffee
+browser.navigateTo '/path'
+browser.click '#open-popup'
+browser.switchToWindow('popup1')
+browser.click '#some-button-in-popup'
+browser.closeWindow()
+browser.switchToDefaultWindow()
+```
+
+### browser.closeWindow()
+
+Close the currently focused window.
+
+```coffee
+browser.click '#open-popup'
+browser.switchToWindow('popup1')
+browser.closeWindow()
+browser.switchToDefaultWindow()
+```
+
+The name used to identify
+the popup can be set in the code
+used to create it.
+Remember that the signature
+looks like:
+`window.open(path, popupName, popupOptions)`.
+
+
 ### browser.close(callback)
 
 Closes the Testium session

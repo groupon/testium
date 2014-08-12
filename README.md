@@ -200,6 +200,10 @@ Method | Description
 `browser.getHeader(name)` | Returns the value of the response header with the provided name.
 `browser.getHeaders()` | Returns all response headers for the current page.
 `browser.getConsoleLogs(logLevel='all')` | Returns all log events with `logLevel` (log/warn/error/debug) since the last time this method was called. Warning: Each browser implements this differently against the WebDriver spec.
+`browser.switchToDefaultFrame()` | Switch focus to the default frame (i.e., the actual page).
+`browser.switchToFrame(id)` | Switch focus to the frame with name or id `id`.
+`browser.switchToDefaultWindow()` | Switch focus to the window that was most recently referenced by `navigateTo`. Useful when interacting with popup windows.
+`browser.switchToWindow(name)` | Switch focus to the window with name `name`.
 `browser.close(callback)` | Closes the Testium session.
 
 ### Alert
