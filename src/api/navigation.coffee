@@ -65,6 +65,10 @@ module.exports = (driver) ->
     else
       driver.navigateTo(url)
 
+    # Save the window handle for referencing later
+    # in `switchToDefaultWindow`
+    driver.rootWindow = driver.getCurrentWindowHandle()
+
   refresh: ->
     driver.refresh()
 

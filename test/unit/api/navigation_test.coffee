@@ -11,6 +11,7 @@ describe 'navigation', ->
     refresh: ->
     getUrl: ->
     navigateTo: ->
+    getCurrentWindowHandle: ->
   navigation = Navigation(driver)
 
   describe '#navigateTo', ->
