@@ -42,6 +42,7 @@ createAssertApi = require './assert'
 createElementApi = require './element'
 createNavigationApi = require './navigation'
 createPageApi = require './page'
+createSleepApi = require './sleep'
 createInputApi = require './input'
 createCookieApi = require './cookie'
 createDebugApi = require './debug'
@@ -73,6 +74,7 @@ module.exports = class
     extend this, createCookieApi(@driver)
     extend this, createDebugApi(@driver)
     extend this, createWindowApi(@driver)
+    extend this, createSleepApi(@driver)
 
     # asserts go last so that
     # they can use testium methods
