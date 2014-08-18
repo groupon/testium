@@ -172,7 +172,8 @@ Method | Description
 `browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports.
 `browser.getElement(cssSelector)` | Finds an element on the page using the `cssSelector` and returns an Element.
 `browser.getElements(cssSelector)` | Finds all elements on the page using the `cssSelector` and returns an array of Elements.
-`browser.waitForElement(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible, then returns the Element. Times out after `timeout` ms.
+~~`browser.waitForElement(cssSelector, timeout=3000)`~~ | **Deprecated** *(synonym for `browser.waitForElementVisible(cssSelector, timeout=3000)`*
+`browser.waitForElementVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible, then returns the Element. Times out after `timeout` ms.
 `browser.getUrl()` | Returns the current url ('http://localhost:1234/some/route') of the page.
 `browser.waitForUrl(url, timeout=5000)` | Waits `timeout` ms for the browser to be at the specified `url`.
 `browser.waitForUrl(url, query, timeout=5000)` | Waits `timeout` ms for the browser to be at the specified `url` with query parameters per the `query` object.
