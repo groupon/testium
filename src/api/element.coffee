@@ -33,24 +33,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 {truthy, hasType} = require 'assertive'
 getElementWithoutError = require './safeElement'
 deprecate = require './deprecate'
+{partial} = require 'underscore'
 
-waitForElement = (driver, selector, shouldBeVisible, timeout=3000) ->
+# Where predicate takes a single parameter which is an element (or null) and
+# returns true when the wait is over
+waitForElement = (driver, selector, predicate, failure, timeout=3000) ->
   start = Date.now()
   driver.setElementTimeout(timeout)
 
   foundElement = null
   while (Date.now() - start) < timeout
     element = getElementWithoutError(driver, selector)
-    if element?.isVisible() == shouldBeVisible
+    if predicate element
       foundElement = element
       break
 
   driver.setElementTimeout(0)
 
-  if foundElement == null
-    negate = if shouldBeVisible then '' else 'not '
-    throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to #{negate}be visible."
+  failure(selector, timeout) if foundElement == null
+
   foundElement
+
+visiblePredicate = (shouldBeVisible, element) ->
+  return element?.isVisible() == shouldBeVisible
+
+visibleFailure = (shouldBeVisible, selector, timeout) ->
+  negate = if shouldBeVisible then '' else 'not '
+  throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to #{negate}be visible."
+
+elementExistsPredicate = (element) ->
+  return element?
+
+elementExistsFailure = (selector, timeout) ->
+  throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to exist in page."
+
+# Curry some functions for later use
+isVisiblePredicate = partial visiblePredicate, true
+isntVisiblePredicate = partial visiblePredicate, false
+
+isVisibleFailure = partial visibleFailure, true
+isntVisibleFailure = partial visibleFailure, false
 
 module.exports = (driver) ->
   getElement: (selector) ->
@@ -66,15 +88,19 @@ module.exports = (driver) ->
   waitForElement: (selector, timeout) ->
     deprecate 'waitForElement', 'waitForElementVisible'
     hasType 'getElements(selector) - requires (String) selector', String, selector
-    waitForElement(driver, selector, true, timeout)
+    waitForElement(driver, selector, isVisiblePredicate, isVisibleFailure, timeout)
 
   waitForElementVisible: (selector, timeout) ->
     hasType 'getElements(selector) - requires (String) selector', String, selector
-    waitForElement(driver, selector, true, timeout)
+    waitForElement(driver, selector, isVisiblePredicate, isVisibleFailure, timeout)
 
   waitForElementNotVisible: (selector, timeout) ->
     hasType 'getElements(selector) - requires (String) selector', String, selector
-    waitForElement(driver, selector, false, timeout)
+    waitForElement(driver, selector, isntVisiblePredicate, isntVisibleFailure, timeout)
+
+  waitForElementExist: (selector, timeout) ->
+    hasType 'getElements(selector) - requires (String) selector', String, selector
+    waitForElement(driver, selector, elementExistsPredicate, elementExistsFailure, timeout)
 
   click: (selector) ->
     hasType 'click(selector) - requires (String) selector', String, selector

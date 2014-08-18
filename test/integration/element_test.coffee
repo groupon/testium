@@ -134,6 +134,23 @@ describe 'element', ->
       expected = 'Assertion failed: elementLacksValue: #text-input\n\u001b[39;49;00mnotInclude expected needle not to be found in haystack\n- needle: \"initialvalue\"\nhaystack: \"initialvalue\"'
       assert.equal expected, error.message
 
+  describe 'waitForElementExist', ->
+    before ->
+      @browser.navigateTo '/dynamic.html'
+
+    it 'finds an element after waiting', ->
+      @browser.assert.elementNotVisible('.load_later')
+      @browser.waitForElementExist('.load_later')
+
+    it 'finds a hidden element', ->
+      @browser.assert.elementNotVisible('.load_never')
+      @browser.waitForElementExist('.load_never')
+
+    it 'fails to find an element that never exists', ->
+      error = assert.throws =>
+        @browser.waitForElementExist('.does-not-exist', 10)
+      assert.equal 'Timeout (10ms) waiting for element (.does-not-exist) to exist in page.', error.message
+
   describe 'waitForElementVisible', ->
     before ->
       @browser.navigateTo '/dynamic.html'
