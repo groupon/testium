@@ -125,7 +125,7 @@ and returns an array of
 fields = browser.getElements('input')
 ```
 
-### browser.waitForElement(cssSelector, timeout=3000)
+### browser.waitForElementVisible(cssSelector, timeout=3000)
 
 Waits for the element at `cssSelector`
 to exist and be visible,
@@ -138,6 +138,10 @@ browser.click '.menu-button'
 # for the menu to show up
 browser.waitForElement('.menu', 1000)
 ```
+
+### browser.waitForElement(cssSelector, timeout=3000)
+
+Deprecated synonym for `browser.waitForElementVisible(cssSelector, timeout=3000)`
 
 ### browser.getUrl()
 
