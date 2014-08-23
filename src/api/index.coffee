@@ -45,6 +45,7 @@ createPageApi = require './page'
 createInputApi = require './input'
 createCookieApi = require './cookie'
 createDebugApi = require './debug'
+createMouseApi = require './mouse'
 
 module.exports = class
   constructor: (targetPort, proxyCommandPort, webdriverServerUrl, desiredCapabilities, options={}) ->
@@ -71,6 +72,7 @@ module.exports = class
     extend this, createInputApi(@driver)
     extend this, createCookieApi(@driver)
     extend this, createDebugApi(@driver)
+    extend this, createMouseApi(@driver)
 
     # asserts go last so that
     # they can use testium methods

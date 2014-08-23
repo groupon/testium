@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Title</title>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <style>
+      body { background-color: white; }
+    </style>
+  </head>
+  <body>
+    <h1>Mouse Tests</h1>
+    <div id="mouseover-div">mouseover div</div>
+    <div id="log">-</div>
+    <script>
+      console.log('start');
+      var div = $('#mouseover-div');
+      div.mouseenter(function(){
+        console.log('triggered');
+        var log = $('#log');
+        log.html('mouseover triggered');
+      });
+    </script>
+  </body>
+</html>
+
