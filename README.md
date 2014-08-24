@@ -94,6 +94,7 @@ testOptions =
   appDirectory: "#{__dirname}/.." # allows relative paths to files/dirs to test
   seleniumServer: 'http://localhost:9999/wd/hub' # optional external selenium server
   javaHeapSize: 256 # optional max java heap size; in megabytes
+  logDirectory: "#{__dirname}/log" # directory for testium log files
   http:
     timeout: 60000
     connectTimeout: 20000
