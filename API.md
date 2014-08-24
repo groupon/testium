@@ -616,6 +616,15 @@ Remember that the signature
 looks like:
 `window.open(path, popupName, popupOptions)`.
 
+### browser.sleep(timeout)
+
+Sleep for `timeout` ms.
+
+```coffee
+browser.click '#trigger-animation'
+browser.sleep(2000)
+# Continue now that animation has complete
+```
 
 ### browser.close(callback)
 

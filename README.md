@@ -205,6 +205,7 @@ Method | Description
 `browser.switchToFrame(id)` | Switch focus to the frame with name or id `id`.
 `browser.switchToDefaultWindow()` | Switch focus to the window that was most recently referenced by `navigateTo`. Useful when interacting with popup windows.
 `browser.switchToWindow(name)` | Switch focus to the window with name `name`.
+`browser.sleep(timeout)` | Sleeps for `timeout` ms. Useful when waiting for DOM animations to complete.
 `browser.close(callback)` | Closes the Testium session.
 
 ### Alert
