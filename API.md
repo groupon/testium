@@ -125,6 +125,21 @@ and returns an array of
 fields = browser.getElements('input')
 ```
 
+### browser.waitForElementExist(cssSelector, timeout=3000)
+
+Waits for the element at `cssSelector`
+to exist,
+then returns the [Element](#element).
+Times out after `timeout` milliseconds.
+Visibility is not considered.
+
+```coffee
+browser.click '.menu-button'
+# wait up to 1 second
+# for the menu to be in the DOM
+browser.waitForElementExist('.menu', 1000)
+```
+
 ### browser.waitForElementVisible(cssSelector, timeout=3000)
 
 Waits for the element at `cssSelector`
@@ -136,7 +151,7 @@ Times out after `timeout` milliseconds.
 browser.click '.menu-button'
 # wait up to 1 second
 # for the menu to show up
-browser.waitForElement('.menu', 1000)
+browser.waitForElementVisible('.menu', 1000)
 ```
 
 ### browser.waitForElement(cssSelector, timeout=3000)
