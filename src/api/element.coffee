@@ -30,6 +30,8 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+STALE_MESSAGE = /stale element reference/
+
 {truthy, hasType} = require 'assertive'
 getElementWithoutError = require './safeElement'
 deprecate = require './deprecate'
@@ -44,7 +46,17 @@ waitForElement = (driver, selector, predicate, failure, timeout=3000) ->
   foundElement = null
   while (Date.now() - start) < timeout
     element = getElementWithoutError(driver, selector)
-    if predicate element
+
+    try
+      predicateResult = predicate element
+    catch exception
+      # Occasionally webdriver throws an error about the element reference being
+      # stale.  Let's handle that case as the element doesn't yet exist. All
+      # other errors are re thrown.
+      message = exception.toString()
+      throw exception if not STALE_MESSAGE.test(message)
+
+    if predicateResult
       foundElement = element
       break
 
