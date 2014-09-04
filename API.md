@@ -103,7 +103,7 @@ else
   xit 'pending: "shows an alert" because #{browserName} does not support alerts'
 ```
 
-### browser.getElements(cssSelector)
+### browser.getElement(cssSelector)
 
 Finds an element on the page
 using the `cssSelector`
