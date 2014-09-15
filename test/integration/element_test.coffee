@@ -1,6 +1,15 @@
 {getBrowser} = require '../../lib/index'
 assert = require 'assertive'
 
+describe 'element outside viewport', ->
+  before ->
+    @browser = getBrowser()
+    @browser.navigateTo '/tall.html'
+
+  it 'can click an element outside the viewport', ->
+    element = @browser.getElement '.outside-viewport'
+    element.click() # no error here means this worked
+
 describe 'element', ->
   before ->
     @browser = getBrowser()

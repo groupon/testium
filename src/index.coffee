@@ -45,7 +45,9 @@ runTests = (options={}, callback) ->
   proc.on 'error', (err) ->
     error = err
 
-  proc.on 'exit', (exitCode) ->
+  proc.on 'exit', (exitCode, interrupt) ->
+    if interrupt == 'SIGSEGV' && !error
+      error = new Error(interrupt)
     callback(error, exitCode)
 
   proc.send(options)
