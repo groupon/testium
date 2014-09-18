@@ -38,6 +38,10 @@ isTextOrRegexp = (textOrRegExp) ->
 
 ElementMixin =
   _getElementWithProperty: (selector, property) ->
+    element = @_getElement selector
+    [ element, element.get(property) ]
+
+  _getElement: (driver, selector)->
     elements = @driver.getElements selector
     count = elements.length
 
@@ -46,7 +50,22 @@ ElementMixin =
       #{selector} has #{count} hits in the page""" unless count is 1
 
     element = elements[0]
-    [ element, element.get(property) ]
+
+  elementHasAttributes: (selector, attributesHash) ->
+    if arguments.length is 3
+      [doc, selector, attributesHash] = arguments
+      assert.truthy 'elementHasAttributes(docstring, selector, attributesHash) - requires String docstring', isString doc
+
+    assert.truthy 'elementHasAttributes(selector, attributesHash) - requires String selector', isString selector
+    assert.truthy 'elementHasAttributes(selector, attributesHash) - requires Hash attributesHash', isHash attributesHash
+
+    element = @_getElement(selector)
+
+    for attribute, val of attributesHash
+      doc = "elementHasAttributes - attribute:#{attribute}"
+      assert.equal doc, element.get(attribute), val
+
+    element
 
   elementHasText: (selector, textOrRegExp) ->
     if arguments.length is 3

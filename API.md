@@ -839,6 +839,23 @@ Returns the element.
 
 Inverse of `assert.elementHasValue`.
 
+### browser.assert.elementHasAttributes( [docString,] selector, attributesHash)
+
+Asserts that the element at `selector`
+contains `attribute:value` pairs specified by attributesHash.
+Returns the element.
+
+Throws exceptions if `selector`
+doesn't match a single node,
+or that node does not contain the given `attribute:value` pairs.
+
+Allows an optional extra _initial_ docstring argument,
+for semantic documentation about the test
+when the assertion fails.
+
+```coffee
+browser.assert.elementHasAttributes('.user-name', {text: 'someone', name: 'username'})
+
 ### browser.assert.elementIsVisible(selector)
 
 Asserts that the element at `selector`
