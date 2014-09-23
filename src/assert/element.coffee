@@ -67,9 +67,9 @@ ElementMixin =
       doc = "elementHasAttributes - attribute:#{attribute}"
 
       if isString val
-        assert.equal doc, element.get(attribute), val
+        assert.equal doc, val, element.get(attribute)
       else
-        assert.match doc, element.get(attribute), val
+        assert.match doc, val, element.get(attribute)
 
     element
 

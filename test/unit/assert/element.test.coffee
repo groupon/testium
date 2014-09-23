@@ -15,7 +15,7 @@ describe 'assert', ->
       attributesObject =
         text: text
         value: text
-        id: text
+        id: /something/
 
       it 'fails if selector is undefined', ->
         assert.throws ->
