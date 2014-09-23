@@ -54,16 +54,22 @@ ElementMixin =
   elementHasAttributes: (selector, attributesHash) ->
     if arguments.length is 3
       [doc, selector, attributesHash] = arguments
-      assert.truthy 'elementHasAttributes(docstring, selector, attributesHash) - requires String docstring', isString doc
+      assert.hasType 'elementHasAttributes(docstring, selector, attributesHash) - requires String docstring', String, doc
 
-    assert.truthy 'elementHasAttributes(selector, attributesHash) - requires String selector', isString selector
-    assert.truthy 'elementHasAttributes(selector, attributesHash) - requires Hash attributesHash', isHash attributesHash
+    assert.hasType 'elementHasAttributes(selector, attributesHash) - requires String selector', String, selector
+    assert.hasType 'elementHasAttributes(selector, attributesHash) - requires Hash attributesHash', Object, attributesHash
 
     element = @_getElement(selector)
 
     for attribute, val of attributesHash
+      assert.hasType 'elementHasAttributes(selector, attributesHash) - requires String attribute', String, attribute
+      assert.truthy 'elementHasAttributes(selector, attributesHash) - requires textOrRegExp value', isTextOrRegexp val
       doc = "elementHasAttributes - attribute:#{attribute}"
-      assert.equal doc, element.get(attribute), val
+
+      if isString val
+        assert.equal doc, element.get(attribute), val
+      else
+        assert.match doc, element.get(attribute), val
 
     element
 
