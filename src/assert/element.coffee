@@ -51,19 +51,19 @@ ElementMixin =
 
     element = elements[0]
 
-  elementHasAttributes: (selector, attributesHash) ->
+  elementHasAttributes: (selector, attributesObject) ->
     if arguments.length is 3
-      [doc, selector, attributesHash] = arguments
-      assert.hasType 'elementHasAttributes(docstring, selector, attributesHash) - requires String docstring', String, doc
+      [doc, selector, attributesObject] = arguments
+      assert.hasType 'elementHasAttributes(docstring, selector, attributesObject) - requires String docstring', String, doc
 
-    assert.hasType 'elementHasAttributes(selector, attributesHash) - requires String selector', String, selector
-    assert.hasType 'elementHasAttributes(selector, attributesHash) - requires Hash attributesHash', Object, attributesHash
+    assert.hasType 'elementHasAttributes(selector, attributesObject) - requires String selector', String, selector
+    assert.hasType 'elementHasAttributes(selector, attributesObject) - requires Hash attributesObject', Object, attributesObject
 
     element = @_getElement(selector)
 
-    for attribute, val of attributesHash
-      assert.hasType 'elementHasAttributes(selector, attributesHash) - requires String attribute', String, attribute
-      assert.truthy 'elementHasAttributes(selector, attributesHash) - requires textOrRegExp value', isTextOrRegexp val
+    for attribute, val of attributesObject
+      assert.hasType 'elementHasAttributes(selector, attributesObject) - requires String attribute', String, attribute
+      assert.truthy 'elementHasAttributes(selector, attributesObject) - requires textOrRegExp value', isTextOrRegexp val
       doc = "elementHasAttributes - attribute:#{attribute}"
 
       if isString val

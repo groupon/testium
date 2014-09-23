@@ -839,10 +839,10 @@ Returns the element.
 
 Inverse of `assert.elementHasValue`.
 
-### browser.assert.elementHasAttributes( [docString,] selector, attributesHash)
+### browser.assert.elementHasAttributes( [docString,] selector, attributesObject)
 
 Asserts that the element at `selector`
-contains `attribute:value` pairs specified by attributesHash.
+contains `attribute:value` pairs specified by attributesObject.
 Returns the element.
 
 Throws exceptions if `selector`
