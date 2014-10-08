@@ -59,7 +59,7 @@ ElementMixin =
       doc = "elementHasAttributes - selector:#{selector}\nattributesObject:#{JSON.stringify(attributesObject)}"
 
     assert.hasType 'elementHasAttributes(selector, attributesObject) - requires String selector', String, selector
-    assert.hasType 'elementHasAttributes(selector, attributesObject) - requires Hash attributesObject', Object, attributesObject
+    assert.hasType 'elementHasAttributes(selector, attributesObject) - requires Object attributesObject', Object, attributesObject
 
     element = @_getElement(selector)
 
