@@ -25,7 +25,7 @@ describe 'assert', ->
         assert.throws ->
           element.elementHasAttributes(999, attributesObject)
 
-      it 'fails if text is undefined', ->
+      it 'fails if attributes is undefined', ->
         assert.throws ->
           element.elementHasAttributes(selector, undefined)
 

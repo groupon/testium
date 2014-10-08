@@ -55,6 +55,8 @@ ElementMixin =
     if arguments.length is 3
       [doc, selector, attributesObject] = arguments
       assert.hasType 'elementHasAttributes(docstring, selector, attributesObject) - requires String docstring', String, doc
+    else
+      doc = "elementHasAttributes - selector:#{selector}\nattributesObject:#{JSON.stringify(attributesObject)}"
 
     assert.hasType 'elementHasAttributes(selector, attributesObject) - requires String selector', String, selector
     assert.hasType 'elementHasAttributes(selector, attributesObject) - requires Hash attributesObject', Object, attributesObject
@@ -62,14 +64,15 @@ ElementMixin =
     element = @_getElement(selector)
 
     for attribute, val of attributesObject
-      assert.hasType 'elementHasAttributes(selector, attributesObject) - requires String attribute', String, attribute
-      assert.truthy 'elementHasAttributes(selector, attributesObject) - requires textOrRegExp value', isTextOrRegexp val
-      doc = "elementHasAttributes - attribute:#{attribute}"
+
+      actualVal = element.get(attribute)
+      attrDoc = "#{doc}\nattribute \"#{attribute}\" was expected to have \"#{val}\", but was \"#{actualVal}\"."
 
       if isString val
-        assert.equal doc, val, element.get(attribute)
+        assert.equal attrDoc, val, actualVal
       else
-        assert.match doc, val, element.get(attribute)
+        assert.hasType 'elementHasAttributes(selector, attributesObject) - attributesObject requires String or RegExp value', RegExp, val
+        assert.match attrDoc, val, actualVal
 
     element
 
