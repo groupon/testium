@@ -855,6 +855,7 @@ when the assertion fails.
 
 ```coffee
 browser.assert.elementHasAttributes('.user-name', {text: 'someone', name: 'username'})
+```
 
 ### browser.assert.elementIsVisible(selector)
 
