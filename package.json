@@ -23,14 +23,14 @@
   "publishConfig": {
     "license": {
       "exclude": [
-        "bin",
+        "cli.js",
         "lib",
         "test"
       ]
     }
   },
   "main": "lib/testium.js",
-  "bin": "bin/testium.js",
+  "bin": "cli.js",
   "scripts": {
     "test": "make all"
   },
