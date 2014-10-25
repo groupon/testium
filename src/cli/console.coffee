@@ -30,68 +30,142 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-LOG_DIRECTORY = "#{__dirname}/../../log"
 WELCOME_MESSAGE = """
 WebDriver repl!
-Methods are available in scope. Try: navigateTo 'google.com'
-Type `methods` to see what's available.
+Methods are available in scope. Try: navigateTo('google.com')
+Type `.methods` to see what's available.
 """
 
-module.exports = (browserName) ->
-  (require '../test_setup/store').set {
-    logDirectory: LOG_DIRECTORY
-    browser: browserName
-    screenshotDirectory: "#{LOG_DIRECTORY}/screenshots"
-    seleniumServer: 'http://127.0.0.1:4444/wd/hub'
-  }
+Module = require 'module'
+path = require 'path'
 
-  selenium = require '../selenium'
-  csrepl = require 'coffee-script-redux/lib/repl'
-  {extend} = require 'underscore'
-  {getBrowser} = require '../test_setup/browser'
+config = require '../config'
+{getBrowser} = require '../testium'
 
+collectPublicMethods = (obj) ->
+  methods = []
+  for prop, method of obj
+    if typeof method == 'function' && prop[0] != '_'
+      methods.push(prop)
+  methods
 
-  normalize = (url) ->
-    if url.indexOf('http') == -1
-      "http://#{url}"
-    else
-      url
+collectPublicMethodsDeep = (obj) ->
+  return [] unless obj?
+  proto = Object.getPrototypeOf(obj)
+  collectPublicMethods(obj).concat(
+    collectPublicMethodsDeep(proto)
+  )
 
-  createBrowser = ->
-    browser = getBrowser()
-    _navigateTo = browser.navigateTo
+getMethods = (browser) ->
+  methods = collectPublicMethodsDeep browser
+  methods.sort().join(', ')
 
-    browser.navigateTo = (url, options) ->
-      url = normalize(url)
-      _navigateTo.call(browser, url, options)
+exportToContext = (browser, context) ->
+  context.browser = browser
+  context.assert = browser.assert
+  methods = collectPublicMethodsDeep browser
+  methods.forEach (method) ->
+    context[method] = browser[method].bind(browser)
 
-    browser
+module.exports = ->
+  browserName = config.browser
+  console.error "Preparing #{browserName}..."
 
-  selenium.start null, null, LOG_DIRECTORY, 80, (error) ->
+  # Hack for resolving modules correctly relative to appDirectory
+  pretendFilename = path.resolve config.root, 'repl'
+
+  replModule = Module._resolveFilename config.repl.module, {
+    filename: pretendFilename
+    paths: Module._nodeModulePaths pretendFilename
+  }, false
+
+  Repl = require replModule
+
+  getBrowser (error, browser) ->
     throw error if error?
 
-    require 'coffee-script-redux/register'
+    closeBrowser = ->
+      browser.close (error) ->
+        return unless error?
+        error.message = "#{error.message} (while closing browser)"
+        throw error
 
-    console.log WELCOME_MESSAGE
-    cli = csrepl.start { prompt: '%> ' }
-    cli.on 'exit', (exitCode) ->
-      browser.close ->
-        selenium.cleanup ->
-          process.exit(exitCode)
+    startRepl = ->
+      repl = Repl.start {
+        prompt: "#{browserName}> "
+      }
+      exportToContext browser, repl.context
+      repl.on 'exit', ->
+        browser.close -> process.exit(0)
+      repl.defineCommand 'methods', {
+        help: 'List available methods'
+        action: ->
+          repl.outputStream.write getMethods browser
+          repl.displayPrompt()
+      }
 
-    browser = createBrowser()
-    extend cli.context, browser
-    cli.context.methods = getMethods(browser)
+    process.on 'exit', closeBrowser
+    process.on 'uncaughtException', (error) ->
+      closeBrowser()
+      throw error
 
-  getMethods = (browser) ->
-    properties = Object.keys browser
-    methods = []
-    for prop in properties
-      if typeof browser[prop] == 'function'
-        methods.push(prop)
-    methods.sort().join(', ')
+    console.error WELCOME_MESSAGE
+    startRepl browser
 
-  process.on 'unhandledException', ->
-    selenium.cleanup ->
-      process.exit(1)
+    # screenshotDirectory = config.screenshotDirectory
+    # if screenshotDirectory
+    #   screenshotDirectory =
+    #     path.resolve config.appDirectory, screenshotDirectory
+
+    #   afterEachHook = takeScreenshotOnFailure screenshotDirectory
+    #   suite.afterEach 'takeScreenshotOnFailure', afterEachHook
+
+  # csrepl = require 'coffee-script-redux/lib/repl'
+  # {extend} = require 'underscore'
+  # {getBrowser} = require '../test_setup/browser'
+
+
+  # normalize = (url) ->
+  #   if url.indexOf('http') == -1
+  #     "http://#{url}"
+  #   else
+  #     url
+
+  # createBrowser = ->
+  #   browser = getBrowser()
+  #   _navigateTo = browser.navigateTo
+
+  #   browser.navigateTo = (url, options) ->
+  #     url = normalize(url)
+  #     _navigateTo.call(browser, url, options)
+
+  #   browser
+
+  # selenium.start null, null, LOG_DIRECTORY, 80, (error) ->
+  #   throw error if error?
+
+  #   require 'coffee-script-redux/register'
+
+  #   console.log WELCOME_MESSAGE
+  #   cli = csrepl.start { prompt: '%> ' }
+  #   cli.on 'exit', (exitCode) ->
+  #     browser.close ->
+  #       selenium.cleanup ->
+  #         process.exit(exitCode)
+
+  #   browser = createBrowser()
+  #   extend cli.context, browser
+  #   cli.context.methods = getMethods(browser)
+
+  # getMethods = (browser) ->
+  #   properties = Object.keys browser
+  #   methods = []
+  #   for prop in properties
+  #     if typeof browser[prop] == 'function'
+  #       methods.push(prop)
+  #   methods.sort().join(', ')
+
+  # process.on 'unhandledException', ->
+  #   selenium.cleanup ->
+  #     process.exit(1)
 

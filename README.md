@@ -18,15 +18,17 @@ by checking the
 
 ## Example
 
-A simple test using [assertive](https://github.com/groupon/assertive).
+A simple test using [assertive](https://github.com/groupon/assertive)
+and [mocha](http://mochajs.github.io/mocha/).
 
 ```coffeescript
-{getBrowser} = require 'testium'
+injectBrowser = require 'testium/mocha'
 assert = require 'assertive' # or whatever assert library you prefer
 
 describe 'browse', ->
+  before injectBrowser
+
   before ->
-    @browser = getBrowser()
     @browser.navigateTo '/my-account'
     @browser.assert.httpStatus 200
 
@@ -42,23 +44,18 @@ check out
 
 Install Testium by running `npm install --save testium`.
 
-Then, you need to require it and run it, like so!
+Then, you can specify additional configuration, like so!
 
-```coffeescript
-testium = require 'testium'
-
-testOptions =
-  tests: "#{__dirname}/test/integration" #string or array of absolute and/or directory paths and/or glob patterns
-  applicationPort: 4000 # used to resolve relative paths in navigateTo calls
-  browser: 'phantomjs' # chrome | firefox | internet explorer
-
-testium.run testOptions, (error, exitCode) ->
-  # error might have an extra property `.stderr`
-  # that captures the stderr of a crashed
-  # internal process
-
-  # handle result
 ```
+; .testiumrc
+launch = true ; defaults to false, `npm start`s the app
+
+[mocha]
+timeout = 10000 ; defaults to 20 seconds
+slow = 2500 ; defaults to 2 seconds
+```
+
+Run your tests with mocha: `mocha test/integration`
 
 ### Detailed Setup
 
@@ -162,7 +159,7 @@ The complete description
 can be found at
 [API.md](API.md).
 
-`browser = getBrowser()`
+`getBrowser(config, callback)`
 
 ### Browser
 

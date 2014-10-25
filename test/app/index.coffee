@@ -45,7 +45,7 @@ createServer = ->
       file.serve(request, response)
     listener.resume()
 
-module.exports =
+testApp = module.exports =
   listen: (port, callback) ->
     @server = createServer()
     @server.listen port, callback
@@ -54,3 +54,6 @@ module.exports =
     @server.close callback
     @server = null
 
+if module == require.main
+  testApp.listen (process.env.PORT || 4003), ->
+    console.log "Listening on port #{@address().port}"
