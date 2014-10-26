@@ -36,7 +36,7 @@ Methods are available in scope. Try: navigateTo('google.com')
 Type `.methods` to see what's available.
 """
 
-Module = require 'module'
+{_resolveFilename, _nodeModulePaths} = require 'module'
 path = require 'path'
 
 config = require '../config'
@@ -67,17 +67,36 @@ exportToContext = (browser, context) ->
   methods.forEach (method) ->
     context[method] = browser[method].bind(browser)
 
+prepareRequireExtensions = (pretendModule, replModule) ->
+  # This hack allows using mixins written in coffee-script
+  # It won't actually change anything in terms of require extensions
+  # since the coffee-script repl will register the extension anyhow.
+  REDUX = /coffee-script-redux(?:\/lib)?\/repl(?:\.js)?$/
+  if REDUX.test(replModule)
+    coffeeModule =
+      _resolveFilename 'coffee-script-redux/register', pretendModule, false
+    require coffeeModule
+
+  COFFEE = /coffee-script(?:\/lib)?\/repl(?:\.js)?$/
+  if COFFEE.test(replModule)
+    coffeeModule =
+      _resolveFilename 'coffee-script/register', pretendModule, false
+    require coffeeModule
+
 module.exports = ->
   browserName = config.browser
   console.error "Preparing #{browserName}..."
 
   # Hack for resolving modules correctly relative to appDirectory
   pretendFilename = path.resolve config.root, 'repl'
-
-  replModule = Module._resolveFilename config.repl.module, {
+  pretendModule = {
     filename: pretendFilename
-    paths: Module._nodeModulePaths pretendFilename
-  }, false
+    paths: _nodeModulePaths pretendFilename
+  }
+
+  replModule = _resolveFilename config.repl.module, pretendModule, false
+
+  prepareRequireExtensions pretendModule, replModule
 
   Repl = require replModule
 

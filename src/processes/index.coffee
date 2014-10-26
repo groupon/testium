@@ -65,14 +65,13 @@ ensureSeleniumListening = (driverUrl, callback) ->
     response.pipe concat (body) ->
       try
         statusReport = JSON.parse body
-        if statusReport.status != 0
-          callback new Error "Selenium not healthy: #{body}"
-        else
-          callback()
       catch parseError
-        callback parseError
+        return callback parseError
 
-    callback null, { driverUrl }
+      if statusReport.status != 0
+        callback new Error "Selenium not healthy: #{body}"
+      else
+        callback null, { driverUrl }
 
   req.on 'error', (error) ->
     oldStack = error.stack
