@@ -1,5 +1,5 @@
 {
-  "name": "testium2",
+  "name": "testium",
   "version": "2.0.0-alpha1",
   "description": "Synchronous integration testing with Node.js bindings for WebDriver",
   "license": "BSD-3-Clause",
