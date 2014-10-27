@@ -26,7 +26,7 @@ injectBrowser = require 'testium/mocha'
 assert = require 'assertive' # or whatever assert library you prefer
 
 describe 'browse', ->
-  before injectBrowser
+  before injectBrowser()
 
   before ->
     @browser.navigateTo '/my-account'
