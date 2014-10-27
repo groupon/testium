@@ -47,16 +47,16 @@
     "portscanner": "^1.0.0",
     "rc": "~0.5.1",
     "read-package-json": "^1.2.7",
-    "selenium-download": "git://github.com/groupon-testium/selenium-download#jk/update-selenium",
-    "semver": "~4.1.0",
-    "webdriver-http-sync": "git://github.com/groupon-testium/webdriver-http-sync#jk/value-is-an-attribute"
+    "selenium-download": "^1.2.2",
+    "semver": "^4.1.0",
+    "webdriver-http-sync": "~0.11.0"
   },
   "devDependencies": {
     "coffee-script": "^1.8.0",
     "mocha": "^1.21.5",
     "node-static": "~0.7.6",
     "npub": "0.0.6",
-    "rimraf": "~2.2.8"
+    "rimraf": "^2.2.8"
   },
   "optionalDependencies": {
     "img-diff": "~0.1.0"
