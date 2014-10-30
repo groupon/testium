@@ -36,11 +36,11 @@ phantomjs: build
 test-integration-all: phantomjs firefox chrome
 
 build:
-	@./node_modules/.bin/coffee --no-header -cbo lib src
+	@./node_modules/.bin/coffee -cbo lib src
 	@./node_modules/.bin/npub prep src
 
 watch:
-	@./node_modules/.bin/coffee --no-header -cwbo lib src
+	@./node_modules/.bin/coffee -cwbo lib src
 
 prepublish:
 	./node_modules/.bin/npub prep
