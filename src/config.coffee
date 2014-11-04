@@ -48,7 +48,7 @@ getDefaults = ->
     command: null # Guess from package.json
   phantomjs:
     command: 'phantomjs'
-    timeout: 3000
+    timeout: 6000
   selenium:
     timeout: 90000
     serverUrl: null
