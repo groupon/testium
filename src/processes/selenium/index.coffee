@@ -102,7 +102,7 @@ ensureBinaries = (browser, jarPath, chromeDriverPath, done) ->
       testium can also download these files for you,
       just execute the following before running your test suite:
 
-      $ testium --download-selenium
+      $ ./node_modules/.bin/testium --download-selenium
 
       testium will download selenium and chromedriver into this directory:
       #{BIN_PATH}

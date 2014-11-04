@@ -32,5 +32,5 @@ describe 'Missing selenium', ->
         done err
 
   it 'mentions useful options', ->
-    assert.include 'testium --download-selenium', @stderr
+    assert.include '$ ./node_modules/.bin/testium --download-selenium', @stderr
     assert.include '[selenium]\njar =', @stderr

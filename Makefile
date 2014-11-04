@@ -4,7 +4,7 @@ setup:
 	npm install
 
 .PHONY: test
-test: test-unit test-screenshot test-integration
+test: test-unit test-screenshot test-missing-selenium test-start-timeout test-integration
 
 test-integration: build
 	@echo "# Integration Tests #"
