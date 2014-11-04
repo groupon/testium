@@ -18,16 +18,31 @@ test-screenshot: build
 	@echo ""
 	@echo ""
 
+test-start-timeout: build
+	@echo "# Start Timeout Tests #"
+	@./node_modules/.bin/mocha test/start_timeout.test.coffee
+	@echo ""
+	@echo ""
+
+test-missing-selenium: build
+	@echo "# Missing Selenium Tests #"
+	@./node_modules/.bin/mocha test/missing_selenium.test.coffee
+	@echo ""
+	@echo ""
+
 test-unit: build
 	@echo "# Unit Tests #"
 	@./node_modules/.bin/mocha test/unit
 	@echo ""
 	@echo ""
 
-firefox: build
+download-selenium:
+	./cli.js --download-selenium
+
+firefox: build download-selenium
 	@testium_browser=firefox make test-integration
 
-chrome: build
+chrome: build download-selenium
 	@testium_browser=chrome make test-integration
 
 phantomjs: build

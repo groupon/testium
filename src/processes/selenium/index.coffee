@@ -35,6 +35,7 @@ http = require 'http'
 fs = require 'fs'
 
 async = require 'async'
+{partial} = require 'lodash'
 
 {spawnServer} = require '../server'
 {findOpenPort} = require '../port'
@@ -42,6 +43,8 @@ initLogs = require '../../logs'
 
 BIN_PATH = path.join(__dirname, '..', '..', '..', 'bin')
 SELENIUM_TIMEOUT = 90000 # 90 seconds
+DEFAULT_JAR_PATH = path.join BIN_PATH, 'selenium.jar'
+DEFAULT_CHROME_PATH = path.join BIN_PATH, 'chromedriver'
 
 ensureSeleniumListening = (driverUrl, callback) ->
   req = http.get "#{driverUrl}/status", (response) ->
@@ -78,7 +81,42 @@ createSeleniumArguments = (chromeDriverPath) ->
     '-debug'
   ]
 
-ensureBinaries = (jarPath) ->
+ensureBinaries = (browser, jarPath, chromeDriverPath, done) ->
+  withPrettyError = (error) ->
+    return done() unless error?
+    oldStack = error.stack
+    error.message =
+      """
+      Could not find required files for running selenium.
+             - message: #{error.message}
+
+      You can provide your own version of selenium via ~/.testiumrc:
+
+      ```
+      [selenium]
+      jar = /path/to/selenium.jar
+      ; For running tests in chrome:
+      chromedriver = /path/to/chromedriver
+      ```
+
+      testium can also download these files for you,
+      just execute the following before running your test suite:
+
+      $ testium --download-selenium
+
+      testium will download selenium and chromedriver into this directory:
+      #{BIN_PATH}
+      """
+    error.stack = "#{error.message}\n#{oldStack}"
+    done error
+
+  ensureChromeDriver = ->
+    return done() if browser != 'chrome'
+    fs.stat chromeDriverPath, withPrettyError
+
+  fs.stat jarPath, (error) ->
+    return withPrettyError(error) if error?
+    ensureChromeDriver()
 
 spawnSelenium = (config, callback) ->
   if config.selenium.serverUrl
@@ -86,11 +124,8 @@ spawnSelenium = (config, callback) ->
 
   logs = initLogs config
 
-  defaultJarPath = path.join BIN_PATH, 'selenium.jar'
-  jarPath = config.selenium.jar ?= defaultJarPath
-
-  defaultChromePath = path.join BIN_PATH, 'chromedriver'
-  chromeDriverPath = config.selenium.chromedriver ?= defaultChromePath
+  jarPath = config.selenium.jar ?= DEFAULT_JAR_PATH
+  chromeDriverPath = config.selenium.chromedriver ?= DEFAULT_CHROME_PATH
 
   async.auto {
     port: findOpenPort
@@ -100,7 +135,7 @@ spawnSelenium = (config, callback) ->
       fs.stat chromeDriverPath, done
 
     binaries: [ 'chromedriver', (done) ->
-      fs.stat jarPath, done
+      ensureBinaries config.browser, jarPath, chromeDriverPath, done
     ]
 
     selenium: [ 'port', 'binaries', (done, {port}) ->

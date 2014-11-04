@@ -31,24 +31,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 {spawn} = require 'child_process'
+{readFileSync} = require 'fs'
 
 portscanner = require 'portscanner'
 {extend, omit} = require 'lodash'
 debug = require('debug')('testium:processes')
 
+getAppLogWithQuote = (proc) ->
+  logQuote =
+    try
+      createTailQuote readFileSync(proc.logPath, 'utf8'), 20
+    catch err
+      "(failed to load log: #{err.message})"
+
+  """
+  App output (last 20 lines):
+
+  #{logQuote}
+
+  See the full log at: #{proc.logPath}
+  """
+
 procCrashedError = (proc) ->
   message =
     """
     Process \"#{proc.name}\" crashed with code #{proc.exitCode}.
-    See log at: #{proc.logPath}
+    #{getAppLogWithQuote proc}
     """
   message += "\n#{proc.error.trim()}" if proc.error?.length > 0
   new Error message
+
+niceTime = (ms) ->
+  if ms > 1000 * 60
+    "#{ms / 1000 / 60}min"
+  else if ms > 1000
+    "#{ms / 1000}s"
+  else
+    "#{ms}ms"
+
+createTailQuote = (str, count) ->
+  lines = str.split('\n').slice(-count)
+  "> #{lines.join '\n> '}"
 
 procTimedoutError = (proc, port, timeout) ->
   formatArguments = (args = []) ->
     return '(no arguments)' unless args.length
     args.join('\n           ')
+
+  configSection =
+    switch proc.name
+      when 'application' then 'app'
+      else proc.name
 
   message =
     """
@@ -59,9 +92,18 @@ procTimedoutError = (proc, port, timeout) ->
                #{formatArguments proc.launchArguments}
     * cwd:     #{proc.workingDirectory}
     * port:    #{port}
-    * timeout: #{timeout}
+    * timeout: #{niceTime timeout}
 
-    See log at: #{proc.logPath}
+    If longer startup times for this process are expected,
+    you can create a .testiumrc file in your project:
+
+    ```
+    ; see: https://www.npmjs.org/package/rc
+    [#{configSection}]
+    timeout = 60000 ; time in ms
+    ```
+
+    #{getAppLogWithQuote proc}
     """
   message += "\n#{proc.error.trim()}" if proc.error?.length > 0
   new Error message
@@ -101,6 +143,8 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     spawnOpts = extend {
       stdio: [ 'ignore', logHandle, logHandle ]
     }, omit(opts, 'port', 'timeout')
+    spawnOpts.cwd ?= process.cwd()
+
     child = spawn cmd, args, spawnOpts
     child.baseUrl = "http://127.0.0.1:#{port}"
     child.logPath = logPath

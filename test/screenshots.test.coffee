@@ -15,7 +15,7 @@ ENV_OVERRIDES = {
 }
 
 describe 'screenshots', ->
-  before "rm -rf #{SCREENSHOT_DIRECTORY}", (done) ->
+  before "rm -rf #{LOG_DIRECTORY}", (done) ->
     rimraf LOG_DIRECTORY, done
 
   before 'run failing test suite', (done) ->

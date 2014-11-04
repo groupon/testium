@@ -4,5 +4,4 @@
 /node_modules
 /npm-debug.log
 
-/test/integration_log
-/test/screenshot_integration_log
+/test/*_log

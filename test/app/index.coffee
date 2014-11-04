@@ -55,5 +55,10 @@ testApp = module.exports =
     @server = null
 
 if module == require.main
+  if process.env.never_listen
+    console.log 'Refusing to listen'
+    someFn = ->
+    return setTimeout(someFn, 100000)
+
   testApp.listen (process.env.PORT || 4003), ->
     console.log "Listening on port #{@address().port}"
