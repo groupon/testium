@@ -37,7 +37,7 @@ portscanner = require 'portscanner'
 {extend, omit} = require 'lodash'
 debug = require('debug')('testium:processes')
 
-getAppLogWithQuote = (proc) ->
+getLogWithQuote = (proc) ->
   logQuote =
     try
       createTailQuote readFileSync(proc.logPath, 'utf8'), 20
@@ -45,7 +45,7 @@ getAppLogWithQuote = (proc) ->
       "(failed to load log: #{err.message})"
 
   """
-  App output (last 20 lines):
+  Log output (last 20 lines):
 
   #{logQuote}
 
@@ -56,7 +56,7 @@ procCrashedError = (proc) ->
   message =
     """
     Process \"#{proc.name}\" crashed with code #{proc.exitCode}.
-    #{getAppLogWithQuote proc}
+    #{getLogWithQuote proc}
     """
   message += "\n#{proc.error.trim()}" if proc.error?.length > 0
   new Error message
@@ -103,7 +103,7 @@ procTimedoutError = (proc, port, timeout) ->
     timeout = 60000 ; time in ms
     ```
 
-    #{getAppLogWithQuote proc}
+    #{getLogWithQuote proc}
     """
   message += "\n#{proc.error.trim()}" if proc.error?.length > 0
   new Error message
