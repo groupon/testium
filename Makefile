@@ -43,6 +43,9 @@ test-all: build
 build: $(LIB)
 	@./node_modules/.bin/npub prep src
 
+force-update:
+	@./cli.sh --force-update
+
 prepublish:
 	./node_modules/.bin/npub prep
 
@@ -57,4 +60,4 @@ clean:
 test-checkout-clean:
 	git diff --exit-code
 
-all: setup clean test test-checkout-clean
+all: setup force-update clean test test-checkout-clean
