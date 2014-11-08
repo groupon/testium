@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 WELCOME_MESSAGE = """
 WebDriver repl!
-Methods are available in scope. Try: navigateTo('google.com')
+Methods are available in scope. Try: navigateTo('http://google.com')
 Type `.methods` to see what's available.
 """
 

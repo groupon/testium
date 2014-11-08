@@ -5,10 +5,30 @@ of the Testium API.
 
 ## Browser
 
+Getting the browser:
+
 ```coffee
 {getBrowser} = require 'testium'
-browser = getBrowser()
+getBrowser options, (error, browser) ->
 ```
+
+Inject browser into a mocha test context:
+
+```
+injectBrowser = require 'testium/mocha'
+describe 'injecting a browser', ->
+  before injectBrowser(options)
+
+  it 'has a browser', -> @browser
+```
+
+In both cases `options` are optional. Available options:
+
+* `reuseSession`: Use the same session across tests, default: `true`
+* `keepCookies`: Don't clear cookies, default: `false`
+
+The details of `getBrowser` depend on the testium config.
+You can read more about available options in the README.
 
 ### browser.navigateTo(url, options)
 
@@ -21,8 +41,7 @@ This deviates from the WebDriver spec.
 **relative urls**
 
 If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`,
-where `applicationPort` is passed in to the options
-for `testium.runTests`.
+where `applicationPort` can be configured via `app.port`.
 
 ```coffee
 # navigates to "http://127.0.0.1:#{applicationPort}/products"
