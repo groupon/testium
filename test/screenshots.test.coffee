@@ -20,16 +20,17 @@ describe 'screenshots', ->
 
   before 'run failing test suite', (done) ->
     @timeout 10000
-    mocha = execFile 'mocha', [ TEST_FILE ], {
+    mocha = execFile './node_modules/.bin/mocha', [ TEST_FILE ], {
       env: extend(ENV_OVERRIDES, process.env)
-    }, (err, stdout, stderr) ->
+    }, (err, @stdout, @stderr) =>
       try
         assert.equal 2, mocha.exitCode
         done()
-      catch err
-        console.log stdout
-        console.log stderr
-        done err
+      catch exitCodeError
+        console.log "Error: #{err.stack}"
+        console.log "stdout: #{@stdout}"
+        console.log "stderr: #{@stderr}"
+        done exitCodeError
 
   before "readdir #{SCREENSHOT_DIRECTORY}", ->
     @files = fs.readdirSync SCREENSHOT_DIRECTORY
