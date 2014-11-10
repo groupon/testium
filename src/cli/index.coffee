@@ -30,21 +30,20 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-USAGE = 'Usage: $0 [browser | --update-selenium | --force-update | --help]'
-BIN_PATH = "#{__dirname}/../../bin"
+path = require 'path'
 
-optimist = require('optimist').usage(USAGE)
-options = optimist.argv
+USAGE = 'Usage: testium [browser | --update-selenium | --force-update | --help]'
+BIN_PATH = path.resolve __dirname, '..', '..', 'bin'
 
-if options['update-selenium']
+config = require '../config'
+
+if config['update-selenium'] || config['download-selenium']
   require('selenium-download').update BIN_PATH, ->
     process.exit(0)
-else if options['force-update']
+else if config['force-update']
   require('selenium-download').forceUpdate BIN_PATH, ->
     process.exit(0)
-else if options.help
-  console.log optimist.help()
+else if config['help']
+  console.log USAGE
 else
-  browserName = options._[0] || 'firefox'
-  (require './console')(browserName)
-
+  (require './console')()

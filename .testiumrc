@@ -1,0 +1,9 @@
+launch = true
+logDirectory = ./test/integration_log
+screenshotDirectory = ./test/integration_log/screenshots
+
+[app]
+command = coffee test/app
+
+[repl]
+module = coffee-script/repl

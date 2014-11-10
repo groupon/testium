@@ -18,15 +18,17 @@ by checking the
 
 ## Example
 
-A simple test using [assertive](https://github.com/groupon/assertive).
+A simple test using [assertive](https://github.com/groupon/assertive)
+and [mocha](http://mochajs.github.io/mocha/).
 
 ```coffeescript
-{getBrowser} = require 'testium'
+injectBrowser = require 'testium/mocha'
 assert = require 'assertive' # or whatever assert library you prefer
 
 describe 'browse', ->
+  before injectBrowser()
+
   before ->
-    @browser = getBrowser()
     @browser.navigateTo '/my-account'
     @browser.assert.httpStatus 200
 
@@ -42,23 +44,18 @@ check out
 
 Install Testium by running `npm install --save testium`.
 
-Then, you need to require it and run it, like so!
+Then, you can specify additional configuration, like so!
 
-```coffeescript
-testium = require 'testium'
-
-testOptions =
-  tests: "#{__dirname}/test/integration" #string or array of absolute and/or directory paths and/or glob patterns
-  applicationPort: 4000 # used to resolve relative paths in navigateTo calls
-  browser: 'phantomjs' # chrome | firefox | internet explorer
-
-testium.run testOptions, (error, exitCode) ->
-  # error might have an extra property `.stderr`
-  # that captures the stderr of a crashed
-  # internal process
-
-  # handle result
 ```
+; .testiumrc
+launch = true ; defaults to false, `npm start`s the app
+
+[mocha]
+timeout = 10000 ; defaults to 20 seconds
+slow = 2500 ; defaults to 2 seconds
+```
+
+Run your tests with mocha: `mocha test/integration`
 
 ### Detailed Setup
 
@@ -70,82 +67,136 @@ system-level libraries.
 - **libcurl** (for sync http)
 <br>[Ubuntu] `sudo apt-get install libcurl4-openssl-dev`
 <br>[OS X] `brew install curl`
-- **java 7+** (for selenium)
-- **Node.js 0.10+** (for [testium@1.4.0](https://github.com/groupon-testium/testium/releases/tag/v1.4.0)+)
+- **Node.js 0.10+**
+- **phantomjs 1.9.7+** (only for headless testing)
+- **java 7+** (only when running in browsers)
 
 **optional**
 
 - **libpng** (for image diffing)
 <br>[Ubuntu] `sudo apt-get install libpng-dev`
 <br>[OS X] `brew install libpng`
-- **phantomjs 1.9.7+** (for headless running)
 
-Below are all of the options you can specify
-with their defaults as an example.
+## Configuration
 
-```coffeescript
-testium = require 'testium'
-testOptions =
-  beforeTests: "#{__dirname}/test/setup.coffee" # custom test setup script
-  tests: "#{__dirname}/test/integration" # string or array of strings containing: glob pattern or an [absolute|relative] [file|directory]
-  applicationPort: 4000 # used to resolve relative paths in navigateTo calls
-  screenshotDirectory: "#{__dirname}/test/failed_screenshots"
-  browser: 'phantomjs' # chrome | firefox | internet explorer
-  appDirectory: "#{__dirname}/.." # allows relative paths to files/dirs to test
-  seleniumServer: 'http://localhost:9999/wd/hub' # optional external selenium server
-  javaHeapSize: 256 # optional max java heap size; in megabytes
-  logDirectory: "#{__dirname}/log" # directory for testium log files
-  http:
-    timeout: 60000
-    connectTimeout: 20000
-  mochaOptions:
-    reporter: 'spec' # the screenshot on failure future will stop working if you set this
-    timeout: 20000
-    slow: 4000
+testium uses [`rc`](https://www.npmjs.org/package/rc) for configuration.
+Below are the options and their defaults:
 
-testium.run testOptions, (error, exitCode) ->
-  # handle result
+```coffee
+# Root directory of the application.
+# All paths will be resolved relative to this directory.
+# It's also where testium will look for a `package.json` file
+# to figure out how to start the app.
+root: process.cwd()
+# Automatically launch the app with NODE_ENV=test.
+# Set this to true if you want testium to handle this for you
+# when you call `getBrowser`.
+launch: false
+
+# The browser to use, possible values:
+# phantomjs | chrome | firefox | internet explorer
+browser: 'phantomjs'
+desiredCapabilities: {}
+
+# Directory (relative to `root`) where logs are written by testium
+logDirectory: './test/log'
+# Directory to store automated screenshosts, e.g. on failing tests
+screenshotDirectory: './test/log/failed_screenshots'
+
+app:
+  # A port of 0 means "auto-select available port"
+  port: process.env.PORT || 0
+  # How long to wait for the app to start listening
+  timeout: 30000
+  # Command to start the app.
+  # `null` means testium will simulate `npm start`
+  command: null
+phantomjs:
+  # Command to start phantomjs
+  # Change this if you don't have phantomjs in your PATH
+  command: 'phantomjs'
+  # How long to wait for phantomjs to listen
+  timeout: 6000
+selenium:
+  # How long to wait for selenium to listen
+  timeout: 90000
+  # Set this if you have a running selenium server
+  # and don't want testium to start one.
+  serverUrl: null
+  # Path to selenium jar.
+  # `null` means "use testium built-in".
+  # Using the testium built-in binaries requires you to run
+  # `testium --download-selenium` before running your tests.
+  jar: null
+  # Path to chromedriver.
+  # `null` means "use testium built-in", see `jar` above.
+  chromedriver: null
+repl:
+  # Module for the testium repl
+  # If you want to use coffee-script in the repl, use:
+  # * `module: coffee-script/repl` for coffee-script
+  # * `module: coffee-script-redux/lib/repl` for redux
+  module: 'repl'
+mixins:
+  # mixin modules allow you to add new methods to the browser
+  # Example:
+  # ```
+  # module.exports = {
+  #   // available as `browser.goHome()`
+  #   goHome: function() {
+  #     this.click('header #home');
+  #   }
+  # };
+  # ```
+  # Elements in the array should be node.js module names
+  # that can be required relative to `root`.
+  browser: []
+  # Same as browser, only that it extends `browser.assert`.
+  # Use this.browser to access the browser.
+  assert: []
+mocha:
+  # mocha timeout for all tests that are in the suite the
+  # browser was injected into.
+  timeout: 20000
+  # Same, just for `slow`.
+  slow: 2000
 ```
-
-If the `seleniumServer` option is not specified,
-the first test run will download
-the latest selenium standalone server
-and chromedriver.
 
 ## Testium Command-Line Tool
 
-### Updating Selenium
+### Downloading Selenium
 
-When you run your first batch of tests,
-testium ensures that you have the latest
-selenium standalone server and chromedriver.
-
-If you want to make sure those
-continue to be up to date,
-you can use the command-line tool!
+Testium can handle downloading selenium for you,
+making sure the version you download was tested
+with the current version of testium.
 
 ```
-$ ./node_modules/.bin/testium --update-selenium
+$ ./node_modules/.bin/testium --download-selenium
 [testium] grabbing selenium standalone server 2.39.0
 [testium] grabbing selenium chromedriver 2.8
 Up to date!
 ```
 
+*Alias: `testium --update-selenium`*
+
 ### Interactive Console
 
-Testium provides an interactive CoffeeScript console
+Testium provides an interactive node.js repl
 as a bin stub.
 It creates a browser
 and mixes the methods of that browser
 into the global scope.
 
+It respects all configuration options,
+so if you enabled `launch`, it will also launch your app.
+
 You can use it like so!
 
-```
-$ ./node_modules/.bin/testium
-%> navigateTo 'google.com'
-%> element = getElement 'input[name="q"]'
-%> element.type 'puppies\n'
+```js
+$ ./node_modules/.bin/testium --browser firefox
+firefox> navigateTo('http://google.com')
+firefox> var element = getElement('input[name="q"]')
+firefox> element.type('puppies\n')
 ```
 
 And the browser will navigate to `google.com`,
@@ -155,6 +206,10 @@ You should now see search results for puppies.
 
 This is useful for testing out your commands
 before setting up an actual test.
+You can even use `.save test/integration/google.coffee`
+to save the commands you entered into a file.
+For more info,
+read the [official node repl docs](http://nodejs.org/api/repl.html).
 
 ## Testium API
 
@@ -162,7 +217,7 @@ The complete description
 can be found at
 [API.md](API.md).
 
-`browser = getBrowser()`
+`getBrowser(config, callback)`
 
 ### Browser
 
@@ -213,13 +268,13 @@ Method | Description
 
 Method | Description
 :----- | :----------
-`browser.alert.getText()` | Gets the text of a visible alert, prompt, or confirm dialog.
-`browser.alert.accept()` | Accepts a visible alert, prompt, or confirm dialog.
-`browser.alert.dismiss()` | Dismisses a visible alert, prompt, or confirm dialog.
-`browser.alert.type(value)` | Types into a visible prompt dialog.
+`browser.getAlertText()` | Gets the text of a visible alert, prompt, or confirm dialog.
+`browser.acceptAlert()` | Accepts a visible alert, prompt, or confirm dialog.
+`browser.dismissAlert()` | Dismisses a visible alert, prompt, or confirm dialog.
+`browser.typeAlert(value)` | Types into a visible prompt dialog.
 
 Note: Alerts effectively don't work when running with PhantomJS.
-`getText()` will throw an error and the others will just silently not work.
+`getAlertText()` will throw an error and the others will just silently not work.
 If you must test with PhantomJS you can work around this by
 stubbing the `alert`, `confirm`, and `prompt` global methods
 in your client-side javascript.
