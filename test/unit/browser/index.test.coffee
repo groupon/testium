@@ -6,38 +6,47 @@ class FakeWebDriver
 describe 'API', ->
   describe 'construction', ->
     driver = new FakeWebDriver()
+    appUrl = 'http://127.0.0.1:3000'
     proxyUrl = 'http://127.0.0.1:1000'
     commandUrl = 'http://127.0.0.1:2000'
 
     it 'fails if driver is undefined', ->
       assert.throws ->
-        new Browser undefined, proxyUrl, commandUrl
+        new Browser undefined, appUrl, proxyUrl, commandUrl
 
     it 'fails if driver is not an object', ->
       assert.throws ->
-        new Browser 'Not a driver', proxyUrl, commandUrl
+        new Browser 'Not a driver', appUrl, proxyUrl, commandUrl
+
+    it 'fails if appUrl is not a String', ->
+      assert.throws ->
+        new Browser driver, 1000, proxyUrl, commandUrl
+
+    it 'fails if appUrl is undefined', ->
+      assert.throws ->
+        new Browser driver, undefined, proxyUrl, commandUrl
 
     it 'fails if proxyUrl is not a String', ->
       assert.throws ->
-        new Browser driver, 1000, commandUrl
+        new Browser driver, appUrl, 1000, commandUrl
 
     it 'fails if proxyUrl is undefined', ->
       assert.throws ->
-        new Browser driver, undefined, commandUrl
+        new Browser driver, appUrl, undefined, commandUrl
 
     it 'fails if commandUrl is undefined', ->
       assert.throws ->
-        new Browser driver, proxyUrl, undefined
+        new Browser driver, appUrl, proxyUrl, undefined
 
     it 'fails if commandUrl is not a String', ->
       err = assert.throws ->
-        new Browser driver, proxyUrl, 999
+        new Browser driver, appUrl, proxyUrl, 999
       assert.include '''
-        new Browser(driver, proxyUrl, commandUrl) - requires (String) commandUrl
+        new Browser(driver, appUrl, proxyUrl, commandUrl) - requires (String) commandUrl
       ''', err.message
 
     it 'succeeds if all conditions are met', ->
-      new Browser driver, proxyUrl, commandUrl
+      new Browser driver, appUrl, proxyUrl, commandUrl
 
   describe '#close', ->
     it 'fails if callback is not a Function', ->

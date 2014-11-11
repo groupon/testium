@@ -67,7 +67,10 @@ spawnApplication = (config, callback) ->
 
   unless launch
     return isAvailable config.app.port, (error, available) ->
-      return callback() unless available
+      unless available
+        return callback null, {
+          baseUrl: "http://127.0.0.1:#{config.app.port}"
+        }
       callback new Error "App not listening on #{config.app.port}"
 
   logs = initLogs config

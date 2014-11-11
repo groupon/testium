@@ -80,7 +80,7 @@ getBrowser = (options, done) ->
 
   processes.ensureRunning config, (err, results) =>
     return done(err) if err?
-    {selenium, proxy} = results
+    {selenium, proxy, application} = results
 
     createDriver = ->
       {driverUrl} = selenium
@@ -96,7 +96,7 @@ getBrowser = (options, done) ->
         else
           createDriver()
 
-      browser = new Browser driver, proxy.baseUrl, proxy.commandUrl
+      browser = new Browser driver, application.baseUrl, proxy.baseUrl, proxy.commandUrl
       browser.init { skipPriming: usedCachedDriver, keepCookies }
 
       applyMixins browser, config.mixins.browser

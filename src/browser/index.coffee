@@ -38,9 +38,10 @@ Assertions = require '../assert'
 patchCapabilities = require './capabilities'
 
 class Browser
-  constructor: (@driver, @proxyUrl, @commandUrl) ->
-    invocation = 'new Browser(driver, proxyUrl, commandUrl)'
+  constructor: (@driver, @appUrl, @proxyUrl, @commandUrl) ->
+    invocation = 'new Browser(driver, appUrl, proxyUrl, commandUrl)'
     hasType "#{invocation} - requires (Object) driver", Object, driver
+    hasType "#{invocation} - requires (String) appUrl", String, appUrl
     hasType "#{invocation} - requires (String) proxyUrl", String, proxyUrl
     hasType "#{invocation} - requires (String) commandUrl", String, commandUrl
     @assert = new Assertions @driver, this
