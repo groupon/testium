@@ -30,6 +30,11 @@ In both cases `options` are optional. Available options:
 The details of `getBrowser` depend on the testium config.
 You can read more about available options in the README.
 
+### browser.appUrl
+
+Exposes the url of the application.
+Useful if you want to make requests bypassing the browser.
+
 ### browser.navigateTo(url, options)
 
 Navigates the browser to the specificed relative or absolute url.

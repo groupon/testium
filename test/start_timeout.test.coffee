@@ -33,8 +33,13 @@ describe 'App startup timeout', ->
         done exitCodeError
 
   it 'mentions helpful details', ->
-    assert.include 'command: coffee', @stderr
-    assert.include 'test/app', @stderr
-    assert.include 'timeout: 250ms', @stderr
-    assert.include 'test/start_timeout_log/application.log', @stderr
-    assert.include '> Refusing to listen', @stderr
+    try
+      assert.include 'command: coffee', @stderr
+      assert.include 'test/app', @stderr
+      assert.include 'timeout: 250ms', @stderr
+      assert.include 'test/start_timeout_log/application.log', @stderr
+      assert.include '> Refusing to listen', @stderr
+    catch error
+      console.log "stdout: #{@stdout}"
+      console.log "stderr: #{@stderr}"
+      throw error
