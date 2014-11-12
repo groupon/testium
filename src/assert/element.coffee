@@ -41,7 +41,7 @@ ElementMixin =
     element = @_getElement selector
     [ element, element.get(property) ]
 
-  _getElement: (driver, selector)->
+  _getElement: (selector)->
     elements = @driver.getElements selector
     count = elements.length
 
