@@ -38,6 +38,10 @@ isTextOrRegexp = (textOrRegExp) ->
 
 ElementMixin =
   _getElementWithProperty: (selector, property) ->
+    element = @_getElement selector
+    [ element, element.get(property) ]
+
+  _getElement: (selector)->
     elements = @driver.getElements selector
     count = elements.length
 
@@ -46,7 +50,31 @@ ElementMixin =
       #{selector} has #{count} hits in the page""" unless count is 1
 
     element = elements[0]
-    [ element, element.get(property) ]
+
+  elementHasAttributes: (selector, attributesObject) ->
+    if arguments.length is 3
+      [doc, selector, attributesObject] = arguments
+      assert.hasType 'elementHasAttributes(docstring, selector, attributesObject) - requires String docstring', String, doc
+    else
+      doc = "elementHasAttributes - selector:#{selector}\nattributesObject:#{JSON.stringify(attributesObject)}"
+
+    assert.hasType 'elementHasAttributes(selector, attributesObject) - requires String selector', String, selector
+    assert.hasType 'elementHasAttributes(selector, attributesObject) - requires Object attributesObject', Object, attributesObject
+
+    element = @_getElement(selector)
+
+    for attribute, val of attributesObject
+
+      actualVal = element.get(attribute)
+      attrDoc = "#{doc}\nattribute \"#{attribute}\" was expected to have \"#{val}\", but was \"#{actualVal}\"."
+
+      if isString val
+        assert.equal attrDoc, val, actualVal
+      else
+        assert.hasType 'elementHasAttributes(selector, attributesObject) - attributesObject requires String or RegExp value', RegExp, val
+        assert.match attrDoc, val, actualVal
+
+    element
 
   elementHasText: (selector, textOrRegExp) ->
     if arguments.length is 3

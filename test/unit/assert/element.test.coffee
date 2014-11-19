@@ -11,6 +11,27 @@ describe 'assert', ->
     selector = '.box'
     text = 'something'
 
+    describe 'Attributes', ->
+      attributesObject =
+        text: text
+        value: text
+        id: /something/
+
+      it 'fails if selector is undefined', ->
+        assert.throws ->
+          element.elementHasAttributes(undefined, attributesObject)
+
+      it 'fails if selector is not a String', ->
+        assert.throws ->
+          element.elementHasAttributes(999, attributesObject)
+
+      it 'fails if attributes is undefined', ->
+        assert.throws ->
+          element.elementHasAttributes(selector, undefined)
+
+      it 'returns the element if all conditions are met', ->
+        assert.truthy element.elementHasAttributes(selector, attributesObject)
+
     describe 'Text', ->
       it 'fails if selector is undefined', ->
         assert.throws ->
