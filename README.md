@@ -334,8 +334,6 @@ If you'd like to help make testium better,
 please check out:
 
 * [CONTRIBUTING.md](CONTRIBUTING.md)
-* [Roadmap](https://github.com/groupon/testium/wiki/Roadmap)
-* [Under the Hood](https://github.com/groupon/testium/wiki/Under-the-Hood)
 
 If you have questions,
 you can contact the author at: <br>
