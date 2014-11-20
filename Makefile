@@ -73,4 +73,4 @@ clean:
 test-checkout-clean:
 	git diff --exit-code
 
-all: setup force-update clean test test-checkout-clean
+all: setup clean build force-update test test-checkout-clean
