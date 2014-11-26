@@ -146,6 +146,13 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     spawnOpts.cwd ?= process.cwd()
 
     child = spawn cmd, args, spawnOpts
+    
+    child.on 'error', (err) ->
+      if err.errno is 'ENOENT'
+        console.error "Unable to find #{cmd}, ensure you have the required dependencies installed"
+
+      throw err
+      
     child.baseUrl = "http://127.0.0.1:#{port}"
     child.logPath = logPath
     child.logHandle = logHandle
