@@ -54,7 +54,7 @@ getLaunchCommand = (config, callback) ->
     debug 'Loaded from package json', pkgJson.scripts?.start
 
     unless pkgJson.scripts?.start
-      return cb new Error NO_LAUNCH_COMMAND_ERROR
+      return callback new Error NO_LAUNCH_COMMAND_ERROR
 
     callback null, pkgJson.scripts.start
 
