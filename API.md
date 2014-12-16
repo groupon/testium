@@ -531,6 +531,19 @@ cookies = browser.getCookies()
 assert.equal 0, cookies.length
 ```
 
+### browser.clearCookie()
+
+Delete a [Cookie](#cookie) by `name`
+that is visible to the current page.
+
+```coffee
+assert = require 'assertive'
+browser.setCookie(name: 'userId', value: '3')
+browser.clearCookie('user')
+cookies = browser.getCookies()
+assert.equal 0, cookies.length
+```
+
 ### browser.getStatusCode()
 
 Returns the response status code
@@ -1036,5 +1049,6 @@ Cookie = {
   value
   path = '/'
   domain = #{current_page_domain}
+  expiry
 }
 ```

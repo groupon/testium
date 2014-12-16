@@ -24,7 +24,7 @@ describe 'cookies', ->
     assert.equal '5', cookie1.value
     assert.equal '7', cookie2.value
 
-  it 'can be cleared', ->
+  it 'can be cleared as a group', ->
     @browser.setCookie
       name: 'test_cookie'
       value: '9'
@@ -33,3 +33,14 @@ describe 'cookies', ->
     cookies = @browser.getCookies()
 
     assert.equal 0, cookies.length
+
+  it 'can be cleared individually', ->
+    @browser.setCookie
+      name: 'test_cookie'
+      value: '4'
+
+    @browser.clearCookie 'test_cookie'
+
+    cookie = @browser.getCookie('test_cookie')
+    assert.falsey cookie
+
