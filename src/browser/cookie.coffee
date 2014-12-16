@@ -83,8 +83,14 @@ CookieMixin =
   clearCookies: ->
     @driver.clearCookies()
 
+  clearCookie: (name) ->
+    @setCookie
+      name: name
+      value: 'dummy' # setCookie doesn't allow null values
+      expiry: 0
+
   # BEGIN _testium_ cookie magic
-  
+
   _getTestiumCookieField: (name) ->
     cookies = @driver.getCookies()
     testiumCookie = getTestiumCookie(cookies)

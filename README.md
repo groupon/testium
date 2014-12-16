@@ -254,6 +254,7 @@ Method | Description
 `browser.getCookie(name)` | Returns the cookie visible to the current page with `name`.
 `browser.getCookies()` | Returns all cookies visible to the current page.
 `browser.clearCookies()` | Deletes all cookies visible to the current page.
+`browser.clearCookie(name)` | Delete a cookie by `name` that is visible to the current page.
 `browser.getStatusCode()` | Returns the response status code for the current page.
 `browser.getHeader(name)` | Returns the value of the response header with the provided name.
 `browser.getHeaders()` | Returns all response headers for the current page.
