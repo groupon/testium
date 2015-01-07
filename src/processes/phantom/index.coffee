@@ -43,6 +43,7 @@ spawnPhantom = (config, callback) ->
     args = [
       "--webdriver=#{port}"
       '--webdriver-loglevel=DEBUG'
+      '--ssl-protocol=tlsv1'
     ]
     opts = {port, timeout: config.phantomjs.timeout}
     spawnServer logs, 'phantomjs', cmd, args, opts, (error, phantom) ->
