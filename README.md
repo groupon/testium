@@ -48,11 +48,14 @@ Then, you can specify additional configuration, like so!
 
 ```
 ; .testiumrc
-launch = true ; defaults to false, `npm start`s the app
+; defaults to false, `npm start`s the app
+launch = true
 
 [mocha]
-timeout = 10000 ; defaults to 20 seconds
-slow = 2500 ; defaults to 2 seconds
+; defaults to 20 seconds
+timeout = 10000
+; defaults to 2 seconds
+slow = 2500
 ```
 
 Run your tests with mocha: `mocha test/integration`
