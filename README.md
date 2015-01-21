@@ -36,9 +36,6 @@ describe 'browse', ->
     assert.equal 'gzip', @browser.getHeader('Content-Encoding')
 ```
 
-For help debugging your tests,
-check out
-[the wiki page](https://github.com/groupon/testium/wiki/Debugging-Your-Tests).
 
 ## Getting Started
 
