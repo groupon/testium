@@ -121,7 +121,7 @@ that the current browser supports.
 if browser.capabilities.handlesAlerts
   it 'shows an alert', ->
     browser.click '.show-alert'
-    browser.alert.accept()
+    browser.acceptAlert()
 else
   browserName = browser.capabilities.browserName
   xit 'pending: "shows an alert" because #{browserName} does not support alerts'
