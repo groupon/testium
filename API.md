@@ -121,7 +121,7 @@ that the current browser supports.
 if browser.capabilities.handlesAlerts
   it 'shows an alert', ->
     browser.click '.show-alert'
-    browser.alert.accept()
+    browser.acceptAlert()
 else
   browserName = browser.capabilities.browserName
   xit 'pending: "shows an alert" because #{browserName} does not support alerts'
@@ -751,39 +751,39 @@ describe 'alert-based tests', ->
     # alert-based tests
 ```
 
-### browser.alert.getText()
+### browser.getAlertText()
 
 Gets the text of a visible
 alert, prompt, or confirm dialog.
 
 ```coffee
-alertText = browser.alert.getText()
+alertText = browser.getAlertText()
 ```
 
-### browser.alert.accept()
+### browser.acceptAlert()
 
 Accepts a visible
 alert, prompt, or confirm dialog.
 
 ```coffee
-browser.alert.accept()
+browser.acceptAlert()
 ```
 
-### browser.alert.dismiss()
+### browser.dismissAlert()
 
 Dismisses a visible
 alert, prompt, or confirm dialog.
 
 ```coffee
-browser.alert.dismiss()
+browser.dismissAlert()
 ```
 
-### browser.alert.type(value)
+### browser.typeAlert(value)
 
 Types into a visible prompt dialog.
 
 ```coffee
-browser.alert.type('')
+browser.typeAlert('')
 ```
 
 ## Assertions
