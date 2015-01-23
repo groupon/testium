@@ -108,6 +108,10 @@ procTimedoutError = (proc, port, timeout) ->
   message += "\n#{proc.error.trim()}" if proc.error?.length > 0
   new Error message
 
+procNotFoundError = (error, cmd) ->
+  error.message = "Unable to find #{cmd}, ensure you have the required dependencies installed"
+  error
+      
 waitFor = (proc, port, timeout, callback) ->
   if proc.exitCode?
     error = procCrashedError(proc)
@@ -132,6 +136,27 @@ waitFor = (proc, port, timeout, callback) ->
 
   check()
 
+trySpawn = (cmd, args, opts, cb) ->
+  error = null
+  done = no
+
+  proc = spawn cmd, args, opts
+  proc.on 'error', (err) ->
+    if err.errno is 'ENOENT'
+      error = err
+    
+  check = ->
+    if error?
+      cb(procNotFoundError error, cmd)
+    else
+      if !done
+        done = yes
+        setTimeout check, 100
+      else
+        cb null, proc
+        
+  check()
+    
 spawnServer = (logs, name, cmd, args, opts, cb) ->
   {port, timeout} = opts
   timeout ?= 1000
@@ -145,30 +170,32 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     }, omit(opts, 'port', 'timeout')
     spawnOpts.cwd ?= process.cwd()
 
-    child = spawn cmd, args, spawnOpts
-    child.baseUrl = "http://127.0.0.1:#{port}"
-    child.logPath = logPath
-    child.logHandle = logHandle
-    child.launchCommand = cmd
-    child.launchArguments = args
-    child.workingDirectory = spawnOpts.cwd
-    child.name = name
-
-    process.on 'exit', ->
-      try child.kill()
-      catch err
-        console.error err.stack
-
-    process.on 'uncaughtException', (error) ->
-      try child.kill()
-      catch err
-        console.error err.stack
-      throw error
-
-    debug 'start %s on port %s', name, port
-    waitFor child, port, timeout, (error) ->
-      debug 'started %s', name, error
+    trySpawn cmd, args, spawnOpts, (error, child) ->
       return cb(error) if error?
-      cb null, child
+        
+      child.baseUrl = "http://127.0.0.1:#{port}"
+      child.logPath = logPath
+      child.logHandle = logHandle
+      child.launchCommand = cmd
+      child.launchArguments = args
+      child.workingDirectory = spawnOpts.cwd
+      child.name = name
+
+      process.on 'exit', ->
+        try child.kill()
+        catch err
+          console.error err.stack
+
+      process.on 'uncaughtException', (error) ->
+        try child.kill()
+        catch err
+          console.error err.stack
+        throw error
+
+      debug 'start %s on port %s', name, port
+      waitFor child, port, timeout, (error) ->
+        debug 'started %s', name, error
+        return cb(error) if error?
+        cb null, child
 
 module.exports = { spawnServer }
