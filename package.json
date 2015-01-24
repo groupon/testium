@@ -49,7 +49,7 @@
     "read-package-json": "^1.2.7",
     "selenium-download": "^2.0.0",
     "semver": "^4.1.0",
-    "webdriver-http-sync": "~0.11.0"
+    "webdriver-http-sync": "git://github.com/azu/webdriver-http-sync.git#Element.prototype.getElement"
   },
   "devDependencies": {
     "coffee-script": "^1.8.0",
