@@ -188,3 +188,32 @@ describe 'element', ->
         @browser.waitForElementNotVisible('.does-not-exist', 10)
       assert.equal 'Timeout (10ms) waiting for element (.does-not-exist) to not be visible.', error.message
 
+  describe '#getElement', ->
+    before ->
+      @element = @browser.getElement 'body'
+
+    it 'fails if selector is undefined', ->
+      assert.throws ->
+        @element.getElement(undefined)
+
+    it 'fails if selector is not a String', ->
+      assert.throws ->
+        @element.getElement(->)
+
+    it 'succeeds if selector is a String', ->
+      @element.getElement('.message')
+
+  describe '#getElements', ->
+    before ->
+      @element = @browser.getElement 'body'
+
+    it 'fails if selector is undefined', ->
+      assert.throws ->
+        @element.getElements(undefined)
+
+    it 'fails if selector is not a String', ->
+      assert.throws ->
+        @element.getElements(->)
+
+    it 'succeeds if selector is a String', ->
+      @element.getElements('.message')
