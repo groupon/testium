@@ -16,7 +16,6 @@ describe 'element', ->
     # the "checked" property (when it doesn't exist)
     # returns a non-standard response from selenium;
     # let's make sure we can handle it properly
-
     element = @browser.getElement '#checkbox'
     checked = element.get 'checked'
     assert.equal 'checked is null', null, checked
@@ -190,6 +189,9 @@ describe 'element', ->
 
   describe '#getElement', ->
     before ->
+      @browser.navigateTo '/'
+
+    beforeEach ->
       @element = @browser.getElement 'body'
 
     it 'fails if selector is undefined', ->
@@ -201,10 +203,18 @@ describe 'element', ->
         @element.getElement(->)
 
     it 'succeeds if selector is a String', ->
-      @element.getElement('.message')
+      @element.getElement '.message'
+
+    it 'return null if not found an element on the message element', ->
+      messageElement = @browser.getElement '.message'
+      element = messageElement.getElement '.message'
+      assert.falsey element
 
   describe '#getElements', ->
     before ->
+      @browser.navigateTo '/'
+
+    beforeEach ->
       @element = @browser.getElement 'body'
 
     it 'fails if selector is undefined', ->
@@ -217,3 +227,8 @@ describe 'element', ->
 
     it 'succeeds if selector is a String', ->
       @element.getElements('.message')
+
+    it 'return empty array if not found an element on the message element', ->
+      messageElement = @browser.getElement '.message'
+      elements = messageElement.getElements '.message'
+      assert.equal 0, elements.length
