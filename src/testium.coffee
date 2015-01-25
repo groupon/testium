@@ -84,9 +84,9 @@ getBrowser = (options, done) ->
 
     createDriver = ->
       {driverUrl} = selenium
-      {desiredCapabilities} = config
-      debug 'WebDriver(%j)', driverUrl, desiredCapabilities
-      new WebDriver driverUrl, desiredCapabilities
+      {desiredCapabilities, webdriver} = config
+      debug 'WebDriver(%j)', driverUrl, desiredCapabilities, webdriver.requestOptions
+      new WebDriver driverUrl, desiredCapabilities, webdriver.requestOptions
 
     createBrowser = ->
       usedCachedDriver = reuseSession && cachedDriver?

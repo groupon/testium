@@ -53,6 +53,13 @@ getDefaults = ->
   # Directory to store automated screenshosts, e.g. on failing tests
   screenshotDirectory: './test/log/failed_screenshots'
 
+  # Options for web driver connections
+  # can specify timeout and connectTimeout here, defaults are
+  # connectTimeout = 2000
+  # timeout = 60000
+  webdriver:
+    requestOptions: {}
+
   app:
     # A port of 0 means "auto-select available port"
     port: process.env.PORT || 0

@@ -160,6 +160,12 @@ mocha:
   timeout: 20000
   # Same, just for `slow`.
   slow: 2000
+webdriver:
+  requestOptions:
+    # connect timeout for all webdriver proxy connections
+    connectTimeout: 2000
+    # read timeout for all webdriver proxy connections
+    timeout: 60000
 ```
 
 ## Testium Command-Line Tool
