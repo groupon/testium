@@ -86,7 +86,15 @@ getBrowser = (options, done) ->
       {driverUrl} = selenium
       {desiredCapabilities, webdriver} = config
       debug 'WebDriver(%j)', driverUrl, desiredCapabilities, webdriver.requestOptions
-      new WebDriver driverUrl, desiredCapabilities, webdriver.requestOptions
+      try
+        new WebDriver driverUrl, desiredCapabilities, webdriver.requestOptions
+      catch error
+        logName = if config.browser == 'phantomjs'
+          'phantomjs.log'
+        else
+          'selenium.log'
+        error.message = "Failed to initialize WebDriver. Check the #{logName}.\n" + error.message
+        throw error
 
     createBrowser = ->
       usedCachedDriver = reuseSession && cachedDriver?
