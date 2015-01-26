@@ -1,4 +1,3 @@
-fs = require 'fs'
 {execFile} = require 'child_process'
 
 assert = require 'assertive'

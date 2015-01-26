@@ -132,6 +132,10 @@ waitFor = (proc, port, timeout, callback) ->
 
   check()
 
+procNotFoundError = (error, cmd) ->
+  error.message = "Unable to find #{cmd}"
+  error
+
 spawnServer = (logs, name, cmd, args, opts, cb) ->
   {port, timeout} = opts
   timeout ?= 1000
@@ -153,6 +157,10 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     child.launchArguments = args
     child.workingDirectory = spawnOpts.cwd
     child.name = name
+    child.on 'error', (err) ->
+      if err.errno is 'ENOENT'
+        child.error = procNotFoundError(err, cmd).stack
+      child.kill()
 
     process.on 'exit', ->
       try child.kill()
