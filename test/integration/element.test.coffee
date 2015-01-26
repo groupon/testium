@@ -16,7 +16,6 @@ describe 'element', ->
     # the "checked" property (when it doesn't exist)
     # returns a non-standard response from selenium;
     # let's make sure we can handle it properly
-
     element = @browser.getElement '#checkbox'
     checked = element.get 'checked'
     assert.equal 'checked is null', null, checked
@@ -188,3 +187,48 @@ describe 'element', ->
         @browser.waitForElementNotVisible('.does-not-exist', 10)
       assert.equal 'Timeout (10ms) waiting for element (.does-not-exist) to not be visible.', error.message
 
+  describe '#getElement', ->
+    before ->
+      @browser.navigateTo '/'
+
+    beforeEach ->
+      @element = @browser.getElement 'body'
+
+    it 'fails if selector is undefined', ->
+      assert.throws ->
+        @element.getElement(undefined)
+
+    it 'fails if selector is not a String', ->
+      assert.throws ->
+        @element.getElement(->)
+
+    it 'succeeds if selector is a String', ->
+      @element.getElement '.message'
+
+    it 'return null if not found an element on the message element', ->
+      messageElement = @browser.getElement '.message'
+      element = messageElement.getElement '.message'
+      assert.falsey element
+
+  describe '#getElements', ->
+    before ->
+      @browser.navigateTo '/'
+
+    beforeEach ->
+      @element = @browser.getElement 'body'
+
+    it 'fails if selector is undefined', ->
+      assert.throws ->
+        @element.getElements(undefined)
+
+    it 'fails if selector is not a String', ->
+      assert.throws ->
+        @element.getElements(->)
+
+    it 'succeeds if selector is a String', ->
+      @element.getElements('.message')
+
+    it 'return empty array if not found an element on the message element', ->
+      messageElement = @browser.getElement '.message'
+      elements = messageElement.getElements '.message'
+      assert.equal 0, elements.length
