@@ -39,7 +39,7 @@ describe 'browse', ->
 
 ## Getting Started
 
-Install Testium by running `npm install --save testium`.
+Install Testium by running `npm install --save-dev testium`.
 
 Then, you can specify additional configuration, like so!
 
