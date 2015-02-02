@@ -130,13 +130,8 @@ spawnSelenium = (config, callback) ->
   async.auto {
     port: findOpenPort
 
-    chromedriver: (done) ->
-      return done() if config.browser != 'chrome'
-      fs.stat chromeDriverPath, done
-
-    binaries: [ 'chromedriver', (done) ->
+    binaries: (done) ->
       ensureBinaries config.browser, jarPath, chromeDriverPath, done
-    ]
 
     selenium: [ 'port', 'binaries', (done, {port}) ->
       args = [
