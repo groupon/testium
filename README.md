@@ -126,7 +126,7 @@ selenium:
   # Path to selenium jar.
   # `null` means "use testium built-in".
   # Using the testium built-in binaries requires you to run
-  # `testium --download-selenium` before running your tests.
+  # `./node_modules/.bin/testium --download-selenium` before running your tests.
   jar: null
   # Path to chromedriver.
   # `null` means "use testium built-in", see `jar` above.
@@ -183,7 +183,7 @@ $ ./node_modules/.bin/testium --download-selenium
 Up to date!
 ```
 
-*Alias: `testium --update-selenium`*
+*Alias: `./node_modules/.bin/testium --update-selenium`*
 
 ### Interactive Console
 
