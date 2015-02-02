@@ -40,10 +40,10 @@ patchCapabilities = require './capabilities'
 class Browser
   constructor: (@driver, @appUrl, @proxyUrl, @commandUrl) ->
     invocation = 'new Browser(driver, appUrl, proxyUrl, commandUrl)'
-    hasType "#{invocation} - requires (Object) driver", Object, driver
-    hasType "#{invocation} - requires (String) appUrl", String, appUrl
-    hasType "#{invocation} - requires (String) proxyUrl", String, proxyUrl
-    hasType "#{invocation} - requires (String) commandUrl", String, commandUrl
+    hasType "#{invocation} - requires (Object) driver", Object, @driver
+    hasType "#{invocation} - requires (String) appUrl", String, @appUrl
+    hasType "#{invocation} - requires (String) proxyUrl", String, @proxyUrl
+    hasType "#{invocation} - requires (String) commandUrl", String, @commandUrl
     @assert = new Assertions @driver, this
 
   init: ({skipPriming, keepCookies} = {}) ->
@@ -52,7 +52,7 @@ class Browser
     else
       @navigateTo '/testium-priming-load'
       debug 'Browser was primed'
-    
+
     if keepCookies
       debug 'Keeping cookies around'
     else

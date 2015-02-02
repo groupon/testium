@@ -105,7 +105,7 @@ injectBrowser = (options = {}) -> (done) ->
         getRootSuite suite
       else suite
 
-    addCloseBrowserHook browserScopeSuite, browser
+    addCloseBrowserHook browserScopeSuite, @browser
 
     done()
 
