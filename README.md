@@ -1,8 +1,8 @@
 # Testium [![travis-ci build](https://travis-ci.org/groupon-testium/testium.svg?branch=master)](https://travis-ci.org/groupon-testium/testium)
 
-Testium is a testing platform focused on providing a simple,
+Testium is a testing library focused on providing a simple,
 but effective,
-platform for testing your code
+tool for testing your web applications
 in different browsers (via Selenium)
 and headlessly (via PhantomJS).
 It uses [webdriver-http-sync](https://github.com/groupon/webdriver-http-sync)
