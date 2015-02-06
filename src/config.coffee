@@ -88,6 +88,8 @@ getDefaults = ->
     # Path to chromedriver.
     # `null` means "use testium built-in", see `jar` above.
     chromedriver: null
+    # Log debug info to selenium.log.
+    debug: true
   repl:
     # Module for the testium repl
     # If you want to use coffee-script in the repl, use:

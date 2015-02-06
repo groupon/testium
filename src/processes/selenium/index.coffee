@@ -78,7 +78,6 @@ createSeleniumArguments = (chromeDriverPath) ->
     "-Dwebdriver.chrome.args=\"#{chromeArgs}\""
     '-firefoxProfileTemplate', firefoxProfilePath
     '-ensureCleanSession'
-    '-debug'
   ]
 
 ensureBinaries = (browser, jarPath, chromeDriverPath, done) ->
@@ -139,6 +138,8 @@ spawnSelenium = (config, callback) ->
         '-jar', jarPath
         '-port', "#{port}"
       ].concat createSeleniumArguments(chromeDriverPath)
+      if config.selenium.debug
+        args.push '-debug'
       options = { port, timeout: config.selenium.timeout }
       spawnServer logs, 'selenium', 'java', args, options, done
     ]
