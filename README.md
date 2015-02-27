@@ -219,6 +219,22 @@ to save the commands you entered into a file.
 For more info,
 read the [official node repl docs](http://nodejs.org/api/repl.html).
 
+
+## Debugging Application Under Test
+
+1. run [`node-inspector`](https://github.com/node-inspector/node-inspector)
+1. load the URL from the output in Google Chrome
+1. set `launch = false` in `.testiumrc`
+1. specify constant port number by setting `app.port` in `.testiumrc` OR `export PORT=something`
+1. add `debugger` statement in production code
+1. run your app with `node --debug-brk app.js` (or the equivalent of what `npm start` does for you with `--debug-brk` argument passed to node)
+1. run tests as normal (not under debugger)
+
+Gotchas: don't simultaneously run your app under the debugger
+and your unit tests under the debugger.
+Bad things will happen.
+
+
 ## Testium API
 
 The complete description
