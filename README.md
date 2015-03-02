@@ -222,8 +222,7 @@ read the [official node repl docs](http://nodejs.org/api/repl.html).
 
 ## Debugging Application Under Test
 
-1. run [`node-inspector`](https://github.com/node-inspector/node-inspector)
-1. load the URL from the output in Google Chrome
+1. run [`node-debug`](https://github.com/node-inspector/node-inspector)
 1. set `launch = false` in `.testiumrc`
 1. specify constant port number by setting `app.port` in `.testiumrc` OR `export PORT=something`
 1. add `debugger` statement in production code
