@@ -230,10 +230,13 @@ read the [official node repl docs](http://nodejs.org/api/repl.html).
 1. run your app with `node --debug-brk app.js` (or the equivalent of what `npm start` does for you with `--debug-brk` argument passed to node)
 1. run tests as normal (not under debugger)
 
-Gotchas: don't simultaneously run your app under the debugger
-and your unit tests under the debugger.
-Bad things will happen.
+### Gotchas
 
+- Don't simultaneously run your app under the debugger
+  and your unit tests under the debugger.
+  Bad things will happen.
+- Don't run your app with a `cluster` of processes.
+  Run just a single workder directly, instead.
 
 ## Testium API
 
