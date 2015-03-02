@@ -52,7 +52,7 @@
     "webdriver-http-sync": "^1.0.0"
   },
   "devDependencies": {
-    "coffee-script": "^1.9.0",
+    "coffee-script": "1.9.1",
     "mocha": "^1.21.5",
     "node-static": "~0.7.6",
     "npub": "0.0.6",
