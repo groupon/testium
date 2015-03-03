@@ -178,6 +178,20 @@ browser.click '.menu-button'
 browser.waitForElementVisible('.menu', 1000)
 ```
 
+### browser.waitForElementNotVisible(cssSelector, timeout=3000)
+
+Waits for the element at `cssSelector`
+to exist and not be visible,
+then returns the [Element](#element).
+Times out after `timeout` milliseconds.
+
+```coffee
+browser.click '.menu-button'
+# wait up to 1 second
+# for the menu to be hidden
+browser.waitForElementNotVisible('.menu', 1000)
+```
+
 ### browser.waitForElement(cssSelector, timeout=3000)
 
 Deprecated synonym for `browser.waitForElementVisible(cssSelector, timeout=3000)`
