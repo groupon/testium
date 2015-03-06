@@ -17,7 +17,7 @@
     }
     function removeElementAfter(selector, ms) {
       setTimeout(function(){
-        el = document.getElementById(selector);
+        var el = document.getElementById(selector);
         el.parentNode.removeChild(el);
       }, ms);
     }

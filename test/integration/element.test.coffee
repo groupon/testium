@@ -155,10 +155,10 @@ describe 'element', ->
     before ->
       @browser.navigateTo '/dynamic.html'
 
-    xit 'fails when element still exists', ->
+    it 'fails when element still exists', ->
       error = assert.throws =>
         @browser.waitForElementNotExist('.hide_never', 10)
-      assert.equal 'Timeout (10ms) waiting for element (.hide_never) to cease existing in the page.', error.message
+      assert.equal 'Timeout (10ms) waiting for element (.hide_never) to not exist in the page.', error.message
 
     it "doesn't an element after waiting", ->
       @browser.assert.elementIsVisible('#remove_later')

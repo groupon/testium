@@ -56,7 +56,7 @@ elementExistsFailure = (selector, timeout) ->
   throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to exist in page."
 
 elementStillExistsFailure = (selector, timeout) ->
-  throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to cease existing in the page."
+  throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to not exist in the page."
 
 # Curry some functions for later use
 isVisiblePredicate = partial visiblePredicate, true
