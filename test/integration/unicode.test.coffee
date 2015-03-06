@@ -12,5 +12,5 @@ describe 'unicode support', ->
     element = @browser.getElement '#blank-input'
     element.type multibyteText
     result = element.get('value')
-    assert.equal result, multibyteText
+    assert.equal multibyteText, result
 
