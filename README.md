@@ -73,9 +73,10 @@ system-level libraries.
 
 **optional**
 
-- **libpng** (for image diffing)
+- ~~**libpng**~~ **Deprecated** (for image diffing)
 <br>[Ubuntu] `sudo apt-get install libpng-dev`
 <br>[OS X] `brew install libpng`
+
 
 ## Configuration
 
@@ -336,7 +337,7 @@ Method | Description
 `browser.assert.elementDoesntExist(selector)` | Throws exceptions if selector exists.
 `browser.assert.httpStatus(statusCode)` | Throws exceptions if current status code is not equal to the provided statusCode.
 `browser.assert.imgLoaded(selector)` | Throws exceptions if selector doesn't match a single `<img>` element that has both loaded and been decoded successfully. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails.
-`browser.assert.imagesMatch(image1, image2, tolerance=0)` | Throws exceptions if the images don't match within the given tolerance. Warning: this method is experimental and slow. You can use `@slow(4000)` in tests to notify mocha of this.
+~~`browser.assert.imagesMatch(image1, image2, tolerance=0)`~~ | **Deprecated** Throws exceptions if the images don't match within the given tolerance. Warning: this method is experimental and slow. You can use `@slow(4000)` in tests to notify mocha of this.
 
 ### Element
 

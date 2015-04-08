@@ -42,8 +42,17 @@ OS X:   brew install libpng
 """
 
 try
-  imgDiff = require 'img-diff'
-catch
+  _imgDiff = require 'img-diff'
+
+  imgDiff =
+    imagesMatch: ->
+      console.warn 'DEPRECATED: img-diff#imagesMatch'
+      _imgDiff.imagesMatch.apply(_imgDiff, arguments)
+    crop: ->
+      console.warn 'DEPRECATED: img-diff#crop'
+      _imgDiff.crop.apply(_imgDiff, arguments)
+
+catch error
   imgDiff =
     imagesMatch: ->
       throw new Error errorMessage
