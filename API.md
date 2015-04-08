@@ -349,12 +349,7 @@ Returns screenshot as a base64 encoded PNG.
 
 ```coffee
 browser.navigateTo '/products'
-screenshot1 = browser.getScreenshot()
-
-browser.navigateTo '/products-rewrite'
-screenshot2 = browser.getScreenshot()
-
-browser.assert.imagesMatch(screenshot1, screenshot2)
+screenshot = browser.getScreenshot()
 ```
 
 ### browser.click(cssSelector)
@@ -973,7 +968,9 @@ about the test when the assertion fails.
 browser.assert.imgLoaded '.logo'
 ```
 
-### browser.assert.imagesMatch(image1, image2, tolerance=0)
+### ~~browser.assert.imagesMatch(image1, image2, tolerance=0)~~
+
+**Deprecated**
 
 Asserts that the provided images
 are equal within the given `tolerance`.
