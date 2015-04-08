@@ -83,7 +83,7 @@ ElementMixin =
     @driver.getElements(selector)
 
   waitForElement: (selector, timeout) ->
-    deprecate 'waitForElement', 'waitForElementVisible'
+    console.warn 'DEPRECATED: waitForElement; use waitForElementVisible instead.'
     hasType 'getElements(selector) - requires (String) selector', String, selector
     @_waitForElement(selector, isVisiblePredicate, isVisibleFailure, timeout)
 
