@@ -73,7 +73,7 @@ system-level libraries.
 
 **optional**
 
-- ~~**libpng**~~ **Deprecated** (for image diffing)
+- ~~**libpng**~~ (**deprecated**) (for image diffing)
 <br>[Ubuntu] `sudo apt-get install libpng-dev`
 <br>[OS X] `brew install libpng`
 
