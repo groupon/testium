@@ -89,10 +89,11 @@ Below are the options and their defaults:
 # It's also where testium will look for a `package.json` file
 # to figure out how to start the app.
 root: process.cwd()
-# Automatically launch the app with NODE_ENV=test.
+# Automatically launch the app with the default NODE_ENV=test.
 # Set this to true if you want testium to handle this for you
 # when you call `getBrowser`.
 launch: false
+launchEnv: 'test'
 
 # The browser to use, possible values:
 # phantomjs | chrome | firefox | internet explorer
