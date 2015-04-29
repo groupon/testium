@@ -42,6 +42,7 @@ getDefaults = ->
   # Set this to true if you want testium to handle this for you
   # when you call `getBrowser`.
   launch: false
+  # Customize the NODE_ENV of the service being started. Example: 'integration' or 'ci'
   launchEnv: 'test'
 
   # The browser to use, possible values:
