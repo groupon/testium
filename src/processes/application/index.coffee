@@ -62,8 +62,8 @@ isTrulyTrue = (value) ->
   value == true || value == '1' || value == 'true'
 
 spawnApplication = (config, callback) ->
-  {launch, app: {timeout}} = config
-  launch = isTrulyTrue launch
+  {app: {timeout}} = config
+  launch = isTrulyTrue config.launch
 
   unless launch
     return isAvailable config.app.port, (error, available) ->
@@ -91,7 +91,7 @@ spawnApplication = (config, callback) ->
       debug 'Launching application', cmd, args
 
       env = defaults {
-        NODE_ENV: 'test'
+        NODE_ENV: config.launchEnv || 'test'
         PORT: port
         PATH: "./node_modules/.bin:#{process.env.PATH}"
       }, process.env
