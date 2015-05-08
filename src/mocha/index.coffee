@@ -83,7 +83,7 @@ injectBrowser = (options = {}) -> (done) ->
   suite = @_runnable.parent
   deepMochaTimeouts suite
 
-  initialTimeout = +config.app.timeout
+  initialTimeout = +config.app?.timeout || 0
   initialTimeout += +config.mocha.timeout
   @timeout initialTimeout
 

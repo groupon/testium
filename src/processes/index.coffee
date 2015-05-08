@@ -44,7 +44,7 @@ spawnSelenium = require './selenium'
 spawnApplication = require './application'
 
 ensureAppPort = (config, done) ->
-  if config.app.port == 0
+  if config.app?.port == 0
     findOpenPort (err, port) ->
       return done(err) if err?
       config.app.port = port
@@ -93,10 +93,19 @@ initProcesses = ->
       return process.nextTick ->
         callback(cached.error, cached.results)
 
-    debug 'Launching processes'
-    async.auto {
+    appTasks = {
       ensureAppPort: (done) -> ensureAppPort(config, done)
 
+      proxy: [ 'ensureAppPort', (done) ->
+        spawnProxy(config, done)
+      ]
+
+      application: [ 'ensureAppPort', (done) ->
+        spawnApplication(config, done)
+      ]
+    }
+
+    tasks = {
       selenium: (done) ->
         if config.desiredCapabilities.browserName == 'phantomjs'
           spawnPhantom(config, done)
@@ -106,15 +115,13 @@ initProcesses = ->
       seleniumReady: [ 'selenium', (done, {selenium}) ->
         ensureSeleniumListening selenium.driverUrl, done
       ]
+    }
 
-      proxy: [ 'ensureAppPort', (done) ->
-        spawnProxy(config, done)
-      ]
+    if config.app != null
+      extend tasks, appTasks
 
-      application: [ 'ensureAppPort', (done) ->
-        spawnApplication(config, done)
-      ]
-    }, (error, results) ->
+    debug 'Launching processes'
+    async.auto tasks, (error, results) ->
       cached = {error, results}
       callback error, results
 

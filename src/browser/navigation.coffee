@@ -52,11 +52,13 @@ NavigationMixin =
 
     options = defaults {url}, omit(options, 'query')
 
-    hasProtocol = /^[^:\/?#]+:\/\//
-    unless hasProtocol.test url
-      url = "#{@proxyUrl}#{url}"
+    if @targetUrl? && @commandUrl?
+      hasProtocol = /^[^:\/?#]+:\/\//
+      hasNoProtocol = !(hasProtocol.test url)
+      if hasNoProtocol
+        url = "#{@targetUrl}#{url}"
 
-    @driver.http.post "#{@commandUrl}/new-page", options
+      @driver.http.post "#{@commandUrl}/new-page", options
 
     # WebDriver does nothing if currentUrl is the same as targetUrl
     currentUrl = @driver.getUrl()

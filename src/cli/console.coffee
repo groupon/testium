@@ -100,7 +100,7 @@ module.exports = ->
 
   Repl = require replModule
 
-  getBrowser (error, browser) ->
+  getBrowser {useApp: false}, (error, browser) ->
     throw error if error?
 
     closeBrowser = ->

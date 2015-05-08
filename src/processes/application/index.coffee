@@ -62,6 +62,8 @@ isTrulyTrue = (value) ->
   value == true || value == '1' || value == 'true'
 
 spawnApplication = (config, callback) ->
+  return callback() unless config.app
+
   {app: {timeout}} = config
   launch = isTrulyTrue config.launch
 

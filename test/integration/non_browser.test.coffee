@@ -7,6 +7,8 @@ describe 'Non-browser test', ->
   before injectBrowser()
 
   it 'can make a request without using the browser', (done) ->
-    http.get "#{@browser.appUrl}/echo", (response) ->
+    url = "#{@browser.appUrl}/echo"
+    http.get(url, (response) ->
       assert.equal 200, response.statusCode
       done()
+    ).on 'error', done

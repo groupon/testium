@@ -71,6 +71,7 @@ getBrowser = (options, done) ->
 
   reuseSession = options.reuseSession ? true
   keepCookies = options.keepCookies ? false
+  useApp = options.useApp ? config.app?
 
   assert.hasType '''
     getBrowser requires a callback, please check the docs for breaking changes
@@ -104,8 +105,12 @@ getBrowser = (options, done) ->
         else
           createDriver()
 
-      browser = new Browser driver, application.baseUrl, proxy.baseUrl, proxy.commandUrl
-      browser.init { skipPriming: usedCachedDriver, keepCookies }
+      skipPriming = usedCachedDriver || !useApp
+
+      # TODO: why do we need a separate init here?
+      browser = new Browser driver, proxy?.baseUrl, proxy?.commandUrl
+      browser.init { skipPriming, keepCookies }
+      browser.appUrl = application.baseUrl
 
       applyMixins browser, config.mixins.browser
       applyMixins browser.assert, config.mixins.assert
