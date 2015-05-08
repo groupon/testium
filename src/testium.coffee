@@ -107,10 +107,13 @@ getBrowser = (options, done) ->
 
       skipPriming = usedCachedDriver || !useApp
 
-      # TODO: why do we need a separate init here?
-      browser = new Browser driver, proxy?.baseUrl, proxy?.commandUrl
-      browser.init { skipPriming, keepCookies }
-      browser.appUrl = application.baseUrl
+      browser = new Browser driver, {
+        appUrl: application?.baseUrl
+        targetUrl: proxy?.baseUrl
+        commandUrl: proxy?.commandUrl
+        skipPriming
+        keepCookies
+      }
 
       applyMixins browser, config.mixins.browser
       applyMixins browser.assert, config.mixins.assert

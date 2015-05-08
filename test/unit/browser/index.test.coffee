@@ -2,6 +2,11 @@ Browser = require '../../../lib/browser'
 assert = require 'assertive'
 
 class FakeWebDriver
+  navigateTo: ->
+  getUrl: ->
+  getCurrentWindowHandle: ->
+  clearCookies: ->
+  setPageSize: ->
 
 describe 'API', ->
   describe 'construction', ->
@@ -11,14 +16,14 @@ describe 'API', ->
 
     it 'fails if driver is undefined', ->
       assert.throws ->
-        new Browser undefined, targetUrl, commandUrl
+        new Browser undefined, {targetUrl, commandUrl}
 
     it 'fails if driver is not an object', ->
       assert.throws ->
-        new Browser 'Not a driver', targetUrl, commandUrl
+        new Browser 'Not a driver', {targetUrl, commandUrl}
 
     it 'succeeds if all conditions are met', ->
-      new Browser driver, targetUrl, commandUrl
+      new Browser driver
 
   describe '#close', ->
     it 'fails if callback is not a Function', ->
