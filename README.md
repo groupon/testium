@@ -270,6 +270,7 @@ Method | Description
 `browser.getPageSource()` | Returns the current page's html source.
 `browser.getPageSize()` | Returns the current window's size.
 `browser.setPageSize({height, width})` | Sets the current window's size.
+~~`browser.getScreenshot(selector)`~~ | **Deprecated** Returns screenshot as a base64 encoded PNG bounded by the element at `cssSelector`.
 `browser.getScreenshot()` | Returns screenshot as a base64 encoded PNG.
 `browser.click(cssSelector)` | Calls Click on the Element found by the given `cssSelector`.
 `browser.type(cssSelector, value)` | Sends `value` to the input Element found by the given `cssSelector`.
