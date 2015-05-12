@@ -122,4 +122,10 @@ getDefaults = ->
     # Same, just for `slow`.
     slow: 2000
 
-module.exports = rc 'testium', getDefaults()
+config = rc 'testium', getDefaults()
+
+# config values from environment variables
+# are always strings
+config.app = null if config.app == 'null'
+
+module.exports = config

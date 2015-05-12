@@ -4,7 +4,7 @@ setup:
 	npm install
 
 .PHONY: test
-test: test-unit test-screenshot test-missing-selenium test-start-timeout test-integration
+test: test-unit test-screenshot test-missing-selenium test-start-timeout test-no-app test-integration
 
 test-integration: build
 	@echo "# Integration Tests #"
@@ -27,6 +27,12 @@ test-start-timeout: build
 test-missing-selenium: build
 	@echo "# Missing Selenium Tests #"
 	@./node_modules/.bin/mocha test/missing_selenium.test.coffee
+	@echo ""
+	@echo ""
+
+test-no-app: build
+	@echo "# No App Tests #"
+	@./node_modules/.bin/mocha test/no_app.test.coffee
 	@echo ""
 	@echo ""
 
