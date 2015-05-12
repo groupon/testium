@@ -71,13 +71,6 @@ system-level libraries.
 - **phantomjs 1.9.7+** (only for headless testing)
 - **java 7+** (only when running in browsers)
 
-**optional**
-
-- ~~**libpng**~~ (**deprecated**) (for image diffing)
-<br>[Ubuntu] `sudo apt-get install libpng-dev`
-<br>[OS X] `brew install libpng`
-
-
 ## Configuration
 
 testium uses [`rc`](https://www.npmjs.org/package/rc) for configuration.
@@ -259,7 +252,6 @@ Method | Description
 `browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports.
 `browser.getElement(cssSelector)` | Finds an element on the page using the `cssSelector` and returns an Element.
 `browser.getElements(cssSelector)` | Finds all elements on the page using the `cssSelector` and returns an array of Elements.
-~~`browser.waitForElement(cssSelector, timeout=3000)`~~ | **Deprecated** *(synonym for `browser.waitForElementVisible(cssSelector, timeout=3000)`*
 `browser.waitForElementVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible, then returns the Element. Times out after `timeout` ms.
 `browser.waitForElementNotVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and not be visible, then returns the Element. Times out after `timeout` ms.
 `browser.waitForElementExist(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist, then returns the Element. Times out after `timeout` ms. Visibility is not considered.
@@ -272,7 +264,6 @@ Method | Description
 `browser.getPageSource()` | Returns the current page's html source.
 `browser.getPageSize()` | Returns the current window's size.
 `browser.setPageSize({height, width})` | Sets the current window's size.
-~~`browser.getScreenshot(selector)`~~ | **Deprecated** Returns screenshot as a base64 encoded PNG bounded by the element at `cssSelector`.
 `browser.getScreenshot()` | Returns screenshot as a base64 encoded PNG.
 `browser.click(cssSelector)` | Calls Click on the Element found by the given `cssSelector`.
 `browser.type(cssSelector, value)` | Sends `value` to the input Element found by the given `cssSelector`.
@@ -342,7 +333,6 @@ Method | Description
 `browser.assert.elementDoesntExist(selector)` | Throws exceptions if selector exists.
 `browser.assert.httpStatus(statusCode)` | Throws exceptions if current status code is not equal to the provided statusCode.
 `browser.assert.imgLoaded(selector)` | Throws exceptions if selector doesn't match a single `<img>` element that has both loaded and been decoded successfully. Allows an optional extra _initial_ docstring argument, for semantic documentation about the test when the assertion fails.
-~~`browser.assert.imagesMatch(image1, image2, tolerance=0)`~~ | **Deprecated** Throws exceptions if the images don't match within the given tolerance. Warning: this method is experimental and slow. You can use `@slow(4000)` in tests to notify mocha of this.
 
 ### Element
 
