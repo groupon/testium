@@ -56,6 +56,7 @@ module.exports =
   getScreenshot: (selector) ->
     if selector?
       hasType 'getScreenshot(selector) - requires (String) selector or nothing', String, selector
+      console.warn 'DEPRECATED: getScreenshot(selector); use getScreenshot() instead.'
       screenshot = @driver.getScreenshot()
       @_cropScreenshotBySelector(screenshot, selector)
     else
