@@ -4,6 +4,7 @@ screenshotDirectory = ./test/integration_log/screenshots
 
 [app]
 command = coffee test/app
+timeout = 1000
 
 [repl]
 module = coffee-script/repl
