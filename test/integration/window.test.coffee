@@ -17,6 +17,12 @@ describe 'window api', ->
       assert.equal 'iframe content!', iframeContent
       assert.equal undefined, primaryContent
 
+    it 'can be found when nested', ->
+      @browser.switchToFrame('cool-frame')
+      @browser.switchToFrame('nested-frame')
+      element = @browser.getElement('#nested-frame-div')
+      assert.truthy 'nested frame content', element
+
   describe 'popups', ->
     before ->
       @browser.navigateTo '/windows.html'
