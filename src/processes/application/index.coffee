@@ -40,7 +40,7 @@ debug = require('debug')('testium:processes:application')
 initLogs = require '../../logs'
 
 NO_LAUNCH_COMMAND_ERROR =
-  'Not launch command found, please add scripts.start to package.json'
+  'No launch command found: please add scripts.start to package.json'
 
 getLaunchCommand = (config, callback) ->
   if config.app.command
@@ -62,6 +62,8 @@ isTrulyTrue = (value) ->
   value == true || value == '1' || value == 'true'
 
 spawnApplication = (config, callback) ->
+  return callback() unless config.app
+
   {app: {timeout}} = config
   launch = isTrulyTrue config.launch
 

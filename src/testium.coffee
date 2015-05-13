@@ -71,6 +71,7 @@ getBrowser = (options, done) ->
 
   reuseSession = options.reuseSession ? true
   keepCookies = options.keepCookies ? false
+  useApp = options.useApp ? config.app?
 
   assert.hasType '''
     getBrowser requires a callback, please check the docs for breaking changes
@@ -104,8 +105,15 @@ getBrowser = (options, done) ->
         else
           createDriver()
 
-      browser = new Browser driver, application.baseUrl, proxy.baseUrl, proxy.commandUrl
-      browser.init { skipPriming: usedCachedDriver, keepCookies }
+      skipPriming = usedCachedDriver || !useApp
+
+      browser = new Browser driver, {
+        appUrl: application?.baseUrl
+        targetUrl: proxy?.baseUrl
+        commandUrl: proxy?.commandUrl
+        skipPriming
+        keepCookies
+      }
 
       applyMixins browser, config.mixins.browser
       applyMixins browser.assert, config.mixins.assert

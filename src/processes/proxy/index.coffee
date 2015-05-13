@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 initLogs = require '../../logs'
 
 spawnProxy = (config, callback) ->
-  appPort = config.app.port
+  appPort = config.app?.port
 
   logs = initLogs config
 

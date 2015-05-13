@@ -106,6 +106,7 @@ logDirectory: './test/log'
 # Directory to store automated screenshosts, e.g. on failing tests
 screenshotDirectory: './test/log/failed_screenshots'
 
+# set app to `null` if you don't want testium to make sure an app is running
 app:
   # A port of 0 means "auto-select available port"
   port: process.env.PORT || 0
@@ -199,7 +200,8 @@ and mixes the methods of that browser
 into the global scope.
 
 It respects all configuration options,
-so if you enabled `launch`, it will also launch your app.
+so if you enabled `launch`,
+it will also launch your app.
 
 You can use it like so!
 

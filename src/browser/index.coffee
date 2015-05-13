@@ -38,15 +38,11 @@ Assertions = require '../assert'
 patchCapabilities = require './capabilities'
 
 class Browser
-  constructor: (@driver, @appUrl, @proxyUrl, @commandUrl) ->
-    invocation = 'new Browser(driver, appUrl, proxyUrl, commandUrl)'
+  constructor: (@driver, {@appUrl, @targetUrl, @commandUrl, skipPriming, keepCookies}={}) ->
+    invocation = 'new Browser(driver, targetUrl, commandUrl)'
     hasType "#{invocation} - requires (Object) driver", Object, @driver
-    hasType "#{invocation} - requires (String) appUrl", String, @appUrl
-    hasType "#{invocation} - requires (String) proxyUrl", String, @proxyUrl
-    hasType "#{invocation} - requires (String) commandUrl", String, @commandUrl
     @assert = new Assertions @driver, this
 
-  init: ({skipPriming, keepCookies} = {}) ->
     if skipPriming
       debug 'Skipping priming load'
     else
