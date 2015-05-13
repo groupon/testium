@@ -192,10 +192,6 @@ browser.click '.menu-button'
 browser.waitForElementNotVisible('.menu', 1000)
 ```
 
-### browser.waitForElement(cssSelector, timeout=3000)
-
-Deprecated synonym for `browser.waitForElementVisible(cssSelector, timeout=3000)`
-
 ### browser.getUrl()
 
 Returns the current url
@@ -966,43 +962,6 @@ about the test when the assertion fails.
 
 ```coffee
 browser.assert.imgLoaded '.logo'
-```
-
-### ~~browser.assert.imagesMatch(image1, image2, tolerance=0)~~
-
-**Deprecated**
-
-Asserts that the provided images
-are equal within the given `tolerance`.
-
-Images can be provided as
-base64-encoded PNG buffers.
-You can pass the value returned
-by `getScreenshot` directly into this method.
-
-It is recommended that you leave the `tolerance`
-value at 0 unless you are fully aware
-of what you are testing.
-Allowing a tolerance larger than 0
-can lead to tests that pass on bad input.
-
-Warning: this method is experimental and slow.
-It uses the [img-diff](https://github.com/groupon-testium/img-diff)
-library.
-You can use `@slow(4000)` in tests to
-notify mocha of this.
-
-```coffee
-it 'has the same UI across implementations', ->
-  @slow(5000)
-
-  browser.navigateTo '/products'
-  screenshot1 = browser.getScreenshot()
-
-  browser.navigateTo '/products-rewrite'
-  screenshot2 = browser.getScreenshot()
-
-  browser.assert.imagesMatch(screenshot1, screenshot2)
 ```
 
 ## Capabilities

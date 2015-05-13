@@ -30,7 +30,6 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{crop: cropScreenshot} = require '../img_diff'
 {hasType} = require 'assertive'
 
 module.exports =
@@ -40,27 +39,8 @@ module.exports =
   getPageSource: ->
     @driver.getPageSource()
 
-  _cropScreenshotBySelector: (screenshot, selector) ->
-    element = @driver.getElement(selector)
-    position = element.getLocationInView()
-    size = element.getSize()
-
-    elementData =
-      x: position.x
-      y: position.y
-      width: size.width
-      height: size.height
-
-    cropScreenshot(screenshot, elementData)
-
-  getScreenshot: (selector) ->
-    if selector?
-      hasType 'getScreenshot(selector) - requires (String) selector or nothing', String, selector
-      console.warn 'DEPRECATED: getScreenshot(selector); use getScreenshot() instead.'
-      screenshot = @driver.getScreenshot()
-      @_cropScreenshotBySelector(screenshot, selector)
-    else
-      @driver.getScreenshot()
+  getScreenshot: ->
+    @driver.getScreenshot()
 
   setPageSize: (size) ->
     invocation = 'setPageSize(size={height, width})'
