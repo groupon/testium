@@ -1,4 +1,4 @@
-# Testium [![travis-ci build](https://travis-ci.org/groupon/testium.svg?branch=master)](https://travis-ci.org/groupon-testium/testium)
+# Testium [![travis-ci build](https://travis-ci.org/groupon/testium.svg?branch=master)](https://travis-ci.org/groupon/testium)
 
 Testium is a testing library focused on providing a simple,
 but effective,
