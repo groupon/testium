@@ -34,8 +34,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 {readFileSync} = require 'fs'
 
 portscanner = require 'portscanner'
-{extend, omit} = require 'lodash'
+{extend, includes, omit} = require 'lodash'
 debug = require('debug')('testium:processes')
+
+children = []
+
+killAllChildren = ->
+  for childProcess in children
+    try childProcess.kill()
+    catch childErr
+      console.error childErr.stack
+
+killAllChildrenAndThrow = (error) ->
+  killAllChildren()
+  throw error
+
+addUniqueListener = (object, event, listener) ->
+  listeners = object.listeners(event)
+  return if includes listeners, listener
+  object.on event, listener
 
 getLogWithQuote = (proc) ->
   logQuote =
@@ -150,6 +167,7 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     spawnOpts.cwd ?= process.cwd()
 
     child = spawn cmd, args, spawnOpts
+    children.push child
     child.baseUrl = "http://127.0.0.1:#{port}"
     child.logPath = logPath
     child.logHandle = logHandle
@@ -160,18 +178,12 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     child.on 'error', (err) ->
       if err.errno is 'ENOENT'
         child.error = procNotFoundError(err, cmd).stack
-      child.kill()
+      killAllChildren()
+      process.exit -1
 
-    process.on 'exit', ->
-      try child.kill()
-      catch err
-        console.error err.stack
+    addUniqueListener process, 'exit', killAllChildren
 
-    process.on 'uncaughtException', (error) ->
-      try child.kill()
-      catch err
-        console.error err.stack
-      throw error
+    addUniqueListener process, 'uncaughtException', killAllChildrenAndThrow
 
     debug 'start %s on port %s', name, port
     waitFor child, port, timeout, (error) ->
