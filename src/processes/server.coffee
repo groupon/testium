@@ -181,6 +181,12 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
       killAllChildren()
       process.exit -1
 
+    child.on 'exit', (code) ->
+      if code != 0
+        console.log "Unexpected exit by child process #{cmd} #{args} with code #{code}"
+        killAllChildren()
+        process.exit -1
+
     addUniqueListener process, 'exit', killAllChildren
 
     addUniqueListener process, 'uncaughtException', killAllChildrenAndThrow
