@@ -62,3 +62,15 @@ describe 'Cleanup test', ->
       exitCode: 255
       done
     }
+
+  it 'cleans up all child apps if child is non-existent', (done) ->
+    @timeout 10000
+    testFile {
+      file: 'test/cleanup_no_child_test.test.coffee'
+      envOverrides:
+        testium_app__command: './node_modules/.bin/coffee test/this_can_be_whatever.coffee'
+        testium_app__port: 1337
+      exitCode: 255
+      done
+    }
+
