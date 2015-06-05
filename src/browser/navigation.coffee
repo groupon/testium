@@ -30,14 +30,32 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-{parse: urlParse} = require 'url'
+{parse: urlParse, format: urlFormat} = require 'url'
 qs = require 'querystring'
 
 {hasType} = require 'assertive'
-{omit, defaults, isObject} = require 'lodash'
+{omit, defaults, extend, isObject, pick, size} = require 'lodash'
 
 waitFor = require './wait'
 makeUrlRegExp = require './makeUrlRegExp'
+
+# retains the url fragment and query args from url, not overridden via queryArgs
+extendUrlWithQuery = (url, queryArgs) ->
+  return url  if size(queryArgs) is 0
+
+  parts = urlParse url
+  query = extend qs.parse(parts.query), queryArgs
+  parts.search = '?' + qs.encode query
+  urlFormat pick(
+    parts
+    'protocol'
+    'slashes'
+    'host'
+    'auth'
+    'pathname'
+    'search'
+    'hash'
+  )
 
 NavigationMixin =
   navigateTo: (url, options = {}) ->
@@ -47,8 +65,7 @@ NavigationMixin =
       hasType '''
         navigateTo(url, {query}) - query must be an Object, if provided
       ''', Object, query
-      sep = if /\?/.test url then '&' else '?'
-      url += sep + qs.encode query
+      url = extendUrlWithQuery url, query
 
     options = defaults {url}, omit(options, 'query')
 
