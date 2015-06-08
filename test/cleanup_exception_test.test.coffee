@@ -6,8 +6,5 @@ injectBrowser = require '../mocha'
 describe 'Failing test', ->
   before injectBrowser()
 
-  it 'when running an async test', (done) ->
-    setTimeout ->
-      assert.equal 0, 1
-      done()
-    , 1000
+  it 'when running a test', ->
+    assert.equal 0, 1

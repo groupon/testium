@@ -5,25 +5,27 @@ rimraf = require 'rimraf'
 {extend} = require 'lodash'
 
 LOG_DIRECTORY = "#{__dirname}/cleanup_log"
-ENV_OVERRIDES = 
+ENV_OVERRIDES =
   testium_logDirectory: LOG_DIRECTORY
 
 getNumProcesses = (done) ->
   exec 'ps', (err, stdout, stderr) ->
+    return done(err) if err?
     numProcesses = stdout.split('\n').length - 1 # header line
-    done numProcesses
+    done null, numProcesses
 
 testFile = ({file, envOverrides, exitCode, done}) ->
   envOverrides ?= {testium_app: null}
-  getNumProcesses (numProcessesBefore) ->
-
+  getNumProcesses (err, numProcessesBefore) ->
+    throw err if err?
     mocha = execFile './node_modules/.bin/mocha', [ file ], {
       env: extend(envOverrides, ENV_OVERRIDES, process.env)
     }, (err, stdout, stderr) ->
       try
         assert.equal 'mocha exit code', exitCode, mocha.exitCode
 
-        getNumProcesses (numProcessesAfter) ->
+        getNumProcesses (err, numProcessesAfter) ->
+          return done(err) if err?
           assert.equal 'number of processes before & after', numProcessesBefore, numProcessesAfter
           done()
 
@@ -48,7 +50,7 @@ describe 'Cleanup test', ->
     @timeout 10000
     testFile {
       file: 'test/cleanup_exception_test.test.coffee'
-      exitCode: 7
+      exitCode: 1
       done
     }
 
@@ -73,4 +75,3 @@ describe 'Cleanup test', ->
       exitCode: 255
       done
     }
-
