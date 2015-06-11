@@ -17,7 +17,7 @@ getNumProcesses = (done) ->
 testFile = ({file, envOverrides, exitCode, done}) ->
   envOverrides ?= {testium_app: null}
   getNumProcesses (err, numProcessesBefore) ->
-    throw err if err?
+    return done(err) if err?
     mocha = execFile './node_modules/.bin/mocha', [ file ], {
       env: extend(envOverrides, ENV_OVERRIDES, process.env)
     }, (err, stdout, stderr) ->
