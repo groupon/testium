@@ -10,6 +10,11 @@ in order to communicate
 (using the WebDriver protocol)
 with a selenium server.
 
+This project is a safe and inclusive place
+for contributors of all kinds.
+See the [Code of Conduct](CODE_OF_CONDUCT.md)
+for details.
+
 Keep up to date with changes
 by checking the
 [releases](https://github.com/groupon-testium/testium/releases).
