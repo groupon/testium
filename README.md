@@ -366,5 +366,4 @@ please check out:
 
 If you have questions,
 you can contact the author at: <br>
-[@endangeredmassa](https://twitter.com/endangeredmassa) <br>
-[smassa@groupon.com](mailto:smassa@groupon.com)
+[@endangeredmassa](https://twitter.com/endangeredmassa)
