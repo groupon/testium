@@ -34,25 +34,13 @@ path = require 'path'
 
 assert = require 'assertive'
 debug = require('debug')('testium:testium')
-{each, extend, clone} = require 'lodash'
+{merge} = require 'lodash'
 
 config = require './config'
 Browser = require './browser'
 Assertions = require './assert'
 processes = require('./processes')()
-
-WebDriver = require 'webdriver-http-sync'
-
-applyMixin = (obj, mixin) ->
-  extend obj, mixin
-
-applyMixins = (obj, mixins = []) ->
-  each mixins, (mixin) ->
-    debug 'Applying mixin to %s', obj.constructor.name, mixin
-    mixinFile = path.resolve process.cwd(), mixin
-    applyMixin obj, require mixinFile
-
-cachedDriver = null
+createBrowser = require './drivers'
 
 RESOURCE_TIMEOUT = 'phantomjs.page.settings.resourceTimeout'
 ensureDesiredCapabilities = (config) ->
@@ -69,10 +57,6 @@ getBrowser = (options, done) ->
     done = options
     options = {}
 
-  reuseSession = options.reuseSession ? true
-  keepCookies = options.keepCookies ? false
-  useApp = options.useApp ? config.app?
-
   assert.hasType '''
     getBrowser requires a callback, please check the docs for breaking changes
   ''', Function, done
@@ -83,44 +67,21 @@ getBrowser = (options, done) ->
     return done(err) if err?
     {selenium, proxy, application} = results
 
-    createDriver = ->
-      {driverUrl} = selenium
-      {desiredCapabilities, webdriver} = config
-      debug 'WebDriver(%j)', driverUrl, desiredCapabilities, webdriver.requestOptions
-      try
-        new WebDriver driverUrl, desiredCapabilities, webdriver.requestOptions
-      catch error
-        logName = if config.browser == 'phantomjs'
-          'phantomjs.log'
-        else
-          'selenium.log'
-        error.message = "Failed to initialize WebDriver. Check the #{logName}.\n" + error.message
-        throw error
-
-    createBrowser = ->
-      usedCachedDriver = reuseSession && cachedDriver?
-      driver =
-        if reuseSession
-          cachedDriver ?= createDriver()
-        else
-          createDriver()
-
-      skipPriming = usedCachedDriver || !useApp
-
-      browser = new Browser driver, {
-        appUrl: application?.baseUrl
+    completeConfig = merge {
+      reuseSession: true
+      keepCookies: false
+      useApp: config.app?
+      driverType: 'sync'
+      app:
+        baseUrl: application?.baseUrl
+      proxy:
         targetUrl: proxy?.baseUrl
         commandUrl: proxy?.commandUrl
-        skipPriming
-        keepCookies
-      }
+      selenium:
+        driverUrl: selenium.driverUrl
+    }, config, options
 
-      applyMixins browser, config.mixins.browser
-      applyMixins browser.assert, config.mixins.assert
-
-      browser
-
-    done null, createBrowser()
+    done null, createBrowser(completeConfig)
 
 exports.getBrowser = getBrowser
 exports.Browser = Browser
