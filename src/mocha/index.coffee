@@ -53,7 +53,7 @@ deepMochaTimeouts = (suite) ->
 
 closeBrowser = (browser) ->
   (done) ->
-    browser.close (error) ->
+    browser.quit (error) ->
       return done() unless error?
       error.message = "#{error.message} (while closing browser)"
       done error

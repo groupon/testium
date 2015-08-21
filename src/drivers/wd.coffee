@@ -30,18 +30,27 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-driverTypes =
-  sync: require './sync'
-  promise: require './wd'
-  promiseChain: require './wd'
-
-KNOWN_TYPES = Object.keys(driverTypes).join ', '
+wd = require 'wd'
 
 module.exports = createBrowser = (options, cb) ->
-  driverFactory = driverTypes[options.driverType]
-  unless driverFactory?
-    throw new Error """
-      Unknown driverType: #{options.driverType}; available: #{KNOWN_TYPES}
-    """
+  {targetUrl, commandUrl} = options.proxy ? {}
 
-  driverFactory options, cb
+
+  # TODO: Add, extract, remove from PromiseChainWebdriver
+  #       to get the wrapper and not pollute wd globally
+  wd.addPromiseChainMethod 'navigateTo', (url, options = {}) ->
+    # TODO: handle query string
+    @get url
+
+
+  { driverType, desiredCapabilities, selenium: { driverUrl } } = options
+  browser = wd.remote driverUrl, driverType
+  browser.configureHttp baseUrl: targetUrl
+
+  if driverType == 'async'
+    browser.init desiredCapabilities, (err) ->
+      cb err, browser
+  else
+    browser.init(desiredCapabilities)
+      .then -> browser
+      .nodeify cb

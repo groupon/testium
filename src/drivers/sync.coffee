@@ -62,7 +62,7 @@ createDriver = (options) ->
     error.message = "Failed to initialize WebDriver. Check the #{logName}.\n" + error.message
     throw error
 
-module.exports = createBrowser = (options) ->
+module.exports = createBrowser = (options, cb) ->
   {reuseSession, useApp, keepCookies} = options
 
   usedCachedDriver = reuseSession && cachedDriver?
@@ -85,4 +85,4 @@ module.exports = createBrowser = (options) ->
   applyMixins browser, options.mixins.browser
   applyMixins browser.assert, options.mixins.assert
 
-  browser
+  cb null, browser

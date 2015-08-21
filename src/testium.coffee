@@ -81,7 +81,7 @@ getBrowser = (options, done) ->
         driverUrl: selenium.driverUrl
     }, config, options
 
-    done null, createBrowser(completeConfig)
+    createBrowser completeConfig, done
 
 exports.getBrowser = getBrowser
 exports.Browser = Browser

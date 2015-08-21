@@ -49,9 +49,12 @@
     "read-package-json": "^1.2.7",
     "selenium-download": "^2.0.0",
     "semver": "^4.1.0",
+    "wd": "^0.3.12",
     "webdriver-http-sync": "^1.0.0"
   },
   "devDependencies": {
+    "assertive-as-promised": "^0.1.0",
+    "bluebird": "^2.9.34",
     "coffee-script": "1.9.3",
     "mocha": "^1.21.5",
     "node-static": "~0.7.6",

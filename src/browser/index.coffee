@@ -59,6 +59,9 @@ class Browser
     # fixes some phantomjs element size/position reporting
     @setPageSize { height: 768, width: 1024 }
 
+  quit: (callback) ->
+    @close callback
+
   close: (callback) ->
     hasType 'close(callback) - requires (Function) callback', Function, callback
 
