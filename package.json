@@ -49,7 +49,7 @@
     "read-package-json": "^1.2.7",
     "selenium-download": "^2.0.0",
     "semver": "^4.1.0",
-    "webdriver-http-sync": "^1.0.0"
+    "webdriver-http-sync": "^1.1.0"
   },
   "devDependencies": {
     "coffee-script": "1.9.3",
