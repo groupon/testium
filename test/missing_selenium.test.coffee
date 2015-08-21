@@ -33,5 +33,5 @@ describe 'Missing selenium', ->
         done exitCodeError
 
   it 'mentions useful options', ->
-    assert.include '$ ./node_modules/.bin/testium --download-selenium', @stderr
-    assert.include '[selenium]\njar =', @stderr
+    assert.include '$ ./node_modules/.bin/testium --download-selenium', @stdout
+    assert.include '[selenium]\njar =', @stdout
