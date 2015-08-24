@@ -6,8 +6,8 @@ describe 'driverType: promiseChain', ->
 
   before ->
     @browser
-      .navigateTo '/other-page.html' # dummy load to fake priming
       .navigateTo '/'
+      .assertStatusCode 200
 
   it 'can open a page and check the title', ->
     assert.equal 'Test Title', @browser.title()

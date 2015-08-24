@@ -31,26 +31,71 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 wd = require 'wd'
+{find, each} = require 'lodash'
+assert = require 'assertive'
+Hub = require 'gofer/hub'
+
+{tryParse} = require '../browser/json'
+
+decode = (value) ->
+  (new Buffer value, 'base64').toString('utf8')
+
+parseTestiumCookie = (cookie) ->
+  value = decode(cookie.value)
+  tryParse(value)
+
+getTestiumCookie = (cookies) ->
+  testiumCookie = find cookies, name: '_testium_'
+
+  unless testiumCookie?
+    throw new Error 'Unable to communicate with internal proxy. Make sure you are using relative paths.'
+
+  parseTestiumCookie(testiumCookie)
+
+CookieMixin =
+  _getTestiumCookieField: (name) ->
+    @allCookies()
+      .then getTestiumCookie
+      .then (testiumCookie) -> testiumCookie?[name]
+
+  getStatusCode: ->
+    @_getTestiumCookieField 'statusCode'
+
+  assertStatusCode: (status) ->
+    @getStatusCode()
+      .then (actual) -> assert.equal status, actual
 
 module.exports = createBrowser = (options, cb) ->
   {targetUrl, commandUrl} = options.proxy ? {}
+
+  hub = new Hub()
+
+  wd.addPromiseChainMethod '_sendTestiumCommand', (pathname, json) ->
+    hub.fetch({ method: 'POST', uri: "#{commandUrl}#{pathname}", json }).then()
+
+
+  each CookieMixin, (method, name) ->
+    wd.addPromiseChainMethod name, method
+
+
+  wd.addPromiseChainMethod 'assertElementHasText', (selector, text) ->
+    # do stuff
+    throw new Error 'Not implemented (assertElementHasText)'
 
 
   # TODO: Add, extract, remove from PromiseChainWebdriver
   #       to get the wrapper and not pollute wd globally
   wd.addPromiseChainMethod 'navigateTo', (url, options = {}) ->
-    # TODO: handle query string
-    @get url
+    # TODO: handle query string etc.
+    @_sendTestiumCommand '/new-page', {url}
+      .get url
 
 
   { driverType, desiredCapabilities, selenium: { driverUrl } } = options
   browser = wd.remote driverUrl, driverType
   browser.configureHttp baseUrl: targetUrl
 
-  if driverType == 'async'
-    browser.init desiredCapabilities, (err) ->
-      cb err, browser
-  else
-    browser.init(desiredCapabilities)
-      .then -> browser
-      .nodeify cb
+  browser.init(desiredCapabilities)
+    .navigateTo '/testium-priming-load'
+    .then -> browser
+    .nodeify cb
