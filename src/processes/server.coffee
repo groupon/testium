@@ -177,15 +177,14 @@ spawnServer = (logs, name, cmd, args, opts, cb) ->
     child.name = name
     child.on 'error', (err) ->
       if err.errno is 'ENOENT'
-        child.error = procNotFoundError(err, cmd).stack
+        err = procNotFoundError(err, cmd)
       killAllChildren()
-      process.exit -1
+      return cb err
 
     child.on 'exit', (code) ->
       if code != 0
-        console.log "Unexpected exit by child process #{cmd} #{args} with code #{code}"
         killAllChildren()
-        process.exit -1
+        return cb new Error("Unexpected exit by child process #{cmd} #{args} with code #{code}")
 
     addUniqueListener process, 'exit', killAllChildren
 

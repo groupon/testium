@@ -14,13 +14,15 @@ getNumProcesses = (done) ->
     numProcesses = stdout.split('\n').length - 1 # header line
     done null, numProcesses
 
-testFile = ({file, envOverrides, exitCode, done}) ->
+testFile = ({file, envOverrides, exitCode, stderrMatcher, done}) ->
   envOverrides ?= {testium_app: null}
   getNumProcesses (err, numProcessesBefore) ->
     return done(err) if err?
     mocha = execFile './node_modules/.bin/mocha', [ file ], {
       env: extend(envOverrides, ENV_OVERRIDES, process.env)
     }, (err, stdout, stderr) ->
+      assert.truthy 'stderr does not match matcher', stderrMatcher.test(stderr)
+
       try
         assert.equal 'mocha exit code', exitCode, mocha.exitCode
 
@@ -43,6 +45,7 @@ describe 'Cleanup test', ->
     testFile {
       file: 'test/cleanup_happy_test.test.coffee'
       exitCode: 0
+      stderrMatcher: /^$/
       done
     }
 
@@ -51,6 +54,7 @@ describe 'Cleanup test', ->
     testFile {
       file: 'test/cleanup_exception_test.test.coffee'
       exitCode: 1
+      stderrMatcher: /1 failing/
       done
     }
 
@@ -61,7 +65,8 @@ describe 'Cleanup test', ->
       envOverrides:
         testium_app__command: './node_modules/.bin/coffee test/cleanup_dead_child_app.coffee'
         testium_app__port: 1337
-      exitCode: 255
+      exitCode: 1
+      stderrMatcher: /Error: Unexpected exit by child process/
       done
     }
 
@@ -72,6 +77,7 @@ describe 'Cleanup test', ->
       envOverrides:
         testium_app__command: './node_modules/.bin/coffee test/this_can_be_whatever.coffee'
         testium_app__port: 1337
-      exitCode: 255
+      exitCode: 1
+      stderrMatcher: /Error: Unable to find phantomjs/
       done
     }
