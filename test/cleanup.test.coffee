@@ -21,7 +21,7 @@ testFile = ({file, envOverrides, exitCode, stderrMatcher, done}) ->
     mocha = execFile './node_modules/.bin/mocha', [ file ], {
       env: extend(envOverrides, ENV_OVERRIDES, process.env)
     }, (err, stdout, stderr) ->
-      assert.truthy 'stderr does not match matcher', stderrMatcher.test(stderr)
+      assert.match 'stderr does not match matcher', stderrMatcher, stderr
 
       try
         assert.equal 'mocha exit code', exitCode, mocha.exitCode
