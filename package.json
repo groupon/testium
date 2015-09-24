@@ -55,7 +55,7 @@
     "coffee-script": "1.9.3",
     "mocha": "^1.21.5",
     "node-static": "~0.7.6",
-    "npub": "0.0.6",
+    "npub": "^2.2.0",
     "rimraf": "^2.2.8"
   }
 }
