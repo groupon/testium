@@ -49,8 +49,14 @@ visibleFailure = (shouldBeVisible, selector, timeout) ->
 elementExistsPredicate = (element) ->
   return element?
 
+elementNotExistPredicate = (element) ->
+  return not element?
+
 elementExistsFailure = (selector, timeout) ->
   throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to exist in page."
+
+elementStillExistsFailure = (selector, timeout) ->
+  throw new Error "Timeout (#{timeout}ms) waiting for element (#{selector}) to not exist in the page."
 
 # Curry some functions for later use
 isVisiblePredicate = partial visiblePredicate, true
@@ -94,6 +100,10 @@ ElementMixin =
     hasType 'getElements(selector) - requires (String) selector', String, selector
     @_waitForElement(selector, elementExistsPredicate, elementExistsFailure, timeout)
 
+  waitForElementNotExist: (selector, timeout) ->
+    hasType 'getElements(selector) - requires (String) selector', String, selector
+    @_waitForElementRemoved(selector, elementNotExistPredicate, elementStillExistsFailure, timeout)
+
   click: (selector) ->
     hasType 'click(selector) - requires (String) selector', String, selector
 
@@ -101,13 +111,25 @@ ElementMixin =
     truthy "Element not found at selector: #{selector}", element
     element.click()
 
-  # Where predicate takes a single parameter which is an element (or null) and
-  # returns true when the wait is over
-  _waitForElement: (selector, predicate, failure, timeout=3000) ->
+  _waitForElementRemoved: (selector, predicate, failure, timeout) ->
+    removedElement = @_waitAndTestPredicate(selector, predicate, timeout)
+    failure(selector, timeout) if removedElement isnt null
+
+    removedElement
+
+  _waitForElement: (selector, predicate, failure, timeout) ->
+    foundElement = @_waitAndTestPredicate(selector, predicate, timeout)
+    failure(selector, timeout) if foundElement is null
+
+    foundElement
+
+# Where predicate takes a single parameter which is an element (or null) and
+# returns true when the wait is over
+  _waitAndTestPredicate: (selector, predicate, timeout=3000) ->
     start = Date.now()
     @driver.setElementTimeout(timeout)
 
-    foundElement = null
+    returnedElement = null
     while (Date.now() - start) < timeout
       element = @getElementWithoutError(selector)
 
@@ -121,13 +143,11 @@ ElementMixin =
         throw exception if not STALE_MESSAGE.test(message)
 
       if predicateResult
-        foundElement = element
+        returnedElement = element
         break
 
     @driver.setElementTimeout(0)
 
-    failure(selector, timeout) if foundElement == null
-
-    foundElement
+    returnedElement
 
 module.exports = ElementMixin

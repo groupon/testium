@@ -15,13 +15,21 @@
         document.querySelector(selector).style.display = 'none';
       }, ms);
     }
+    function removeElementAfter(selector, ms) {
+      setTimeout(function(){
+        var el = document.getElementById(selector);
+        el.parentNode.removeChild(el);
+      }, ms);
+    }
 
     showElementAfter('.load_later', 300);
     hideElementAfter('.hide_later', 300);
+    removeElementAfter('remove_later', 300);
   </script>
   <div class="load_later">This just in!</div>
   <div class="load_never">This in never!</div>
-  <div class="hide_later">For a limitted time!</div>
+  <div class="hide_later">For a limited time!</div>
   <div class="hide_never">Here forever!</div>
+  <div id="remove_later">Removed soon!</div>
 </body>
 </html>
