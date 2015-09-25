@@ -72,7 +72,7 @@ system-level libraries.
 - **libcurl** (for sync http)
 <br>[Ubuntu] `sudo apt-get install libcurl4-openssl-dev`
 <br>[OS X] `brew install curl`
-- **Node.js 0.10+**
+- **Node.js 0.10+, 0.12+, 2.0+**
 - **phantomjs 1.9.7+** (only for headless testing)
 - **java 7+** (only when running in browsers)
 
