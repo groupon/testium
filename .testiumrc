@@ -3,7 +3,7 @@ logDirectory = ./test/integration_log
 screenshotDirectory = ./test/integration_log/screenshots
 
 [app]
-command = coffee test/app
+command = testium-example-app
 timeout = 1000
 
 [proxy]

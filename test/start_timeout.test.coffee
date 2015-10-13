@@ -33,8 +33,7 @@ describe 'App startup timeout', ->
 
   it 'mentions helpful details', ->
     try
-      assert.include 'command: coffee', @stderr
-      assert.include 'test/app', @stderr
+      assert.include 'command: testium-example-app', @stderr
       assert.include 'timeout: 250ms', @stderr
       assert.include 'test/start_timeout_log/application.log', @stderr
       assert.include '> Refusing to listen', @stderr
