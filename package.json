@@ -49,6 +49,8 @@
     "read-package-json": "^1.2.7",
     "selenium-download": "^2.0.0",
     "semver": "^4.1.0",
+    "testium-core": "testiumjs/testium-core#jk-selenium-support",
+    "testium-driver-sync": "testiumjs/testium-driver-sync#jk-initial",
     "webdriver-http-sync": "^1.0.0"
   },
   "devDependencies": {

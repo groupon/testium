@@ -1,6 +1,7 @@
 injectBrowser = require '../../mocha'
 assert = require 'assertive'
-{browser} = require '../../lib/config'
+# Hack but the best we can do right now
+{browser} = require('testium-core/lib/config').load()
 
 describe 'dialogs', ->
   if browser == 'phantomjs'

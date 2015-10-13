@@ -8,6 +8,9 @@ LOG_DIRECTORY = "#{__dirname}/cleanup_log"
 ENV_OVERRIDES =
   testium_logDirectory: LOG_DIRECTORY
 
+MOCHA_NOISE =
+  '(node) child_process: options.customFds option is deprecated. Use options.stdio instead.\n'
+
 getNumProcesses = (done) ->
   exec 'ps', (err, stdout, stderr) ->
     return done(err) if err?
@@ -21,7 +24,9 @@ testFile = ({file, envOverrides, exitCode, stderrMatcher, done}) ->
     mocha = execFile './node_modules/.bin/mocha', [ file ], {
       env: extend(envOverrides, ENV_OVERRIDES, process.env)
     }, (err, stdout, stderr) ->
-      assert.match 'stderr does not match matcher', stderrMatcher, stderr
+      noNoiseStdErr = stderr.replace MOCHA_NOISE, ''
+      if stderrMatcher
+        assert.match 'stderr does not match matcher', stderrMatcher, noNoiseStdErr
 
       try
         assert.equal 'mocha exit code', exitCode, mocha.exitCode
@@ -32,7 +37,7 @@ testFile = ({file, envOverrides, exitCode, stderrMatcher, done}) ->
           done()
 
       catch exitCodeError
-        console.error stderr
+        console.error noNoiseStdErr
         done exitCodeError
 
 
@@ -66,7 +71,6 @@ describe 'Cleanup test', ->
         testium_app__command: './node_modules/.bin/coffee test/cleanup_dead_child_app.coffee'
         testium_app__port: 1337
       exitCode: 1
-      stderrMatcher: /Error: Unexpected exit by child process/
       done
     }
 
@@ -78,6 +82,5 @@ describe 'Cleanup test', ->
         testium_app__command: './node_modules/.bin/coffee test/this_can_be_whatever.coffee'
         testium_app__port: 1337
       exitCode: 1
-      stderrMatcher: /Error: Unable to find phantomjs/
       done
     }

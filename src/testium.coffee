@@ -34,14 +34,11 @@ path = require 'path'
 
 assert = require 'assertive'
 debug = require('debug')('testium:testium')
-{each, extend, clone} = require 'lodash'
+{each, extend, once} = require 'lodash'
+initTestium = require 'testium-core'
+createDriver = require 'testium-driver-sync'
 
-config = require './config'
-Browser = require './browser'
-Assertions = require './assert'
-processes = require('./processes')()
-
-WebDriver = require 'webdriver-http-sync'
+initTestiumOnce = once initTestium
 
 applyMixin = (obj, mixin) ->
   extend obj, mixin
@@ -54,74 +51,57 @@ applyMixins = (obj, mixins = []) ->
 
 cachedDriver = null
 
-RESOURCE_TIMEOUT = 'phantomjs.page.settings.resourceTimeout'
-ensureDesiredCapabilities = (config) ->
-  capabilities = config.desiredCapabilities ? {}
-  capabilities.browserName ?= config.browser
-  switch capabilities.browserName
-    when 'phantomjs'
-      capabilities[RESOURCE_TIMEOUT] ?= 2500
+getTestium = (options) ->
+  reuseSession = options.reuseSession ? true
+  # TODO: Figure this part out & honor keepCookies
+  keepCookies = options.keepCookies ? false
 
-  config.desiredCapabilities = capabilities
+  browserName = 'phantomjs' # start with a guess
+  createCachedDriver = (testium) ->
+    browserName = testium.config.get('browser')
 
-getBrowser = (options, done) ->
+    if reuseSession
+      cachedDriver ?= createDriver testium
+    else
+      createDriver testium
+
+  generateDriverError = (error) ->
+    logName =
+      if browserName == 'phantomjs'
+        'phantomjs.log'
+      else
+        'selenium.log'
+    error.message =
+      """
+      Failed to initialize WebDriver. Check the #{logName}.
+      #{error.message}
+      """
+    throw error
+
+  addBrowserWithMixins = (testium) ->
+    {browser, config} = testium
+    applyMixins browser, config.get('mixins.browser', [])
+    applyMixins browser.assert, config.get('mixins.assert', [])
+
+    testium
+
+  initTestiumOnce()
+    .then createCachedDriver
+    .catch generateDriverError
+    .then addBrowserWithMixins
+
+getBrowser = (options, callback) ->
   if typeof options == 'function'
     done = options
     options = {}
-
-  reuseSession = options.reuseSession ? true
-  keepCookies = options.keepCookies ? false
-  useApp = options.useApp ? config.app?
 
   assert.hasType '''
     getBrowser requires a callback, please check the docs for breaking changes
   ''', Function, done
 
-  ensureDesiredCapabilities config
-
-  processes.ensureRunning config, (err, results) =>
-    return done(err) if err?
-    {selenium, proxy, application} = results
-
-    createDriver = ->
-      {driverUrl} = selenium
-      {desiredCapabilities, webdriver} = config
-      debug 'WebDriver(%j)', driverUrl, desiredCapabilities, webdriver.requestOptions
-      try
-        new WebDriver driverUrl, desiredCapabilities, webdriver.requestOptions
-      catch error
-        logName = if config.browser == 'phantomjs'
-          'phantomjs.log'
-        else
-          'selenium.log'
-        error.message = "Failed to initialize WebDriver. Check the #{logName}.\n" + error.message
-        throw error
-
-    createBrowser = ->
-      usedCachedDriver = reuseSession && cachedDriver?
-      driver =
-        if reuseSession
-          cachedDriver ?= createDriver()
-        else
-          createDriver()
-
-      skipPriming = usedCachedDriver || !useApp
-
-      browser = new Browser driver, {
-        appUrl: application?.baseUrl
-        targetUrl: proxy?.baseUrl
-        commandUrl: proxy?.commandUrl
-        skipPriming
-        keepCookies
-      }
-
-      applyMixins browser, config.mixins.browser
-      applyMixins browser.assert, config.mixins.assert
-
-      browser
-
-    done null, createBrowser()
+  getTestium(options)
+    .then ({browser}) -> browser
+    .nodeify callback
 
 exports.getBrowser = getBrowser
-exports.Browser = Browser
-exports.Assertions = Assertions
+exports.getTestium = getTestium

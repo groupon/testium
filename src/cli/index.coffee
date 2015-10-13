@@ -35,7 +35,7 @@ path = require 'path'
 USAGE = 'Usage: testium [browser | --update-selenium | --force-update | --help]'
 BIN_PATH = path.resolve __dirname, '..', '..', 'bin'
 
-config = require '../config'
+config = require('testium-core/lib/config').load()
 
 if config['update-selenium'] || config['download-selenium']
   require('selenium-download').update BIN_PATH, ->

@@ -33,23 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 path = require 'path'
 
 debug = require('debug')('testium:mocha')
+TestiumConfig = require 'testium-core/lib/config'
 
-config = require '../config'
-{getBrowser} = require '../testium'
+{getTestium} = require '../testium'
 takeScreenshotOnFailure = require './screenshot'
-
-setMochaTimeouts = (obj) ->
-  obj.timeout +config.mocha.timeout
-  obj.slow +config.mocha.slow
-
-deepMochaTimeouts = (suite) ->
-  setMochaTimeouts suite
-  suite.suites.forEach deepMochaTimeouts
-  suite.tests.forEach setMochaTimeouts
-  suite._beforeEach.forEach setMochaTimeouts
-  suite._beforeAll.forEach setMochaTimeouts
-  suite._afterEach.forEach setMochaTimeouts
-  suite._afterAll.forEach setMochaTimeouts
 
 closeBrowser = (browser) ->
   (done) ->
@@ -75,23 +62,38 @@ getRootSuite = (suite) ->
 
 DEFAULT_TITLE = '"before all" hook'
 BETTER_TITLE =  '"before all" hook: Testium setup hook'
-injectBrowser = (options = {}) -> (done) ->
+injectBrowser = (options = {}) -> ->
   if @_runnable.title == DEFAULT_TITLE
     @_runnable.title = BETTER_TITLE
 
-  debug 'Overriding mocha timeouts', config.mocha
+  initialConfig = TestiumConfig.load()
+
+  mochaTimeout = +initialConfig.get('mocha.timeout', 20000)
+  mochaSlow = +initialConfig.get('mocha.slow', 2000)
+
+  setMochaTimeouts = (obj) ->
+    obj.timeout mochaTimeout
+    obj.slow mochaSlow
+
+  deepMochaTimeouts = (suite) ->
+    setMochaTimeouts suite
+    suite.suites.forEach deepMochaTimeouts
+    suite.tests.forEach setMochaTimeouts
+    suite._beforeEach.forEach setMochaTimeouts
+    suite._beforeAll.forEach setMochaTimeouts
+    suite._afterEach.forEach setMochaTimeouts
+    suite._afterAll.forEach setMochaTimeouts
+
+  debug 'Overriding mocha timeouts', mochaTimeout, mochaSlow
   suite = @_runnable.parent
   deepMochaTimeouts suite
 
-  initialTimeout = +config.app?.timeout || 0
-  initialTimeout += +config.mocha.timeout
+  initialTimeout = +initialConfig.get('app.timeout', 0) + mochaTimeout
   @timeout initialTimeout
 
   reuseSession = options.reuseSession ?= true
 
-  getBrowser options, (err, @browser) =>
-    return done(err) if err?
-
+  getTestium(options).then ({ @browser, config }) =>
     screenshotDirectory = config.screenshotDirectory
     if screenshotDirectory
       screenshotDirectory =
@@ -106,7 +108,5 @@ injectBrowser = (options = {}) -> (done) ->
       else suite
 
     addCloseBrowserHook browserScopeSuite, @browser
-
-    done()
 
 module.exports = injectBrowser
