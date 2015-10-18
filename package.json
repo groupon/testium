@@ -43,14 +43,14 @@
     "lodash": "^3.9.3",
     "mkdirp": "~0.5.0",
     "selenium-download": "^2.0.0",
-    "testium-core": "testiumjs/testium-core#jk-selenium-support",
-    "testium-driver-sync": "testiumjs/testium-driver-sync#jk-initial"
+    "testium-core": "^1.2.0",
+    "testium-driver-sync": "^1.0.3"
   },
   "devDependencies": {
     "coffee-script": "1.9.3",
     "mocha": "^1.21.5",
     "npub": "^2.2.0",
     "rimraf": "^2.2.8",
-    "testium-example-app": "~1.0.4"
+    "testium-example-app": "^1.0.4"
   }
 }
