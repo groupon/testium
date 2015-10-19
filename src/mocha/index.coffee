@@ -35,7 +35,7 @@ path = require 'path'
 debug = require('debug')('testium:mocha')
 {getConfig} = require 'testium-core'
 
-{getTestium} = require '../testium'
+{getTestium} = require 'testium-core'
 takeScreenshotOnFailure = require './screenshot'
 
 closeBrowser = (browser) ->
