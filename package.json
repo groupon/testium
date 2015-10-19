@@ -44,7 +44,8 @@
     "mkdirp": "~0.5.0",
     "selenium-download": "^2.0.0",
     "testium-core": "testiumjs/testium-core#jk-driver-factory",
-    "testium-driver-sync": "testiumjs/testium-driver-sync#jk-cleanup"
+    "testium-driver-sync": "testiumjs/testium-driver-sync#jk-cleanup",
+    "testium-mocha": "testiumjs/testium-mocha#jk-initial"
   },
   "devDependencies": {
     "coffee-script": "1.9.3",
