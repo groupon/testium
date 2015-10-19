@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 path = require 'path'
 
 debug = require('debug')('testium:mocha')
-TestiumConfig = require 'testium-core/lib/config'
+{getConfig} = require 'testium-core'
 
 {getTestium} = require '../testium'
 takeScreenshotOnFailure = require './screenshot'
@@ -66,7 +66,7 @@ injectBrowser = (options = {}) -> ->
   if @_runnable.title == DEFAULT_TITLE
     @_runnable.title = BETTER_TITLE
 
-  initialConfig = TestiumConfig.load()
+  initialConfig = getConfig()
 
   mochaTimeout = +initialConfig.get('mocha.timeout', 20000)
   mochaSlow = +initialConfig.get('mocha.slow', 2000)
