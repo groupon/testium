@@ -17,16 +17,16 @@ getNumProcesses = (done) ->
     numProcesses = stdout.split('\n').length - 1 # header line
     done null, numProcesses
 
-testFile = ({file, envOverrides, exitCode, stderrMatcher, done}) ->
+testFile = ({file, envOverrides, exitCode, outputMatcher, done}) ->
   envOverrides ?= {testium_app: null}
   getNumProcesses (err, numProcessesBefore) ->
     return done(err) if err?
     mocha = execFile './node_modules/.bin/mocha', [ file ], {
       env: extend(envOverrides, ENV_OVERRIDES, process.env)
     }, (err, stdout, stderr) ->
-      noNoiseStdErr = stderr.replace MOCHA_NOISE, ''
-      if stderrMatcher
-        assert.match 'stderr does not match matcher', stderrMatcher, noNoiseStdErr
+      output = ("#{stdout}\n#{stderr}").replace MOCHA_NOISE, ''
+      if outputMatcher
+        assert.match 'output does not match matcher', outputMatcher, output
 
       try
         assert.equal 'mocha exit code', exitCode, mocha.exitCode
@@ -37,7 +37,7 @@ testFile = ({file, envOverrides, exitCode, stderrMatcher, done}) ->
           done()
 
       catch exitCodeError
-        console.error noNoiseStdErr
+        console.error output
         done exitCodeError
 
 
