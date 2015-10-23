@@ -30,98 +30,13 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
-path = require 'path'
+{getBrowser, getTestium} = require 'testium-core'
 
-assert = require 'assertive'
-debug = require('debug')('testium:testium')
-{each, extend, clone} = require 'lodash'
-
-config = require './config'
-Browser = require './browser'
-Assertions = require './assert'
-processes = require('./processes')()
-
-WebDriver = require 'webdriver-http-sync'
-
-applyMixin = (obj, mixin) ->
-  extend obj, mixin
-
-applyMixins = (obj, mixins = []) ->
-  each mixins, (mixin) ->
-    debug 'Applying mixin to %s', obj.constructor.name, mixin
-    mixinFile = path.resolve process.cwd(), mixin
-    applyMixin obj, require mixinFile
-
-cachedDriver = null
-
-RESOURCE_TIMEOUT = 'phantomjs.page.settings.resourceTimeout'
-ensureDesiredCapabilities = (config) ->
-  capabilities = config.desiredCapabilities ? {}
-  capabilities.browserName ?= config.browser
-  switch capabilities.browserName
-    when 'phantomjs'
-      capabilities[RESOURCE_TIMEOUT] ?= 2500
-
-  config.desiredCapabilities = capabilities
-
-getBrowser = (options, done) ->
+exports.getBrowser = (options, callback) ->
   if typeof options == 'function'
-    done = options
+    callback = options
     options = {}
 
-  reuseSession = options.reuseSession ? true
-  keepCookies = options.keepCookies ? false
-  useApp = options.useApp ? config.app?
+  getBrowser(options).nodeify callback
 
-  assert.hasType '''
-    getBrowser requires a callback, please check the docs for breaking changes
-  ''', Function, done
-
-  ensureDesiredCapabilities config
-
-  processes.ensureRunning config, (err, results) =>
-    return done(err) if err?
-    {selenium, proxy, application} = results
-
-    createDriver = ->
-      {driverUrl} = selenium
-      {desiredCapabilities, webdriver} = config
-      debug 'WebDriver(%j)', driverUrl, desiredCapabilities, webdriver.requestOptions
-      try
-        new WebDriver driverUrl, desiredCapabilities, webdriver.requestOptions
-      catch error
-        logName = if config.browser == 'phantomjs'
-          'phantomjs.log'
-        else
-          'selenium.log'
-        error.message = "Failed to initialize WebDriver. Check the #{logName}.\n" + error.message
-        throw error
-
-    createBrowser = ->
-      usedCachedDriver = reuseSession && cachedDriver?
-      driver =
-        if reuseSession
-          cachedDriver ?= createDriver()
-        else
-          createDriver()
-
-      skipPriming = usedCachedDriver || !useApp
-
-      browser = new Browser driver, {
-        appUrl: application?.baseUrl
-        targetUrl: proxy?.baseUrl
-        commandUrl: proxy?.commandUrl
-        skipPriming
-        keepCookies
-      }
-
-      applyMixins browser, config.mixins.browser
-      applyMixins browser.assert, config.mixins.assert
-
-      browser
-
-    done null, createBrowser()
-
-exports.getBrowser = getBrowser
-exports.Browser = Browser
-exports.Assertions = Assertions
+exports.getTestium = getTestium

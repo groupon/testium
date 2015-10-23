@@ -54,7 +54,7 @@ describe 'navigation', ->
       @browser.assert.httpStatus 200
 
       error = assert.throws => @browser.waitForUrl '/some-random-place.html', 5
-      expectedError = 'Timed out (5ms) waiting for url (/some-random-place.html). Last url was: http://127.0.0.1:4445/index.html'
+      expectedError = 'Timed out (5ms) waiting for url ("/some-random-place.html"). Last value was: "http://127.0.0.1:4445/index.html"'
       assert.equal expectedError, error.message
 
     describe 'groks url and query object', ->

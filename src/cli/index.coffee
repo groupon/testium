@@ -32,10 +32,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 path = require 'path'
 
+{getConfig} = require 'testium-core'
+
 USAGE = 'Usage: testium [browser | --update-selenium | --force-update | --help]'
 BIN_PATH = path.resolve __dirname, '..', '..', 'bin'
 
-config = require '../config'
+config = getConfig()
 
 if config['update-selenium'] || config['download-selenium']
   require('selenium-download').update BIN_PATH, ->

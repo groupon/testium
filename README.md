@@ -72,7 +72,7 @@ system-level libraries.
 - **libcurl** (for sync http)
 <br>[Ubuntu] `sudo apt-get install libcurl4-openssl-dev`
 <br>[OS X] `brew install curl`
-- **Node.js 0.10+**
+- **Node.js 0.10+, 0.12+, 4.0+**
 - **phantomjs 1.9.7+** (only for headless testing)
 - **java 7+** (only when running in browsers)
 
@@ -260,6 +260,7 @@ Method | Description
 `browser.waitForElementVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible, then returns the Element. Times out after `timeout` ms.
 `browser.waitForElementNotVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and not be visible, then returns the Element. Times out after `timeout` ms.
 `browser.waitForElementExist(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist, then returns the Element. Times out after `timeout` ms. Visibility is not considered.
+`browser.waitForElementNotExist(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to not exist, then returns `null`. Times out after `timeout` ms.
 `browser.getUrl()` | Returns the current url ('http://localhost:1234/some/route') of the page.
 `browser.waitForUrl(url, timeout=5000)` | Waits `timeout` ms for the browser to be at the specified `url`.
 `browser.waitForUrl(url, query, timeout=5000)` | Waits `timeout` ms for the browser to be at the specified `url` with query parameters per the `query` object.

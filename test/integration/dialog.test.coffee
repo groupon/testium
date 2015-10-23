@@ -1,9 +1,10 @@
 injectBrowser = require '../../mocha'
+
 assert = require 'assertive'
-{browser} = require '../../lib/config'
+{getConfig} = require 'testium-core'
 
 describe 'dialogs', ->
-  if browser == 'phantomjs'
+  if getConfig().browser == 'phantomjs'
     xit "skipping tests because browser phantomjs doesn't support alerts"
     return
 
