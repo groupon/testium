@@ -138,6 +138,18 @@ button = browser.getElement('.button')
 button.click()
 ```
 
+### browser.getElementOrNull(cssSelector)
+
+Finds an element on the page
+using the `cssSelector`
+and returns an [Element](#element).
+Returns `null` if the element wasn't found.
+
+```coffee
+button = browser.getElement('.button')
+button?.click()
+```
+
 ### browser.getElements(cssSelector)
 
 Finds all elements on the page
