@@ -146,7 +146,7 @@ and returns an [Element](#element).
 Returns `null` if the element wasn't found.
 
 ```coffee
-button = browser.getElement('.button')
+button = browser.getElementOrNull('.button')
 button?.click()
 ```
 

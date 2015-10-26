@@ -53,6 +53,6 @@
     "mocha": "^2.3.3",
     "npub": "^2.2.0",
     "rimraf": "^2.2.8",
-    "testium-example-app": "^1.0.4"
+    "testium-example-app": "^2.0.0"
   }
 }
