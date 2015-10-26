@@ -21,6 +21,7 @@
     "email": "endangeredmassa@gmail.com"
   },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org",
     "license": {
       "exclude": [
         "cli.js",
