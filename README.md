@@ -256,6 +256,7 @@ Method | Description
 `browser.refresh()` | Refresh the current page.
 `browser.capabilities` | Is an object describing the [WebDriver capabilities](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Capabilities_JSON_Object) that the current browser supports.
 `browser.getElement(cssSelector)` | Finds an element on the page using the `cssSelector` and returns an Element.
+`browser.getElementOrNull(cssSelector)` | Finds an element on the page using the `cssSelector`. Returns `null` if the element wasn't found.
 `browser.getElements(cssSelector)` | Finds all elements on the page using the `cssSelector` and returns an array of Elements.
 `browser.waitForElementVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and be visible, then returns the Element. Times out after `timeout` ms.
 `browser.waitForElementNotVisible(cssSelector, timeout=3000)` | Waits for the element at `cssSelector` to exist and not be visible, then returns the Element. Times out after `timeout` ms.
