@@ -24,7 +24,7 @@ by checking the
 ## Example
 
 A simple test using [assertive](https://github.com/groupon/assertive)
-and [mocha](http://mochajs.github.io/mocha/).
+and [mocha](https://mochajs.org/).
 
 ```coffeescript
 injectBrowser = require 'testium/mocha'
@@ -144,14 +144,14 @@ repl:
 mixins:
   # mixin modules allow you to add new methods to the browser
   # Example:
-  # ```
-  # module.exports = {
-  #   // available as `browser.goHome()`
-  #   goHome: function() {
-  #     this.click('header #home');
-  #   }
-  # };
-  # ```
+  # 
+  #   module.exports = {
+  #     // available as `browser.goHome()`
+  #     goHome: function() {
+  #       this.click('header #home');
+  #     }
+  #   };
+  # 
   # Elements in the array should be node.js module names
   # that can be required relative to `root`.
   browser: []
@@ -353,11 +353,16 @@ this is equivalent to `document.querySelectorAll(selector)`.
 
 Method | Description
 :----- | :----------
-`element.get(attribute)` | Returns the element's specified attribute, which can be `text`. Note that WebDriver (and therefore testium) will not return text of hidden elements.
+`element.clear()` | Clears the input element.
 `element.click()` | Calls click on the element.
+`element.get(attribute)` | Returns the element's specified attribute, which can be `text`. Note that WebDriver (and therefore testium) will not return text of hidden elements.
+`element.getElement(cssSelector)` | Finds a child element of `element` using the `cssSelector` and returns an Element.
+`element.getElements(cssSelector)` | Finds all child elements of the `element` using the `cssSelector` and returns an array of Elements.
+`element.getLocation()` | Return an element's pixel location on the page. Ex: `{ y: 80, x: 406 }`
+`element.getLocationInView()` | Return an element's pixel location on the screen once it has been scrolled into view. Ex: `{ y: 80, x: 406 }`
+`element.getSize()` | Returns an element's size in pixels. Ex: `{ height: 207, width: 269 }`
 `element.isVisible()` | Returns `true` if the element is visible.
 `element.type(strings...)` | Sends `strings...` to the input element.
-`element.clear()` | Clears the input element.
 
 ## Contributing
 
