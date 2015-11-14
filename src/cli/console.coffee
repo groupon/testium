@@ -39,8 +39,9 @@ Type `.methods` to see what's available.
 {_resolveFilename, _nodeModulePaths} = require 'module'
 path = require 'path'
 
-config = require '../config'
-{getBrowser} = require '../testium'
+{getConfig, getBrowser} = require 'testium-core'
+
+config = getConfig()
 
 collectPublicMethods = (obj) ->
   methods = []
@@ -100,9 +101,7 @@ module.exports = ->
 
   Repl = require replModule
 
-  getBrowser {useApp: false}, (error, browser) ->
-    throw error if error?
-
+  getBrowser(useApp: false).done (browser) ->
     closeBrowser = ->
       browser.close (error) ->
         return unless error?
