@@ -11,20 +11,20 @@ Below is the complete description of the Testium API.
 
 Getting the browser:
 
-{% highlight coffee %}
+```coffee
 {getBrowser} = require 'testium'
 getBrowser options, (error, browser) ->
-{% endhighlight %}
+```
 
 Inject browser into a mocha test context:
 
-{% highlight coffee %}
+```coffee
 injectBrowser = require 'testium/mocha'
 describe 'injecting a browser', ->
   before injectBrowser(options)
 
   it 'has a browser', -> @browser
-{% endhighlight %}
+```
 
 In both cases `options` are optional. Available options:
 
@@ -52,10 +52,10 @@ This deviates from the WebDriver spec.
 If relative, the root is assumed to be `http://127.0.0.1:#{applicationPort}`,
 where `applicationPort` can be configured via `app.port`.
 
-{% highlight coffee %}
+```coffee
 # navigates to "http://127.0.0.1:#{applicationPort}/products"
 browser.navigateTo('/products')
-{% endhighlight %}
+```
 
 **absolute urls**
 
@@ -65,53 +65,53 @@ any methods that depend on the proxy
 will not work.
 This is a bug and will be fixed.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo('http://www.google.com')
 
 # fails
 browser.getStatusCode()
-{% endhighlight %}
+```
 
 **options**
 
 The following types of options
 can be provided.
 
-{% highlight coffee %}
+```coffee
 options:
   query:
     someQueryParam: 'someQueryValue'
   headers:
     locale: 'en_US'
-{% endhighlight %}
+```
 
 The `headers` key provides
 headers to pass along with the request.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products', headers: {
   locale: 'en_US'
 }
-{% endhighlight %}
+```
 
 The `query` key provides an object
 that will be converted to a querystring.
 
-{% highlight coffee %}
+```coffee
 # navigates to "/products?start=50&count=25"
 browser.navigateTo '/products', query: {
   start: 50
   count: 25
 }
-{% endhighlight %}
+```
 
 #### browser.refresh()
 
 Refresh the current page.
 
-{% highlight coffee %}
+```coffee
 browser.refresh()
-{% endhighlight %}
+```
 
 #### browser.capabilities
 
@@ -119,7 +119,7 @@ Is an object describing the
 [Capabilities](#capabilities)
 that the current browser supports.
 
-{% highlight coffee %}
+```coffee
 # only define a test if the current browser
 # can work with alerts
 if browser.capabilities.handlesAlerts
@@ -129,7 +129,7 @@ if browser.capabilities.handlesAlerts
 else
   browserName = browser.capabilities.browserName
   xit 'pending: "shows an alert" because #{browserName} does not support alerts'
-{% endhighlight %}
+```
 
 #### browser.getElement(cssSelector)
 
@@ -137,10 +137,10 @@ Finds an element on the page
 using the `cssSelector`
 and returns an [Element](#element).
 
-{% highlight coffee %}
+```coffee
 button = browser.getElement('.button')
 button.click()
-{% endhighlight %}
+```
 
 #### browser.getElementOrNull(cssSelector)
 
@@ -149,10 +149,10 @@ using the `cssSelector`
 and returns an [Element](#element).
 Returns `null` if the element wasn't found.
 
-{% highlight coffee %}
+```coffee
 button = browser.getElementOrNull('.button')
 button?.click()
-{% endhighlight %}
+```
 
 #### browser.getElements(cssSelector)
 
@@ -161,9 +161,9 @@ using the `cssSelector`
 and returns an array of
 [Element](#element) objects.
 
-{% highlight coffee %}
+```coffee
 fields = browser.getElements('input')
-{% endhighlight %}
+```
 
 #### browser.waitForElementExist(cssSelector, timeout=3000)
 
@@ -173,12 +173,12 @@ then returns the [Element](#element).
 Times out after `timeout` milliseconds.
 Visibility is not considered.
 
-{% highlight coffee %}
+```coffee
 browser.click '.menu-button'
 # wait up to 1 second
 # for the menu to be in the DOM
 browser.waitForElementExist('.menu', 1000)
-{% endhighlight %}
+```
 
 #### browser.waitForElementVisible(cssSelector, timeout=3000)
 
@@ -187,12 +187,12 @@ to exist and be visible,
 then returns the [Element](#element).
 Times out after `timeout` milliseconds.
 
-{% highlight coffee %}
+```coffee
 browser.click '.menu-button'
 # wait up to 1 second
 # for the menu to show up
 browser.waitForElementVisible('.menu', 1000)
-{% endhighlight %}
+```
 
 #### browser.waitForElementNotVisible(cssSelector, timeout=3000)
 
@@ -201,12 +201,12 @@ to exist and not be visible,
 then returns the [Element](#element).
 Times out after `timeout` milliseconds.
 
-{% highlight coffee %}
+```coffee
 browser.click '.menu-button'
 # wait up to 1 second
 # for the menu to be hidden
 browser.waitForElementNotVisible('.menu', 1000)
-{% endhighlight %}
+```
 
 #### browser.getUrl()
 
@@ -214,11 +214,11 @@ Returns the current url
 ('http://127.0.0.1:1234/some/route')
 of the page.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 url = browser.getUrl()
 assert.equal 'is SSL', 0, url.indexOf('https')
-{% endhighlight %}
+```
 
 #### browser.waitForUrl(url, timeout=5000)
 
@@ -226,11 +226,11 @@ Waits `timeout` milliseconds
 for the browser to be at the specified `url`.
 `url` can be a String, or a Regular Expression.
 
-{% highlight coffee %}
+```coffee
 # wait up to 1 second for the url
 # to be exactly "http://127.0.0.1:3000/confirmation"
 browser.waitForUrl('http://127.0.0.1:3000/confirmation', 1000)
-{% endhighlight %}
+```
 
 #### browser.waitForUrl(url, query, timeout=5000)
 
@@ -247,7 +247,7 @@ query string.
 
 `url` can be a String, or a Regular Expression.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products?start=30&count=15'
 # returns immediately
 browser.waitForUrl '/products', {
@@ -263,7 +263,7 @@ browser.waitForUrl '/products', {
   start: 30
   count: 15
 }
-{% endhighlight %}
+```
 
 #### browser.getPath()
 
@@ -271,12 +271,12 @@ Returns the current path ('/some/route') of the page.
 This is different from `getUrl` because only
 the path portion of the full url is returned.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 browser.navigateTo '/products'
 path = browser.getPath()
 assert.equal '/products', path
-{% endhighlight %}
+```
 
 #### browser.waitForPath(path, timeout=5000)
 
@@ -286,18 +286,18 @@ at the specified `path`.
 
 `path` can be a String, or a Regular Expression.
 
-{% highlight coffee %}
+```coffee
 # waits up to one second for path to be "/products"
 browser.waitForPath('/products', 1000)
-{% endhighlight %}
+```
 
 #### browser.getPageTitle()
 
 Returns the current page title.
 
-{% highlight coffee %}
+```coffee
 title = browser.getPageTitle()
-{% endhighlight %}
+```
 
 #### browser.getPageSource()
 
@@ -307,11 +307,11 @@ that you are trying to test something
 that can be done without a browser.
 Consider writing a simpler test.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 source = browser.getPageSource()
 assert.matches /body/, source
-{% endhighlight %}
+```
 
 Note that if the browser is presenting
 something like an XML or JSON response,
@@ -328,11 +328,11 @@ Returns the current window's page size
 as an object with height and width properties
 in pixels.
 
-{% highlight coffee %}
+```coffee
 size = browser.getPageSize()
 assert.equal 600, size.height
 assert.equal 800, size.width
-{% endhighlight %}
+```
 
 This can be useful for responsive UI testing
 when combined with `browser.setPageSize`.
@@ -344,14 +344,14 @@ Testium defaults the page size to
 Sets the current window's page size
 in pixels.
 
-{% highlight coffee %}
+```coffee
 browser.setPageSize({height: 400, width: 200})
 # page has resized to a much smaller screen
 
 size = browser.getPageSize()
 assert.equal 400, size.height
 assert.equal 200, size.width
-{% endhighlight %}
+```
 
 This can be useful for responsive UI testing.
 
@@ -359,10 +359,10 @@ This can be useful for responsive UI testing.
 
 Returns screenshot as a base64 encoded PNG.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products'
 screenshot = browser.getScreenshot()
-{% endhighlight %}
+```
 
 #### browser.click(cssSelector)
 
@@ -370,14 +370,14 @@ Finds an [Element](#element)
 based on the `cssSelector`
 and clicks it.
 
-{% highlight coffee %}
+```coffee
 browser.click('.menu-button')
 
 # is the same as
 
 button = browser.getElement('.menu-button')
 button.click()
-{% endhighlight %}
+```
 
 #### browser.setValue(cssSelector, value)
 
@@ -386,24 +386,24 @@ button.click()
 Set's the [Element](#element)'s value
 to `value` found by the given `cssSelector`.
 
-{% highlight coffee %}
+```coffee
 browser.setValue('.first-name', 'John')
 browser.setValue('.last-name', 'Smith')
 browser.click('.submit')
-{% endhighlight %}
+```
 
 #### browser.clear(cssSelector)
 
 Clears the input [Element](#element)
 found by the given `cssSelector`.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 browser.type('.search', 'puppies')
 browser.clear('.search')
 searchValue = browser.getElement('.search').get('value')
 assert.falsey searchValue
-{% endhighlight %}
+```
 
 #### browser.clearAndType(cssSelector, value)
 
@@ -411,14 +411,14 @@ Clears the input [Element](#element)
 found by the given `cssSelector`,
 then sends `value` to it.
 
-{% highlight coffee %}
+```coffee
 browser.clearAndType('.search', 'kittens')
 
 # is the same as
 
 browser.clear('.search')
 browser.type('.search', 'kittens')
-{% endhighlight %}
+```
 
 #### browser.evaluate( [String|Function] clientFunction )
 
@@ -433,23 +433,23 @@ will not have access to server-side values.
 It must contain a return statement
 in order to get a value back.
 
-{% highlight js %}
+```js
 // JavaScript
 var clientFunction = "return document.querySelector('.menu').style;";
 style = browser.evaluate(clientFunction);
-{% endhighlight %}
+```
 
-{% highlight coffee %}
+```coffee
 # CoffeeScript
 
 # the client-side string must still be JavaScript
 clientFunction = "return document.querySelector('.menu').style;"
 style = browser.evaluate(clientFunction)
-{% endhighlight %}
+```
 
 **function**
 
-{% highlight js %}
+```js
 // JavaScript
 var clientFunction = function(){
   // does not have access to the closure
@@ -457,9 +457,9 @@ var clientFunction = function(){
   return document.querySelector('.menu').style;
 };
 style = browser.evaluate(clientFunction);
-{% endhighlight %}
+```
 
-{% highlight coffee %}
+```coffee
 # CoffeeScript
 
 # the client-side function can be written here
@@ -468,7 +468,7 @@ style = browser.evaluate(clientFunction);
 clientFunction = ->
   document.querySelector('.menu').style
 style = browser.evaluate(clientFunction)
-{% endhighlight %}
+```
 
 #### browser.evaluate(args..., function(args...))
 
@@ -477,14 +477,14 @@ but marshals the `args` as JSON
 and passes them to the function
 in the given order.
 
-{% highlight coffee %}
+```coffee
 hash = browser.evaluate 'hash', (prop) -> window.location[prop]
 
 # is the same as
 
 clientFunction = -> window.location['hash']
 hash = browser.evaluate(clientFunction)
-{% endhighlight %}
+```
 
 #### browser.setCookie(Cookie)
 
@@ -495,19 +495,19 @@ Testium tells the browser to load a blank page
 at `/` so that cookies can be set
 before loading a real page.
 
-{% highlight coffee %}
+```coffee
 cookie =
   name: 'userId'
   value: '3'
 browser.setCookie(cookie)
-{% endhighlight %}
+```
 
 #### browser.setCookies([Cookie])
 
 Sets all [Cookie](#cookie) objects
 in the array.
 
-{% highlight coffee %}
+```coffee
 cookies = [
   {name: 'userId', value: '3'}
   {name: 'dismissedPopup', value: 'true'}
@@ -518,52 +518,52 @@ browser.setCookies(cookies)
 
 cookies.forEach (cookie) ->
   browser.setCookie(cookie)
-{% endhighlight %}
+```
 
 #### browser.getCookie(name)
 
 Returns the [Cookie](#cookie) visible
 to the current page with `name`.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 userIdCookie = browser.getCookie('userId')
 assert.equal 3, userIdCookie.value
-{% endhighlight %}
+```
 
 #### browser.getCookies()
 
 Returns all [Cookie](#cookie) objects
 visible to the current page.
 
-{% highlight coffee %}
+```coffee
 cookies = browser.getCookies()
-{% endhighlight %}
+```
 
 #### browser.clearCookies()
 
 Deletes all [Cookie](#cookie) objects
 visible to the current page.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 browser.clearCookies()
 cookies = browser.getCookies()
 assert.equal 0, cookies.length
-{% endhighlight %}
+```
 
 #### browser.clearCookie()
 
 Delete a [Cookie](#cookie) by `name`
 that is visible to the current page.
 
-{% highlight coffee %}
+```coffee
 assert = require 'assertive'
 browser.setCookie(name: 'userId', value: '3')
 browser.clearCookie('user')
 cookies = browser.getCookies()
 assert.equal 0, cookies.length
-{% endhighlight %}
+```
 
 #### browser.getStatusCode()
 
@@ -575,10 +575,10 @@ to store the response status code.
 Therefore, this method does not currently work
 when navigating to absolute urls.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products'
 statusCode = browser.getStatusCode()
-{% endhighlight %}
+```
 
 #### browser.getHeaders(name)
 
@@ -590,20 +590,20 @@ to store the response headers.
 Therefore, this method does not currently work
 when navigating to absolute urls.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products'
 contentLength = browser.getHeader('Content-Length')
-{% endhighlight %}
+```
 
 #### browser.getHeaders()
 
 Returns all response headers
 for the current page.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products'
 allHeaders = browser.getHeaders()
-{% endhighlight %}
+```
 
 #### browser.getConsoleLogs(logLevel='all')
 
@@ -611,9 +611,9 @@ Returns all log events with
 `logLevel` (all/log/warn/error/debug)
 since the last time this method was called.
 
-{% highlight coffee %}
+```coffee
 errorLogs = browser.getConsoleLogs('error')
-{% endhighlight %}
+```
 
 Warning: No browser appears to implement this
 exactly according to the spec.
@@ -626,22 +626,22 @@ in the same way.
 Switch focus to the default frame
 (i.e., the actual page).
 
-{% highlight coffee %}
+```coffee
 browser.switchToFrame('some-frame')
 browser.click('#some-button-in-frame')
 browser.switchToDefaultFrame()
-{% endhighlight %}
+```
 
 #### browser.switchToFrame(id)
 
 Switch focus to the frame
 with name or id `id`.
 
-{% highlight coffee %}
+```coffee
 browser.switchToFrame('some-frame')
 browser.click('#some-button-in-frame')
 browser.switchToDefaultFrame()
-{% endhighlight %}
+```
 
 #### browser.switchToDefaultWindow()
 
@@ -649,38 +649,38 @@ Switch focus to the window
 that was most recently referenced
 by `navigateTo`.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/path'
 browser.click '#open-popup'
 browser.switchToWindow('popup1')
 browser.click '#some-button-in-popup'
 browser.closeWindow()
 browser.switchToDefaultWindow()
-{% endhighlight %}
+```
 
 #### browser.switchToWindow(name)
 
 Switch focus to the window with name `name`.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/path'
 browser.click '#open-popup'
 browser.switchToWindow('popup1')
 browser.click '#some-button-in-popup'
 browser.closeWindow()
 browser.switchToDefaultWindow()
-{% endhighlight %}
+```
 
 #### browser.closeWindow()
 
 Close the currently focused window.
 
-{% highlight coffee %}
+```coffee
 browser.click '#open-popup'
 browser.switchToWindow('popup1')
 browser.closeWindow()
 browser.switchToDefaultWindow()
-{% endhighlight %}
+```
 
 The name used to identify
 the popup can be set in the code
@@ -697,19 +697,19 @@ and the browser attached to it.
 Calls the callback
 when everything is torn down.
 
-{% highlight coffee %}
+```coffee
 browser.close ->
   console.log 'all done!'
-{% endhighlight %}
+```
 
 ### Element
 
 An element object
 has the following properties.
 
-{% highlight coffee %}
+```coffee
 element = browser.getElement(selector)
-{% endhighlight %}
+```
 
 Note: `selector` can be anything
 [WebDriver's CSS Selector](http://www.w3.org/TR/2013/WD-webdriver-20130117/#css-selectors)
@@ -729,17 +729,17 @@ which can be `text`.
 Note that WebDriver (and therefore testium)
 will not return text of hidden elements.
 
-{% highlight coffee %}
+```coffee
 value = element.get('value')
-{% endhighlight %}
+```
 
 #### element.click()
 
 Calls click on the element.
 
-{% highlight coffee %}
+```coffee
 element.click()
-{% endhighlight %}
+```
 
 #### element.isVisible()
 
@@ -763,49 +763,49 @@ don't support this part of the WebDriver spec.
 You can guard against this by checking
 the [Capabilities](#capabilities) object.
 
-{% highlight coffee %}
+```coffee
 describe 'alert-based tests', ->
   if !getBrowser().capabilities.handlesAlerts
     browserName = getBrowser().capabilities.browserName
     xit "skipping tests because browser #{browserName} doesn't support alerts"
   else
     # alert-based tests
-{% endhighlight %}
+```
 
 #### browser.getAlertText()
 
 Gets the text of a visible
 alert, prompt, or confirm dialog.
 
-{% highlight coffee %}
+```coffee
 alertText = browser.getAlertText()
-{% endhighlight %}
+```
 
 #### browser.acceptAlert()
 
 Accepts a visible
 alert, prompt, or confirm dialog.
 
-{% highlight coffee %}
+```coffee
 browser.acceptAlert()
-{% endhighlight %}
+```
 
 #### browser.dismissAlert()
 
 Dismisses a visible
 alert, prompt, or confirm dialog.
 
-{% highlight coffee %}
+```coffee
 browser.dismissAlert()
-{% endhighlight %}
+```
 
 #### browser.typeAlert(value)
 
 Types into a visible prompt dialog.
 
-{% highlight coffee %}
+```coffee
 browser.typeAlert('')
-{% endhighlight %}
+```
 
 ### Assertions
 
@@ -823,7 +823,7 @@ Allows an optional extra _initial_ docstring argument,
 for semantic documentation about the test
 when the assertion fails.
 
-{% highlight coffee %}
+```coffee
 browser.assert.elementHasText('.user-name', 'someone')
 
 # is the same as
@@ -831,7 +831,7 @@ browser.assert.elementHasText('.user-name', 'someone')
 assert = require 'assertive'
 userName = browser.getElement('.user-name')
 assert.equal 'someone', userName.get('text')
-{% endhighlight %}
+```
 
 #### browser.assert.elementLacksText( [docString,] selector, textOrRegex)
 
@@ -855,7 +855,7 @@ Allows an optional extra _initial_ docstring argument,
 for semantic documentation about the test
 when the assertion fails.
 
-{% highlight coffee %}
+```coffee
 browser.assert.elementHasValue('.user-name', 'someone else')
 
 # is the same as
@@ -863,7 +863,7 @@ browser.assert.elementHasValue('.user-name', 'someone else')
 assert = require 'assertive'
 userName = browser.getElement('.user-name')
 assert.equal 'someone else', userName.get('value')
-{% endhighlight %}
+```
 
 #### browser.assert.elementLacksValue(selector, textOrRegex)
 
@@ -887,9 +887,9 @@ Allows an optional extra _initial_ docstring argument,
 for semantic documentation about the test
 when the assertion fails.
 
-{% highlight coffee %}
+```coffee
 browser.assert.elementHasAttributes('.user-name', {text: 'someone', name: 'username'})
-{% endhighlight %}
+```
 
 #### browser.assert.elementIsVisible(selector)
 
@@ -900,7 +900,7 @@ Returns the element.
 Throws exceptions if selector doesn't exist
 or is not visible.
 
-{% highlight coffee %}
+```coffee
 browser.assert.elementIsVisible('.user-name')
 
 # is the same as
@@ -908,7 +908,7 @@ browser.assert.elementIsVisible('.user-name')
 assert = require 'assertive'
 userName = browser.getElement('.user-name')
 assert.truthy userName.isVisible()
-{% endhighlight %}
+```
 
 #### browser.assert.elementNotVisible(selector)
 
@@ -926,9 +926,9 @@ Returns the element.
 
 Throws exceptions if selector doesn't exist.
 
-{% highlight coffee %}
+```coffee
 browser.assert.elementExists('.user-name')
-{% endhighlight %}
+```
 
 #### browser.assert.elementDoesntExist(selector)
 
@@ -943,16 +943,16 @@ Inverse of `assert.elementExists`.
 Asserts that the most recent
 response status code is `statusCode`.
 
-{% highlight coffee %}
+```coffee
 browser.navigateTo '/products'
 browser.assert.httpStatus(200)
-{% endhighlight %}
+```
 
 This is especially useful
 as a method to short circuit
 test failures.
 
-{% highlight coffee %}
+```coffee
 describe 'products', ->
   before ->
     @browser = getBrowser()
@@ -965,7 +965,7 @@ describe 'products', ->
   it 'works 1', ->
   it 'works 2', ->
   it 'works 3', ->
-{% endhighlight %}
+```
 
 #### browser.assert.imgLoaded( [docString,] selector)
 
@@ -976,9 +976,9 @@ Allows an optional extra _initial_ docstring argument,
 for semantic documentation
 about the test when the assertion fails.
 
-{% highlight coffee %}
+```coffee
 browser.assert.imgLoaded '.logo'
-{% endhighlight %}
+```
 
 ### Capabilities
 
@@ -1019,17 +1019,17 @@ will return as a `console.log` event by this method.
 The method `browser.getConsoleLogs` works
 entirely as documented.
 
-{% highlight coffee %}
+```coffee
 if browser.capabilities.consoleLogs != 'none'
   logs = browser.getConsoleLogs()
-{% endhighlight %}
+```
 
 ### Cookie
 
 A Cookie object
 has the following properties.
 
-{% highlight coffee %}
+```coffee
 Cookie = {
   name
   value
@@ -1037,4 +1037,4 @@ Cookie = {
   domain = #{current_page_domain}
   expiry
 }
-{% endhighlight %}
+```

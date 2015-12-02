@@ -10,7 +10,7 @@ exclude:
 - Gemfile
 - Gemfile.lock
 
-markdown: kramdown
+markdown: redcarpet
 sass:
   style: :compressed
 defaults:
@@ -18,3 +18,9 @@ defaults:
       path: ""
     values:
       category: docs
+
+redcarpet:
+  extensions:
+    - no_intra_emphasis
+    - autolink
+    - strikethrough
