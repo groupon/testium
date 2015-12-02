@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+<link rel="stylesheet" href="https://assets4.grouponcdn.com/layout/assets/gig-v5.3.0-b69d992b76.css" />
+<link rel="stylesheet" href="https://assets4.grouponcdn.com/layout/assets/sls-v5.1.43-b908742de0.css" />
+<link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/docs.css" />
+<base href="{{ site.baseurl }}/" />
+</head>
+<body class="gig prom-night header-v3 ltr en_US en_XX">
+<div id="wrapper">
+  <header>
+    <nav class="row">
+      <ul id="primary-nav" class="tabs">
+        <li class="primary-nav-tab" id="logo">
+          <h1><a href="{{ site.baseurl }}/">{{ site.title }}</a></h1>
+        </li>
+        {% for item in site.data.topnav %}
+          <li class="primary-nav-tab{% if page.url == item.url or page.category == item.category %} active{% endif %}">
+            <a href="{% if item.externalUrl %}{{ item.externalUrl }}{% else %}{{ site.baseurl }}{{ item.url }}{% endif %}">
+              {{ item.title }}
+            </a>
+          </li>
+        {% endfor %}
+        <li class="primary-nav-tab pull-right">
+          <a href="{{ site.projectUrl }}">Github</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <div id="content">
+    {{ content }}
+  </div>
+</div>
+<footer>
+  <div class="row">
+    <div class="six columns">{{ site.copyright }}</div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+title: Testium
+baseurl: '/testium'
+sourceUrl: https://github.com/groupon/testium
+sourceBranch: gh-pages
+projectUrl: https://github.com/groupon/testium
+copyright: "Copyright © 2015 Groupon, Inc. All Rights Reserved."
+
+exclude:
+- README.md
+- Gemfile
+- Gemfile.lock
+
+markdown: kramdown
+sass:
+  style: :compressed
+defaults:
+  - scope:
+      path: ""
+    values:
+      category: docs

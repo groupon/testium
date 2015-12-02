@@ -1,0 +1,6 @@
+- url: /index.html
+  title: Quick Start
+  category: intro
+- url: /api.html
+  title: API
+  category: docs

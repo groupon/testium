@@ -1,0 +1,19 @@
+- title: Quick Start
+  items:
+  - url: /index.html
+    title: Introduction
+    subitems:
+    - url: /mocha.html
+      title: Setup mocha
+    - url: /tap.html
+      title: Setup tap
+  - url: /config.html
+    title: Configuration
+- title: API
+  items:
+  - url: /api.html
+    title: Initiating Testium
+  - url: /sync.html
+    title: Using sync-http
+  - url: /wd.html
+    title: Using Promises

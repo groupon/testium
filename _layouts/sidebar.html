@@ -1,0 +1,12 @@
+---
+layout: default
+---
+<div class="row">
+  <div class="three columns">{% include sidenav.html %}</div>
+  <div class="nine columns">
+    <a href="{{ site.sourceUrl }}/edit/{{ site.sourceBranch }}/{% if page.relative_path %}{{ page.relative_path }}{% else %}{{page.path}}{% endif %}" class="pull-right gh-edit" style="margin-top: 31px;">
+      Edit on GitHub
+    </a>
+    {{ content }}
+  </div>
+</div>
