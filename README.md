@@ -17,7 +17,7 @@ for details.
 
 Keep up to date with changes
 by checking the
-[releases](https://github.com/groupon-testium/testium/releases).
+[releases](https://github.com/groupon/testium/releases).
 
 [Demo Video](https://www.youtube.com/watch?v=qmPlM_SqZes)
 
@@ -78,7 +78,7 @@ system-level libraries.
 
 ## Configuration
 
-testium uses [`rc`](https://www.npmjs.org/package/rc) for configuration.
+testium uses [`rc`](https://www.npmjs.com/package/rc) for configuration.
 Below are the options and their defaults:
 
 ```coffee
@@ -205,7 +205,7 @@ You can use it like so!
 
 ```js
 $ ./node_modules/.bin/testium --browser firefox
-firefox> navigateTo('http://google.com')
+firefox> navigateTo('http://www.google.com/')
 firefox> var element = getElement('input[name="q"]')
 firefox> element.type('puppies\n')
 ```
@@ -220,7 +220,7 @@ before setting up an actual test.
 You can even use `.save test/integration/google.coffee`
 to save the commands you entered into a file.
 For more info,
-read the [official node repl docs](http://nodejs.org/api/repl.html).
+read the [official node repl docs](https://nodejs.org/api/repl.html).
 
 
 ## Debugging Application Under Test
