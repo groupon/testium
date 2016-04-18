@@ -144,14 +144,14 @@ repl:
 mixins:
   # mixin modules allow you to add new methods to the browser
   # Example:
-  # 
+  #
   #   module.exports = {
   #     // available as `browser.goHome()`
   #     goHome: function() {
   #       this.click('header #home');
   #     }
   #   };
-  # 
+  #
   # Elements in the array should be node.js module names
   # that can be required relative to `root`.
   browser: []
@@ -277,6 +277,8 @@ Method | Description
 `browser.setValue(cssSelector, value)` | Set's the Element's value at `cssSelector` to `value`.
 `browser.clear(cssSelector)` | Clears the input Element found by the given `cssSelector`.
 `browser.clearAndType(cssSelector, value)` | Clears the input Element found by the given `cssSelector`, then sends `value` to it.
+`browser.buttonDown(button=0)` | Click and hold the given pointer button at coordinate last set with `Element#movePointerRelativeTo()` (0=left, 1=middle, 2=right)
+`browser.buttonUp(button=0)` | Release the given pointer button at coordinate last set with `Element#movePointerRelativeTo()`
 `browser.evaluate(javascriptString)` | Executes the given javascript. It must contain a return statement in order to get a value back.
 `browser.evaluate(function)` | Returns the result of the given function, invoked on the webdriver side (so you can not bind its `this` object or access context variables via lexical closure).
 `browser.evaluate(args..., function(args...))` | Same as above, but marshals the args as JSON and passes them to the function in the given order. E g: `browser.evaluate 'hash', (prop) -> window.location[prop]` would return the current url fragment.
@@ -363,6 +365,7 @@ Method | Description
 `element.getSize()` | Returns an element's size in pixels. Ex: `{ height: 207, width: 269 }`
 `element.isVisible()` | Returns `true` if the element is visible.
 `element.type(strings...)` | Sends `strings...` to the input element.
+`element.movePointerRelativeTo(x, y)` | Moves the pointer to the given coordinates relative to the current element.
 
 ## Contributing
 
