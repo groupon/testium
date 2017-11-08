@@ -36,8 +36,10 @@ describe 'screenshots', ->
     @files = fs.readdirSync SCREENSHOT_DIRECTORY
     @files.sort()
 
-  it 'creates two screenshots', ->
+  it 'creates two screenshots w/ html', ->
     assert.deepEqual [
+      'forced_screenshot_my_test.html',
       'forced_screenshot_my_test.png',
+      'forced_screenshot_some_sPecial_chars.html',
       'forced_screenshot_some_sPecial_chars.png'
     ], @files
