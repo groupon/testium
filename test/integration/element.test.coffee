@@ -114,7 +114,7 @@ describe 'element', ->
       error = assert.throws =>
         @browser.assert.elementLacksText('.only', 'only')
 
-      expected = 'Assertion failed: elementLacksText: .only\nnotInclude expected needle not to be found in haystack\n- needle: \"only\"\nhaystack: \"only one here\"'
+      expected = 'Assertion failed: elementLacksText: .only\nnotInclude expected needle not to be found in haystack\n- needle: \"only\"\n haystack: \"only one here\"'
       assert.equal expected, stripColors error.message
 
   describe 'elementHasValue', ->
@@ -134,7 +134,7 @@ describe 'element', ->
       error = assert.throws =>
         @browser.assert.elementLacksValue('#text-input', 'initialvalue')
 
-      expected = 'Assertion failed: elementLacksValue: #text-input\nnotInclude expected needle not to be found in haystack\n- needle: \"initialvalue\"\nhaystack: \"initialvalue\"'
+      expected = 'Assertion failed: elementLacksValue: #text-input\nnotInclude expected needle not to be found in haystack\n- needle: \"initialvalue\"\n haystack: \"initialvalue\"'
       assert.equal expected, stripColors error.message
 
   describe 'waitForElementExist', ->
