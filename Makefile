@@ -57,17 +57,13 @@ phantomjs: build
 test-integration-all: phantomjs firefox chrome
 
 build:
-	@./node_modules/.bin/coffee -cbo lib src
-	@./node_modules/.bin/npub prep src
+	@./node_modules/.bin/coffee --no-header -cbo lib src
 
 watch:
 	@./node_modules/.bin/coffee -cwbo lib src
 
 force-update:
 	@./cli.js --force-update
-
-prepublish:
-	./node_modules/.bin/npub prep
 
 clean:
 	@rm -rf lib

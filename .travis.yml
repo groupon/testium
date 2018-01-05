@@ -1,11 +1,20 @@
 language: node_js
 node_js:
-  - '4'
+  - 4.6.1
+  - 6.11.5
+  - 8.9.0
+deploy:
+  - provider: script
+    script: ./node_modules/.bin/nlm release
+    skip_cleanup: true
+    'on':
+      branch: master
+      node: 8.9.0
 env:
   - CXX=g++-4.8
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - g++-4.8
+      - g++-4.8

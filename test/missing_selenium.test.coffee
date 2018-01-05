@@ -17,6 +17,7 @@ ENV_OVERRIDES = {
 describe 'Missing selenium', ->
   before "rm -rf #{LOG_DIRECTORY}", (done) ->
     rimraf LOG_DIRECTORY, done
+    return
 
   before 'run failing test suite', (done) ->
     @timeout 10000
@@ -31,6 +32,7 @@ describe 'Missing selenium', ->
         console.log "stdout: #{@stdout}"
         console.log "stderr: #{@stderr}"
         done exitCodeError
+    return
 
   it 'mentions useful options', ->
     assert.include '$ ./node_modules/.bin/testium --download-selenium', @stdout

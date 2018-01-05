@@ -14,6 +14,7 @@ ENV_OVERRIDES = {
 describe 'App not Required', ->
   before "rm -rf #{LOG_DIRECTORY}", (done) ->
     rimraf LOG_DIRECTORY, done
+    return
 
   it 'run the no_app test', (done) ->
     @timeout 10000
@@ -27,4 +28,5 @@ describe 'App not Required', ->
       catch exitCodeError
         console.error @stderr
         done exitCodeError
+    return
 

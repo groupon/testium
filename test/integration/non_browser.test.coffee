@@ -12,3 +12,4 @@ describe 'Non-browser test', ->
       assert.equal 200, response.statusCode
       done()
     ).on 'error', done
+    return

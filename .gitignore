@@ -1,7 +1,11 @@
+node_modules/
+npm-debug.log
+/tmp
+/yarn.lock
+/package-lock.json
 /bin/chromedriver
 /bin/selenium.jar
 
-/node_modules
 /npm-debug.log
 
 /test/*_log
