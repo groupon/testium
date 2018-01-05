@@ -8,3 +8,4 @@ describe 'Dead child test', ->
 
   it 'that deliberately hangs because we want the app to die first', (done) ->
     setTimeout done, 60000
+    return

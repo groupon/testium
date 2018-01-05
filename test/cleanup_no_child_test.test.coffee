@@ -11,3 +11,4 @@ describe 'No child test', ->
 
   it 'that deliberately hangs because we want the error to be triggered', (done) ->
     setTimeout done, 60000
+    return

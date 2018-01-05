@@ -16,6 +16,7 @@ ENV_OVERRIDES = {
 describe 'App startup timeout', ->
   before "rm -rf #{LOG_DIRECTORY}", (done) ->
     rimraf LOG_DIRECTORY, done
+    return
 
   before 'run failing test suite', (done) ->
     @timeout 10000
@@ -30,6 +31,7 @@ describe 'App startup timeout', ->
         console.log "stdout: #{@stdout}"
         console.log "stderr: #{@stderr}"
         done exitCodeError
+    return
 
   it 'mentions helpful details', ->
     try

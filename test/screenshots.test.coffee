@@ -17,6 +17,7 @@ ENV_OVERRIDES = {
 describe 'screenshots', ->
   before "rm -rf #{LOG_DIRECTORY}", (done) ->
     rimraf LOG_DIRECTORY, done
+    return
 
   before 'run failing test suite', (done) ->
     @timeout 10000
@@ -31,6 +32,7 @@ describe 'screenshots', ->
         console.log "stdout: #{@stdout}"
         console.log "stderr: #{@stderr}"
         done exitCodeError
+    return
 
   before "readdir #{SCREENSHOT_DIRECTORY}", ->
     @files = fs.readdirSync SCREENSHOT_DIRECTORY

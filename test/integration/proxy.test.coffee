@@ -35,6 +35,7 @@ describe 'proxy', ->
       # because firefox blocks dom-ready
       # if we don't wait on the client-side
     ), 50
+    return
 
   it 'handles hashes in urls', ->
     @browser.navigateTo '/#deals'

@@ -44,6 +44,7 @@ testFile = ({file, envOverrides, exitCode, outputMatcher, done}) ->
 describe 'Cleanup test', ->
   before "rm -rf #{LOG_DIRECTORY}", (done) ->
     rimraf LOG_DIRECTORY, done
+    return
 
   it 'cleans up all child apps after exit without any exceptions', (done) ->
     @timeout 10000
@@ -53,6 +54,7 @@ describe 'Cleanup test', ->
       stderrMatcher: /^$/
       done
     }
+    return
 
   it 'cleans up all child apps after uncaught exception', (done) ->
     @timeout 10000
@@ -62,6 +64,7 @@ describe 'Cleanup test', ->
       stderrMatcher: /1 failing/
       done
     }
+    return
 
   it 'cleans up all child apps after child dies', (done) ->
     @timeout 10000
@@ -73,6 +76,7 @@ describe 'Cleanup test', ->
       exitCode: 1
       done
     }
+    return
 
   it 'cleans up all child apps if child is non-existent', (done) ->
     @timeout 10000
@@ -84,3 +88,4 @@ describe 'Cleanup test', ->
       exitCode: 1
       done
     }
+    return
