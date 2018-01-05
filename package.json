@@ -14,9 +14,7 @@
     "url": "https://github.com/groupon/testium/issues"
   },
   "scripts": {
-    "build": "rm -rf lib && coffee --no-header -cbo lib src",
-    "pretest": "npm run build",
-    "test": "mocha",
+    "test": "make all",
     "posttest": "nlm verify",
     "watch": "coffee --no-header -wcbo lib src & nodemon -w lib -w test -e coffee,js,json -x \"mocha\""
   },
