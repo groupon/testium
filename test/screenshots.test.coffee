@@ -7,7 +7,7 @@ rimraf = require 'rimraf'
 
 LOG_DIRECTORY = "#{__dirname}/screenshot_integration_log"
 SCREENSHOT_DIRECTORY = "#{__dirname}/screenshot_integration_log/screenshots"
-TEST_FILE = 'test/screenshot_integration/force_screenshot.hidden.coffee'
+TEST_FILE = 'test/screenshot_integration/force_screenshot.hidden.test.coffee'
 
 ENV_OVERRIDES = {
   testium_logDirectory: LOG_DIRECTORY
