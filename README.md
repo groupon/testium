@@ -1,33 +1,14 @@
-# Testium [![travis-ci build](https://travis-ci.org/groupon/testium.svg?branch=master)](https://travis-ci.org/groupon/testium)
+[DEPRECATED] Please use a testing interface + a testium driver
 
-Testium is a testing library focused on providing a simple,
-but effective,
-tool for testing your web applications
-in different browsers (via Selenium)
-and headlessly (via PhantomJS).
+Test interface
+* [testium-mocha][testium-mocha]
 
-## Usage
+Testium drivers
 
-This particular module bundles a few different testium libraries together in a fashion
-that is no longer recommended.  Please instead use a testing interface modules + one
-of the testium drivers, e.g:
+* [testium-driver-sync][testium-driver-sync]
+* [testium-driver-wd][testium-driver-wd]
 
-https://github.com/testiumjs/testium-mocha and https://github.com/testiumjs/testium-driver-wd
-
-```
-$ npm install --save-dev testium-mocha testium-driver-wd
-```
-
-```javascript
-const { browser } = require('testium-mocha');
-
-describe('something', () => {
-  before(browser.beforeHook({ driver: 'wd' }));
-
-  it('works', () => browser.loadPage('/'));
-});
-```
-
-## API Docs
-
-For full API documentation, see the [Testium API Docs](http://testiumjs.com/api/)
+[testium-core]: https://github.com/testiumjs/testium-core
+[testium-mocha]: https://github.com/testiumjs/testium-mocha
+[testium-driver-wd]: https://github.com/testiumjs/testium-driver-wd
+[testium-driver-sync]: https://github.com/testiumjs/testium-driver-sync
