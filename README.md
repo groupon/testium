@@ -12,3 +12,5 @@ Testium drivers
 [testium-mocha]: https://github.com/testiumjs/testium-mocha
 [testium-driver-wd]: https://github.com/testiumjs/testium-driver-wd
 [testium-driver-sync]: https://github.com/testiumjs/testium-driver-sync
+
+Official documentation: http://testiumjs.com/
